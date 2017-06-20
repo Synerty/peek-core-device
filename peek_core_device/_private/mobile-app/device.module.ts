@@ -1,51 +1,31 @@
 import {CommonModule} from "@angular/common";
 import {NgModule} from "@angular/core";
 import {Routes} from "@angular/router";
-
 // Import a small abstraction library to switch between nativescript and web
-import {PeekModuleFactory} from "@synerty/peek-mobile-util/index.web";
-
+import {PeekModuleFactory} from "@synerty/peek-util/index.web";
 // Import the default route component
 import {DeviceComponent} from "./device.component";
-
-// Import the required classes from VortexJS
-import {
-    TupleOfflineStorageNameService,
-    TupleOfflineStorageService
-} from "@synerty/vortexjs";
-
-// Import the names we need for the
-import {
-    deviceTupleOfflineServiceName
-} from "@peek/peek_core_device/_private/PluginNames";
-
-// Import the required classes from VortexJS
-import {
-    TupleDataObservableNameService,
-    TupleDataObserverService,
-    TupleDataOfflineObserverService
-} from "@synerty/vortexjs";
-
-// Import the names we need for the
-
-import {StringIntComponent} from "./string-int/string-int.component";
-
-import {
-    deviceObservableName,
-    deviceFilt
-} from "@peek/peek_core_device/_private/PluginNames";
-
 // Import the required classes from VortexJS
 import {
     TupleActionPushNameService,
     TupleActionPushOfflineService,
-    TupleActionPushService
+    TupleActionPushService,
+    TupleDataObservableNameService,
+    TupleDataObserverService,
+    TupleDataOfflineObserverService,
+    TupleOfflineStorageNameService,
+    TupleOfflineStorageService
 } from "@synerty/vortexjs";
-
 // Import the names we need for the
 import {
-    deviceActionProcessorName
-} from "@peek/peek_core_device/_private";
+    deviceFilt,
+    deviceObservableName,
+    deviceTupleOfflineServiceName
+} from "@peek/peek_core_device/_private/PluginNames";
+import {EnrollComponent} from "./enroll/enroll.component";
+// Import the names we need for the
+import {deviceActionProcessorName} from "@peek/peek_core_device/_private";
+import {EnrollingComponent} from "./enrolling/enrolling.component";
 
 
 export function tupleActionPushNameServiceFactory() {
@@ -65,13 +45,17 @@ export function tupleOfflineStorageNameServiceFactory() {
 // Define the child routes for this plugin
 export const pluginRoutes: Routes = [
     {
-        path: 'stringint',
-        component: StringIntComponent
+        path: 'enrolling',
+        component: EnrollingComponent
+    },
+    {
+        path: 'enroll',
+        component: EnrollComponent
     },
     {
         path: '',
         pathMatch: 'full',
-        component: DeviceComponent
+        component: EnrollComponent
     }
 
 ];
@@ -82,7 +66,10 @@ export const pluginRoutes: Routes = [
 @NgModule({
     imports: [
         CommonModule,
-        PeekModuleFactory.RouterModule.forChild(pluginRoutes)],
+        PeekModuleFactory.RouterModule,
+        PeekModuleFactory.RouterModule.forChild(pluginRoutes),
+        ...PeekModuleFactory.FormsModules,
+    ],
     exports: [],
     providers: [
         TupleActionPushOfflineService, TupleActionPushService, {
@@ -98,7 +85,7 @@ export const pluginRoutes: Routes = [
             useFactory: tupleDataObservableNameServiceFactory
         },
     ],
-    declarations: [DeviceComponent, StringIntComponent]
+    declarations: [DeviceComponent, EnrollComponent, EnrollingComponent]
 })
 export class DeviceModule {
 }

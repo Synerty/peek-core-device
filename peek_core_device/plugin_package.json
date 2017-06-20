@@ -1,8 +1,8 @@
 {
     "plugin": {
-        "title": "Device Plugin",
+        "title": "Devices",
         "packageName": "peek_core_device",
-    "version":"0.0.1",
+        "version": "0.0.1",
         "buildNumber": "#PLUGIN_BUILD#",
         "buildDate": "#BUILD_DATE#",
         "creator": "Synerty Pty Ltd",
@@ -14,7 +14,7 @@
         "admin",
         "client",
         "mobile",
-        "agent"
+        "desktop"
     ],
     "server": {
     },
@@ -25,7 +25,7 @@
         "showHomeLink": true,
         "appDir": "_private/admin-app",
         "appModule": "device.module#DeviceModule",
-        "moduleDir": "plugin-module",
+        "moduleDir": "plugin-module"
     },
     "client": {
     },
@@ -35,11 +35,31 @@
         "appModule": "device.module#DeviceModule",
         "assetDir": "_private/mobile-assets",
         "icon": "/assets/peek_core_device/icon.png",
-        "moduleDir": "plugin-module"
-    },
-    "agent": {
+        "moduleDir": "plugin-module",
+        "rootServices": [
+            {
+                "file": "device-enrolment.service",
+                "class": "DeviceEnrolmentService",
+                "persistent": true
+            },
+            {
+                "file": "_private/device-update.service",
+                "class": "DeviceUpdateService",
+                "persistent": true
+            },
+            {
+                "file": "_private/device-nav.service",
+                "class": "DeviceNavService",
+                "persistent": false
+            }
+        ]
     },
     "desktop": {
+        "showHomeLink": true,
+        "appDir": "_private/mobile-app",
+        "appModule": "device.module#DeviceModule",
+        "assetDir": "_private/mobile-assets",
+        "icon": "/assets/peek_core_device/icon.png",
         "moduleDir": "plugin-module"
     }
 }

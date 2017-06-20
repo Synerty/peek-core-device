@@ -1,6 +1,11 @@
 export * from "./PluginNames";
-export {DeviceTuple} from "./tuples/DeviceTuple";
-export {StringIntTuple} from "./tuples/StringIntTuple";
+export {DeviceUpdateTuple} from "./tuples/DeviceUpdateTuple";
 export {SettingPropertyTuple} from "./tuples/SettingPropertyTuple";
-export {AddIntValueActionTuple} from "./tuples/AddIntValueActionTuple";
-export {StringCapToggleActionTuple} from "./tuples/StringCapToggleActionTuple";
+
+export {BuildUpdateAction} from "./tuples/admin/BuildUpdateAction";
+export {AuthoriseEnrolmentAction} from "./tuples/admin/AuthoriseEnrolmentAction";
+export {EnrolDeviceAction} from "./tuples/EnrolDeviceAction";
+
+export {HardwareInfo} from "./hardware-info/hardware-info.mweb";
+
+export {DeviceNavService} from "./device-nav.service";

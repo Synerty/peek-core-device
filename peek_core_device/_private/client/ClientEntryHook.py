@@ -2,12 +2,11 @@ import logging
 
 from peek_plugin_base.client.PluginClientEntryHookABC import PluginClientEntryHookABC
 
+from peek_core_device._private.storage.DeclarativeBase import loadStorageTuples
 from .DeviceTupleDataObservableProxy import makeDeviceTupleDataObservableProxy
 
 from peek_core_device._private.tuples import loadPrivateTuples
 from peek_core_device.tuples import loadPublicTuples
-
-from peek_core_device._private.storage import loadStorageTuples
 
 from .DeviceTupleProcessorActionProxy import makeTupleActionProcessorProxy
 

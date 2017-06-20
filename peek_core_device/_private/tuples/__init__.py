@@ -6,11 +6,14 @@ def loadPrivateTuples():
     serialised data.
 
     """
-    from . import DeviceTuple
-    DeviceTuple.__unused = False
+    from . import AuthoriseEnrolAction
+    AuthoriseEnrolAction.__unused = False
 
-    from . import AddIntValueActionTuple
-    AddIntValueActionTuple.__unused = False
+    from . import BuildUpdateAction
+    BuildUpdateAction.__unused = False
 
-    from . import StringCapToggleActionTuple
-    StringCapToggleActionTuple.__unused = False
+    from . import EnrolDeviceAction
+    EnrolDeviceAction.__unused = False
+
+    from . import ToggleUpdateEnabledAction
+    ToggleUpdateEnabledAction.__unused = False

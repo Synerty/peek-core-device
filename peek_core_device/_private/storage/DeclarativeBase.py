@@ -2,7 +2,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from sqlalchemy.schema import MetaData
 
-metadata = MetaData(schema="pl_device")
+metadata = MetaData(schema="core_device")
 DeclarativeBase = declarative_base(metadata=metadata)
 
 
@@ -17,8 +17,11 @@ def loadStorageTuples():
     deserialized by the vortex.
 
     """
-    from . import StringIntTuple
-    StringIntTuple.__unused = False
+    from . import DeviceInfoTuple
+    DeviceInfoTuple.__unused = False
+
+    from . import DeviceUpdateTuple
+    DeviceUpdateTuple.__unused = False
 
     from . import Setting
     Setting.__unused = False

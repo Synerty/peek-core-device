@@ -1,9 +1,9 @@
 import logging
 
-from peek_plugin_active_task.server.ActiveTaskApiABC import ActiveTaskApiABC
 from peek_plugin_base.server.PluginServerEntryHookABC import PluginServerEntryHookABC
 
-from peek_core_device._private.storage import DeclarativeBase, loadStorageTuples
+from peek_core_device._private.storage import DeclarativeBase
+from peek_core_device._private.storage.DeclarativeBase import loadStorageTuples
 from peek_plugin_base.server.PluginServerStorageEntryHookABC import \
     PluginServerStorageEntryHookABC
 
@@ -17,13 +17,7 @@ from .controller.MainController import MainController
 
 from .admin_backend import makeAdminBackendHandlers
 
-from .agent_handlers.RpcForAgent import RpcForAgent
-
-from .ServerToAgentRpcCallExample import ServerToAgentRpcCallExample
-
 from .DeviceApi import DeviceApi
-
-from .ExampleUseTaskApi import ExampleUseTaskApi
 
 logger = logging.getLogger(__name__)
 
@@ -70,24 +64,6 @@ class ServerEntryHook(PluginServerEntryHookABC, PluginServerStorageEntryHookABC)
 
         self._loadedObjects.append(tupleObservable)
 
-        # session = self.dbSessionCreator()
-        #
-        # This will retrieve all the settings
-        # from peek_core_device._private.storage.Setting import globalSetting
-        # allSettings = globalSetting(session)
-        # logger.debug(allSettings)
-        #
-        # This will retrieve the value of property1
-        # from peek_core_device._private.storage.Setting import PROPERTY1
-        # value1 = globalSetting(session, key=PROPERTY1)
-        # logger.debug("value1 = %s" % value1)
-        #
-        # This will set property1
-        # globalSetting(session, key=PROPERTY1, value="new value 1")
-        # session.commit()
-        #
-        # session.close()
-
         mainController = MainController(
             dbSessionCreator=self.dbSessionCreator,
             tupleObservable=tupleObservable)
@@ -95,25 +71,10 @@ class ServerEntryHook(PluginServerEntryHookABC, PluginServerStorageEntryHookABC)
         self._loadedObjects.append(mainController)
         self._loadedObjects.append(makeTupleActionProcessorHandler(mainController))
 
-        # Initialise the RpcForAgent
-        self._loadedObjects.extend(RpcForAgent(mainController, self.dbSessionCreator)
-                                   .makeHandlers())
-
-        # Initialise and start the RPC for Server
-        self._loadedObjects.append(ServerToAgentRpcCallExample().start())
-
         # Initialise the API object that will be shared with other plugins
         self._api = DeviceApi(mainController)
         self._loadedObjects.append(self._api)
 
-        # Get a reference for the Active Task
-        activeTaskApi = self.platform.getOtherPluginApi("peek_plugin_active_task")
-        assert isinstance(activeTaskApi, ActiveTaskApiABC), "Wrong activeTaskApi"
-
-        # Initialise the example code that will send the test task
-        self._loadedObjects.append(
-            ExampleUseTaskApi(mainController, activeTaskApi).start()
-        )
 
         logger.debug("Started")
 

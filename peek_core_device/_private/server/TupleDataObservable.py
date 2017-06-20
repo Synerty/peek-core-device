@@ -1,10 +1,12 @@
-from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
-
 from peek_core_device._private.PluginNames import deviceFilt
 from peek_core_device._private.PluginNames import deviceObservableName
-
-from .tuple_providers.StringIntTupleProvider import StringIntTupleProvider
-from peek_core_device._private.storage.StringIntTuple import StringIntTuple
+from peek_core_device._private.server.tuple_providers.DeviceInfoTupleProvider import \
+    DeviceInfoTupleProvider
+from peek_core_device._private.server.tuple_providers.DeviceUpdateTupleProvider import \
+    DeviceUpdateTupleProvider
+from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
+from peek_core_device._private.storage.DeviceUpdateTuple import DeviceUpdateTuple
+from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
 
 
 def makeTupleDataObservableHandler(ormSessionCreator):
@@ -19,10 +21,13 @@ def makeTupleDataObservableHandler(ormSessionCreator):
 
     """
     tupleObservable = TupleDataObservableHandler(
-                observableName=deviceObservableName,
-                additionalFilt=deviceFilt)
+        observableName=deviceObservableName,
+        additionalFilt=deviceFilt)
 
     # Register TupleProviders here
-    tupleObservable.addTupleProvider(StringIntTuple.tupleName(),
-                                     StringIntTupleProvider(ormSessionCreator))
+    tupleObservable.addTupleProvider(DeviceUpdateTuple.tupleName(),
+                                     DeviceUpdateTupleProvider(ormSessionCreator))
+
+    tupleObservable.addTupleProvider(DeviceInfoTuple.tupleName(),
+                                     DeviceInfoTupleProvider(ormSessionCreator))
     return tupleObservable
