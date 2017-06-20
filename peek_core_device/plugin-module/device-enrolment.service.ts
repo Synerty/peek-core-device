@@ -1,4 +1,5 @@
 import {Injectable, NgZone} from "@angular/core";
+import {TitleService} from "@synerty/peek-util";
 import {
     TupleDataObservableNameService,
     TupleDataObserverService,
@@ -34,7 +35,8 @@ export class DeviceEnrolmentService {
                 webSqlFactory: WebSqlFactoryService,
                 vortexService: VortexService,
                 vortexStatusService: VortexStatusService,
-                zone: NgZone) {
+                zone: NgZone,
+                private titleService: TitleService) {
         // Create the offline storage
         this.offlineStorage = new TupleOfflineStorageService(
             webSqlFactory,
@@ -72,13 +74,19 @@ export class DeviceEnrolmentService {
                         }
 
                         if (this.deviceInfo == null) {
+                            titleService.setEnabled(false);
+                            titleService.setTitle('');
                             this.nav.toEnroll();
 
                         } else if (!this.deviceInfo.isEnrolled) {
+                            titleService.setEnabled(false);
+                            titleService.setTitle('');
                             this.nav.toEnrolling();
 
                         } else {
+                            titleService.setEnabled(true);
                             console.log("Device Enrollment Confirmed");
+                            this.nav.toHome();
 
                         }
 

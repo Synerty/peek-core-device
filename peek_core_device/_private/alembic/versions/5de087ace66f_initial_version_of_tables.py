@@ -2,14 +2,14 @@
 
 Peek Plugin Database Migration Script
 
-Revision ID: fc2decf46a93
+Revision ID: 5de087ace66f
 Revises: 
-Create Date: 2017-06-20 17:56:36.774678
+Create Date: 2017-06-20 21:20:38.641261
 
 """
 
 # revision identifiers, used by Alembic.
-revision = 'fc2decf46a93'
+revision = '5de087ace66f'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -31,6 +31,7 @@ def upgrade():
     sa.Column('updateVersion', sa.String(length=15), nullable=True),
     sa.Column('lastOnline', sa.DateTime(), nullable=True),
     sa.Column('lastUpdateCheck', sa.DateTime(), nullable=True),
+    sa.Column('createdDate', sa.DateTime(), nullable=False),
     sa.Column('isOnline', sa.Boolean(), server_default='0', nullable=False),
     sa.Column('isEnrolled', sa.Boolean(), server_default='0', nullable=False),
     sa.PrimaryKeyConstraint('id'),

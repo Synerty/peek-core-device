@@ -16,18 +16,17 @@ class DeviceInfoTupleProvider(TuplesProviderABC):
     @deferToThreadWrap
     def makeVortexMsg(self, filt: dict,
                       tupleSelector: TupleSelector) -> Union[Deferred, bytes]:
-        # Potential filters can be placed here.
-        # deviceToken = tupleSelector.selector["deviceToken"]
+
+        deviceId = tupleSelector.selector.get("deviceId")
 
         session = self._ormSessionCreator()
         try:
-            tuples = (
-                session.query(DeviceInfoTuple)
-                    # .filter(DeviceUpdateTuple.deviceType == deviceInfo.deviceType)
-                    # .filter(DeviceUpdateTuple.enabled == True)
-                    # .order_by(DeviceUpdateTuple.buildDate)
-                    .all()
-            )
+            qry = session.query(DeviceInfoTuple)
+
+            if deviceId is not None:
+                qry = qry.filter(DeviceInfoTuple.deviceId == deviceId)
+
+            tuples = qry.all()
 
             # Create the vortex message
             msg = Payload(filt, tuples=tuples).toVortexMsg()

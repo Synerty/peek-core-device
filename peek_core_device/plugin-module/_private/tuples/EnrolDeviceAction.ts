@@ -9,11 +9,7 @@ export class EnrolDeviceAction extends TupleActionABC {
     description: string;
     deviceId: string;
     deviceType: string;
-    deviceToken: string;
     appVersion: string;
-
-    serverHost: string;
-    serverPort: number;
 
     constructor() {
         super(EnrolDeviceAction.tupleName)

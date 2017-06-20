@@ -37,5 +37,6 @@ class DeviceInfoTuple(Tuple, DeclarativeBase):
     updateVersion = Column(String(15))  # Null means it hasn't updated
     lastOnline = Column(DateTime)
     lastUpdateCheck = Column(DateTime)
+    createdDate = Column(DateTime, nullable=False)
     isOnline = Column(Boolean, nullable=False, server_default='0')
     isEnrolled = Column(Boolean, nullable=False, server_default='0')

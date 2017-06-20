@@ -11,8 +11,4 @@ class EnrolDeviceAction(TupleActionABC):
     description:str = TupleField()
     deviceId: str = TupleField()
     deviceType: str = TupleField()
-    deviceToken: str = TupleField()
     appVersion: str = TupleField()
-
-    serverHost:str = TupleField()
-    serverPort:int = TupleField()

@@ -10,13 +10,14 @@
 
         <!--  -->
 
-        <div class="row">
+        <div *ngIf="server != null" class="row">
             <div class="col-xs-9">
                 <div class="details-section-title">
                     Peek Server Hostname or IP
                 </div>
                 <div class="details-section-value">
-                    <input type="text" [(ngModel)]="data.serverHost" class="form-control editable">
+                    <input type="text" [(ngModel)]="server.serverHost"
+                           class="form-control editable">
                 </div>
             </div>
             <div class="col-xs-3">
@@ -24,7 +25,8 @@
                     Port
                 </div>
                 <div class="details-section-value">
-                    <input type="number" [(ngModel)]="data.serverPort" class="form-control editable">
+                    <input type="number" [(ngModel)]="server.serverPort"
+                           class="form-control editable">
                 </div>
             </div>
         </div>
@@ -37,7 +39,8 @@
                     A unique description for this devicem, or an asset id
                 </div>
                 <div class="details-section-value">
-                    <input type="text" [(ngModel)]="data.description" class="form-control editable">
+                    <input type="text" [(ngModel)]="data.description"
+                           class="form-control editable">
                 </div>
             </div>
         </div>

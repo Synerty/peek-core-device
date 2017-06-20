@@ -6,8 +6,8 @@ def loadPrivateTuples():
     serialised data.
 
     """
-    from . import AuthoriseEnrolAction
-    AuthoriseEnrolAction.__unused = False
+    from . import UpdateEnrollmentAction
+    UpdateEnrollmentAction.__unused = False
 
     from . import BuildUpdateAction
     BuildUpdateAction.__unused = False

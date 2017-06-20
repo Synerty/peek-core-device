@@ -9,6 +9,10 @@ export class DeviceNavService {
 
     }
 
+    toHome() {
+        this.router.navigate([]);
+    }
+
     toEnroll() {
         this.router.navigate([deviceBaseUrl, 'enroll']);
     }

@@ -51,6 +51,11 @@
                 "file": "_private/device-nav.service",
                 "class": "DeviceNavService",
                 "persistent": false
+            },
+            {
+                "file": "_private/device-server.service",
+                "class": "DeviceServerService",
+                "persistent": true
             }
         ]
     },

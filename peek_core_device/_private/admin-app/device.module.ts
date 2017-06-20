@@ -14,8 +14,11 @@ import {
 import {DeviceComponent} from "./device.component";
 import {DeviceUpdateComponent} from "./device-update-table/device-update.component";
 import {DeviceInfoComponent} from "./device-info-table/device-info.component";
-import {deviceActionProcessorName, deviceFilt} from "@peek/peek_core_device/_private";
-import {deviceObservableName} from "../../plugin-module/_private/PluginNames";
+import {
+    deviceActionProcessorName,
+    deviceFilt,
+    deviceObservableName
+} from "@peek/peek_core_device/_private";
 
 
 export function tupleActionPushNameServiceFactory() {

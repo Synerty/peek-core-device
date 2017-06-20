@@ -1,4 +1,4 @@
-import {Tuple, TupleOfflineStorageService, TupleSelector} from "@synerty/vortexjs";
+import {Tuple, TupleOfflineStorageService, TupleSelector,addTupleType} from "@synerty/vortexjs";
 
 import {deviceTuplePrefix} from "@peek/peek_core_device/_private";
 
@@ -13,6 +13,8 @@ export enum DeviceTypeEnum {
     DESKTOP_MACOS
 }
 
+
+@addTupleType
 class DeviceUuidTuple extends Tuple {
     public static readonly tupleName = deviceTuplePrefix + "DeviceUuidTuple";
 
