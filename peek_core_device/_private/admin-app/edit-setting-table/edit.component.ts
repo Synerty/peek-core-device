@@ -1,4 +1,5 @@
 import {Component} from "@angular/core";
+import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 import {
     ComponentLifecycleEventEmitter,
     extend,
@@ -23,7 +24,8 @@ export class EditSettingComponent extends ComponentLifecycleEventEmitter {
 
     loader: TupleLoader;
 
-    constructor(vortexService: VortexService) {
+    constructor(private balloonMsg: Ng2BalloonMsgService,
+                vortexService: VortexService) {
         super();
 
         this.loader = vortexService.createTupleLoader(this,
@@ -31,6 +33,18 @@ export class EditSettingComponent extends ComponentLifecycleEventEmitter {
 
         this.loader.observable
             .subscribe((tuples:SettingPropertyTuple[]) => this.items = tuples);
+    }
+
+    saveClicked() {
+        this.loader.save()
+            .then(() => this.balloonMsg.showSuccess("Save Successful"))
+            .catch(e => this.balloonMsg.showError(e));
+    }
+
+    resetClicked() {
+        this.loader.load()
+            .then(() => this.balloonMsg.showSuccess("Reset Successful"))
+            .catch(e => this.balloonMsg.showError(e));
     }
 
 }

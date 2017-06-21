@@ -19,9 +19,9 @@ class DeviceInfoTupleProvider(TuplesProviderABC):
 
         deviceId = tupleSelector.selector.get("deviceId")
 
-        session = self._ormSessionCreator()
+        ormSession = self._ormSessionCreator()
         try:
-            qry = session.query(DeviceInfoTuple)
+            qry = ormSession.query(DeviceInfoTuple)
 
             if deviceId is not None:
                 qry = qry.filter(DeviceInfoTuple.deviceId == deviceId)
@@ -29,11 +29,7 @@ class DeviceInfoTupleProvider(TuplesProviderABC):
             tuples = qry.all()
 
             # Create the vortex message
-            msg = Payload(filt, tuples=tuples).toVortexMsg()
-
-            session.commit()
+            return Payload(filt, tuples=tuples).toVortexMsg()
 
         finally:
-            session.close()
-
-        return msg
+            ormSession.close()

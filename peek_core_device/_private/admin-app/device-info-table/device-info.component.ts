@@ -1,5 +1,5 @@
 import {Component} from "@angular/core";
-import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
+import {Ng2BalloonMsgService, UsrMsgLevel, UsrMsgType} from "@synerty/ng2-balloon-msg";
 import {
     ComponentLifecycleEventEmitter,
     TupleActionPushService,
@@ -37,11 +37,15 @@ export class DeviceInfoComponent extends ComponentLifecycleEventEmitter {
         action.deviceInfoId = item.id;
         action.remove = true;
 
-        if (confirm("Are you sure you'd like to delete this device?")) {
-            this.actionService.pushAction(action)
-                .then(() => this.balloonMsg.showSuccess("Success"))
-                .catch(e => this.balloonMsg.showError(e));
-        }
+
+        this.balloonMsg.showMessage(
+            "Are you sure you'd like to delete this device?",
+            UsrMsgLevel.Warning,
+            UsrMsgType.Confirm,
+            {confirmText: "Yes"}
+        )
+            .then(() => this.sendAction(action));
+
     }
 
     toggleEnrollClicked(item) {
@@ -49,12 +53,24 @@ export class DeviceInfoComponent extends ComponentLifecycleEventEmitter {
         action.deviceInfoId = item.id;
         action.unenroll = item.isEnrolled;
 
-        if (!action.unenroll
-            || confirm("Are you sure you'd like to unenroll this device?")) {
-            this.actionService.pushAction(action)
-                .then(() => this.balloonMsg.showSuccess("Success"))
-                .catch(e => this.balloonMsg.showError(e));
+        if (!action.unenroll) {
+            this.sendAction(action);
+            return;
         }
+
+        this.balloonMsg.showMessage(
+            "Are you sure you'd like to unenroll this device?",
+            UsrMsgLevel.Warning,
+            UsrMsgType.Confirm,
+            {confirmText: "Yes"}
+        )
+            .then(() => this.sendAction(action));
+    }
+
+    private sendAction(action: UpdateEnrollmentAction) {
+        this.actionService.pushAction(action)
+            .then(() => this.balloonMsg.showSuccess("Success"))
+            .catch(e => this.balloonMsg.showError(e));
     }
 
 }

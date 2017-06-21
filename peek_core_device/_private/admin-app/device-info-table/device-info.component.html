@@ -15,11 +15,11 @@
                 <td>
                     {{item.description}}
                 </td>
-                <td *ngIf="item.isOnline">
-                    Online Now
-                </td>
-                <td *ngIf="!item.isOnline">
-                    {{item.lastOnline}}
+                <td>
+                    <p *ngIf="item.isOnline">Online Now</p>
+                    <p *ngIf="!item.isOnline && item.lastOnline">{{item.lastOnline}}</p>
+                    <p *ngIf="!item.isOnline && !item.lastOnline">Never Connected</p>
+
                 </td>
                 <td>
                     <button class="btn"

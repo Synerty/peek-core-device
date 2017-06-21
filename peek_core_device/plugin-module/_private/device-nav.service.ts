@@ -10,7 +10,7 @@ export class DeviceNavService {
     }
 
     toHome() {
-        this.router.navigate([]);
+        this.router.navigate(['']);
     }
 
     toEnroll() {

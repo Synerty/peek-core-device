@@ -69,9 +69,12 @@ export class DeviceEnrolmentService {
                 this.offlineObserver
                     .subscribeToTupleSelector(tupleSelector)
                     .subscribe((tuples: DeviceInfoTuple[]) => {
-                        if (tuples.length == 1) {
+
+                        if (tuples.length == 1)
                             this.deviceInfo = tuples[0];
-                        }
+                        else
+                            this.deviceInfo = null;
+
 
                         if (this.deviceInfo == null) {
                             titleService.setEnabled(false);

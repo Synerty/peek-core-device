@@ -30,11 +30,10 @@
     "client": {
     },
     "mobile": {
-        "showHomeLink": true,
-        "appDir": "_private/mobile-app",
+        "showHomeLink": false,
+        "appDir": "_private/both-app",
         "appModule": "device.module#DeviceModule",
-        "assetDir": "_private/mobile-assets",
-        "icon": "/assets/peek_core_device/icon.png",
+        "assetDir": "_private/both-assets",
         "moduleDir": "plugin-module",
         "rootServices": [
             {
@@ -60,11 +59,32 @@
         ]
     },
     "desktop": {
-        "showHomeLink": true,
-        "appDir": "_private/mobile-app",
+        "showHomeLink": false,
+        "appDir": "_private/both-app",
         "appModule": "device.module#DeviceModule",
-        "assetDir": "_private/mobile-assets",
-        "icon": "/assets/peek_core_device/icon.png",
-        "moduleDir": "plugin-module"
+        "assetDir": "_private/both-assets",
+        "moduleDir": "plugin-module",
+        "rootServices": [
+            {
+                "file": "device-enrolment.service",
+                "class": "DeviceEnrolmentService",
+                "persistent": true
+            },
+            {
+                "file": "_private/device-update.service",
+                "class": "DeviceUpdateService",
+                "persistent": true
+            },
+            {
+                "file": "_private/device-nav.service",
+                "class": "DeviceNavService",
+                "persistent": false
+            },
+            {
+                "file": "_private/device-server.service",
+                "class": "DeviceServerService",
+                "persistent": true
+            }
+        ]
     }
 }
