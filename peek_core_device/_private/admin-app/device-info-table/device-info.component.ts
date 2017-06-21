@@ -41,8 +41,8 @@ export class DeviceInfoComponent extends ComponentLifecycleEventEmitter {
         this.balloonMsg.showMessage(
             "Are you sure you'd like to delete this device?",
             UsrMsgLevel.Warning,
-            UsrMsgType.Confirm,
-            {confirmText: "Yes"}
+            UsrMsgType.ConfirmCancel,
+            {confirmText: "Yes", cancelText: 'No'}
         )
             .then(() => this.sendAction(action));
 
@@ -61,8 +61,8 @@ export class DeviceInfoComponent extends ComponentLifecycleEventEmitter {
         this.balloonMsg.showMessage(
             "Are you sure you'd like to unenroll this device?",
             UsrMsgLevel.Warning,
-            UsrMsgType.Confirm,
-            {confirmText: "Yes"}
+            UsrMsgType.ConfirmCancel,
+            {confirmText: "Yes", cancelText: 'No'}
         )
             .then(() => this.sendAction(action));
     }

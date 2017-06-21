@@ -1,17 +1,21 @@
 from abc import ABCMeta, abstractmethod
 
-from peek_core_device.tuples.DoSomethingTuple import DoSomethingTuple
 
 
 class DeviceApiABC(metaclass=ABCMeta):
+    """ Device API
 
-    @abstractmethod
-    def doSomethingGood(self, somethingsDescription:str) -> DoSomethingTuple:
-        """ Add a New Task
+    This is the public API for the part of the plugin that runs on the server service.
 
-        Add a new task to the users device.
+    """
 
-        :param somethingsDescription: An arbitrary string
-        :return: The computed result contained in a DoSomethingTuple tuple
-
-        """
+    # @abstractmethod
+    # def doSomethingGood(self, somethingsDescription:str) -> DoSomethingTuple:
+    #     """ Add a New Task
+    #
+    #     Add a new task to the users device.
+    #
+    #     :param somethingsDescription: An arbitrary string
+    #     :return: The computed result contained in a DoSomethingTuple tuple
+    #
+    #     """

@@ -1,5 +1,8 @@
 import logging
 
+from twisted.internet.defer import inlineCallbacks
+
+from peek_core_device._private.client.DeviceOnlineHandler import DeviceOnlineHandler
 from peek_plugin_base.client.PluginClientEntryHookABC import PluginClientEntryHookABC
 
 from peek_core_device._private.storage.DeclarativeBase import loadStorageTuples
@@ -49,8 +52,11 @@ class ClientEntryHook(PluginClientEntryHookABC):
 
         self._loadedObjects.append(makeDeviceTupleDataObservableProxy())
 
+        self._loadedObjects.append(DeviceOnlineHandler())
+
         logger.debug("Started")
 
+    @inlineCallbacks
     def stop(self):
         """ Stop
 
@@ -59,7 +65,7 @@ class ClientEntryHook(PluginClientEntryHookABC):
         """
         # Shutdown and dereference all objects we constructed when we started
         while self._loadedObjects:
-            self._loadedObjects.pop().shutdown()
+            yield self._loadedObjects.pop().shutdown()
 
         logger.debug("Stopped")
 

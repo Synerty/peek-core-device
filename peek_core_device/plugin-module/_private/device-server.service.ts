@@ -2,6 +2,8 @@ import {Injectable, NgZone} from "@angular/core";
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 import {
     addTupleType,
+    extend,
+    Payload,
     Tuple,
     TupleOfflineStorageNameService,
     TupleOfflineStorageService,
@@ -11,7 +13,11 @@ import {
     WebSqlFactoryService
 } from "@synerty/vortexjs";
 
-import {deviceTupleOfflineServiceName, deviceTuplePrefix} from "./PluginNames";
+import {
+    deviceFilt,
+    deviceTupleOfflineServiceName,
+    deviceTuplePrefix
+} from "./PluginNames";
 import {HardwareInfo} from "./hardware-info/hardware-info.mweb";
 import {DeviceTypeEnum} from "./hardware-info/hardware-info.abstract";
 
@@ -28,6 +34,7 @@ export class ServerInfoTuple extends Tuple {
     }
 }
 
+
 @Injectable()
 export class DeviceServerService {
     private offlineStorage: TupleOfflineStorageService;
@@ -37,10 +44,15 @@ export class DeviceServerService {
     );
 
 
+    private readonly deviceOnlineFilt = extend({key: "device.online"}, deviceFilt);
+    private hardwareInfo: HardwareInfo;
+
+    private lastOnlineSub: any | null = null;
+
     constructor(private balloonMsg: Ng2BalloonMsgService,
                 webSqlFactory: WebSqlFactoryService,
                 private vortexService: VortexService,
-                vortexStatusService: VortexStatusService,
+                private vortexStatusService: VortexStatusService,
                 zone: NgZone) {
 
         // Create the offline storage
@@ -50,7 +62,8 @@ export class DeviceServerService {
         );
 
 
-        let type: DeviceTypeEnum = (new HardwareInfo(this.offlineStorage)).deviceType();
+        this.hardwareInfo = new HardwareInfo(this.offlineStorage);
+        let type: DeviceTypeEnum = this.hardwareInfo.deviceType();
 
         switch (type) {
             case DeviceTypeEnum.MOBILE_WEB:
@@ -64,6 +77,7 @@ export class DeviceServerService {
                 this.loadConnInfo();
                 break;
         }
+
 
     }
 
@@ -110,6 +124,41 @@ export class DeviceServerService {
     private updateVortex(host: string, port: number) {
         VortexService.setVortexUrl(`ws://${host}:${port}/vortexws`);
         this.vortexService.reconnect();
+
+        this.setupOnlinePing();
+    }
+
+    /** Setup Online Ping
+     *
+     * This method sends a payload to the server when we detect that the vortex is
+     * back online.
+     *
+     * The client listens for these payloads and tells the server acoordingly.
+     *
+     */
+    private setupOnlinePing() {
+        if (this.lastOnlineSub != null) {
+            this.lastOnlineSub.unsubscribe();
+            this.lastOnlineSub = null;
+        }
+
+        // Setup the online ping
+        this.hardwareInfo
+            .uuid()
+            .then(deviceId => {
+                let filt = extend({deviceId: deviceId}, this.deviceOnlineFilt);
+
+                this.lastOnlineSub = this.vortexStatusService.isOnline
+                    .filter(online => online) // Filter for online only
+                    .subscribe(() => {
+                        this.vortexService.sendFilt(filt);
+                    });
+
+                if (this.vortexStatusService.snapshot.isOnline)
+                        this.vortexService.sendFilt(filt);
+
+
+            });
     }
 
 }

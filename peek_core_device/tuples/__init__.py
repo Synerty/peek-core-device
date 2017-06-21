@@ -1,3 +1,6 @@
+from txhttputil.util.ModuleUtil import filterModules
+
+
 def loadPublicTuples():
     """ Load Public Tuples
 
@@ -6,6 +9,6 @@ def loadPublicTuples():
     serialised data.
 
     """
+    for mod in filterModules(__name__, __file__):
+        __import__(mod, locals(), globals())
 
-    from . import DoSomethingTuple
-    DoSomethingTuple.__unused = False
