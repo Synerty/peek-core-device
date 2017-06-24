@@ -6,7 +6,7 @@ import {deviceTuplePrefix} from "../PluginNames";
 export class DeviceUpdateTuple extends Tuple {
     public static readonly tupleName = deviceTuplePrefix + "DeviceUpdateTuple";
 
-    id: string;
+    id: number;
     deviceType: string;
     description: string;
     buildDate: Date;

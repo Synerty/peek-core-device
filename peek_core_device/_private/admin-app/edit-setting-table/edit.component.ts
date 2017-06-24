@@ -11,7 +11,7 @@ import {SettingPropertyTuple, deviceFilt} from "@peek/peek_core_device/_private"
 
 
 @Component({
-    selector: 'pl-device-edit-setting',
+    selector: 'core-device-edit-setting',
     templateUrl: './edit.component.html'
 })
 export class EditSettingComponent extends ComponentLifecycleEventEmitter {

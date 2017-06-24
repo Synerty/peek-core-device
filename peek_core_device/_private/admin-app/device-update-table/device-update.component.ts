@@ -13,7 +13,7 @@ import {
 
 
 @Component({
-    selector: 'pl-device-device-update',
+    selector: 'core-device-device-update',
     templateUrl: './device-update.component.html'
 })
 export class DeviceUpdateComponent extends ComponentLifecycleEventEmitter {
@@ -37,7 +37,7 @@ export class DeviceUpdateComponent extends ComponentLifecycleEventEmitter {
 
     deleteUpdateClicked(item) {
         let action = new AlterDeviceUpdateAction();
-        action.deviceInfoId = item.id;
+        action.updateId = item.id;
         action.remove = true;
 
 
@@ -54,13 +54,13 @@ export class DeviceUpdateComponent extends ComponentLifecycleEventEmitter {
 
     toggleUpdateEnabledClicked(item: DeviceUpdateTuple) {
         let action = new AlterDeviceUpdateAction();
-        action.deviceInfoId = item.id;
-        action.remove = true;
+        action.updateId = item.id;
+        action.isEnabled = !item.isEnabled;
 
         let verb = item.isEnabled ? "DISABLE" : "enable";
 
         this.balloonMsg.showMessage(
-            "Are you sure you'd like to ${verb} this update?",
+            `Are you sure you'd like to ${verb} this update?`,
             UsrMsgLevel.Warning,
             UsrMsgType.ConfirmCancel,
             {confirmText: "Yes", cancelText: 'No'}

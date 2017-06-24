@@ -10,7 +10,7 @@ import {DeviceInfoTuple} from "@peek/peek_core_device";
 import {UpdateEnrollmentAction} from "@peek/peek_core_device/_private";
 
 @Component({
-    selector: 'pl-device-device-info',
+    selector: 'core-device-device-info',
     templateUrl: './device-info.component.html'
 })
 export class DeviceInfoComponent extends ComponentLifecycleEventEmitter {

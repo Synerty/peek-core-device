@@ -49,6 +49,7 @@ class ServerEntryHook(PluginServerEntryHookABC, PluginServerStorageEntryHookABC)
 
         """
         self._deviceUpdatesPath = self.platform.fileStorageDirectory / "device_update"
+        self._deviceUpdatesPath.mkdir(parents=True, exist_ok=True)
         
         loadStorageTuples()
         loadPrivateTuples()

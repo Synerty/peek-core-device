@@ -14,7 +14,7 @@ export class DeviceInfoTuple extends Tuple {
     readonly TYPE_DESKTOP_WINDOWS = "desktop-windows";
     readonly TYPE_DESKTOP_MACOS = "desktop-macos";
 
-    id: string;
+    id: number;
     description: string;
     deviceId: string;
     deviceType: string;

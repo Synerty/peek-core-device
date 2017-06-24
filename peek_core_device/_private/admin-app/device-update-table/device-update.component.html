@@ -30,7 +30,7 @@
                     <button class="btn"
                             [class.btn-success]="item.isEnabled"
                             [class.btn-warning]="!item.isEnabled"
-                            (click)='toggleEnrollClicked(item)'>
+                            (click)='toggleUpdateEnabledClicked(item)'>
                         {{item.isEnabled ? "Enabled" : "Disabled"}}
                     </button>
                 </td>

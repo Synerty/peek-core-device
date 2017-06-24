@@ -3,6 +3,7 @@ import {FormsModule} from "@angular/forms";
 import {NgModule} from "@angular/core";
 import {RouterModule, Routes} from "@angular/router";
 import {EditSettingComponent} from "./edit-setting-table/edit.component";
+import {FileUploadModule} from "ng2-file-upload";
 // Import the required classes from VortexJS
 import {
     TupleActionPushNameService,
@@ -46,7 +47,8 @@ export const pluginRoutes: Routes = [
     imports: [
         CommonModule,
         RouterModule.forChild(pluginRoutes),
-        FormsModule],
+        FormsModule,
+        FileUploadModule],
     exports: [],
     providers: [
         TupleActionPushService, {

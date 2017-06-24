@@ -36,7 +36,7 @@ class DeviceUpdateController:
 
     def processTupleAction(self, tupleAction: TupleActionABC) -> List[Tuple]:
 
-        if isinstance(tupleAction, DeviceUpdateTuple):
+        if isinstance(tupleAction, AlterDeviceUpdateAction):
             return self._processAdminAlter(tupleAction)
 
     @deferToThreadWrapWithLogger(logger)
@@ -58,7 +58,7 @@ class DeviceUpdateController:
             if action.remove:
                 session.delete(deviceUpdate)
             else:
-                deviceUpdate.isEnabled = not action.isEnabled
+                deviceUpdate.isEnabled = action.isEnabled
 
             session.commit()
 
@@ -93,6 +93,7 @@ class DeviceUpdateController:
         deviceUpdateTuple = yield self._createUpdateOrmObj(action.newUpdate)
 
         absFilePath = self._deviceUpdateFilePath / filePath
+        absFilePath.parent.mkdir(parents=True, exist_ok=True)
 
         shutil.move(namedTempFile.name, str(absFilePath))
         namedTempFile.delete = False

@@ -4,7 +4,7 @@ import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 import {FileUploader} from "ng2-file-upload";
 import {
     CreateDeviceUpdateAction,
-    DeviceUpdateInfo
+    DeviceUpdateTuple
 } from "@peek/peek_core_device/_private";
 
 
@@ -18,7 +18,7 @@ export class UploadDeviceUpdateComponent extends ComponentLifecycleEventEmitter 
         key: "peek_server.plugin.version.info"
     };
 
-    newUpdate: DeviceUpdateInfo = new DeviceUpdateInfo();
+    newUpdate: DeviceUpdateTuple = new DeviceUpdateTuple();
 
 
     serverRestarting: boolean = false;
@@ -31,6 +31,7 @@ export class UploadDeviceUpdateComponent extends ComponentLifecycleEventEmitter 
                 private balloonMsg: Ng2BalloonMsgService) {
         super();
 
+        // Subscribe to the angular check event
         this.doCheckEvent.subscribe(() => this.checkProgress());
 
     }
@@ -61,10 +62,10 @@ export class UploadDeviceUpdateComponent extends ComponentLifecycleEventEmitter 
             return;
         }
 
-        let action = CreateDeviceUpdateAction();
+        let action = new CreateDeviceUpdateAction();
         action.newUpdate = this.newUpdate;
 
-        let data = new Payload({}, [action]).toVortexMsg();
+        let data = encodeURIComponent(new Payload({}, [action]).toVortexMsg());
 
         this.uploader = new FileUploader({
             url: '/peek_core_device/create_device_update?payload=' + data,
@@ -79,6 +80,9 @@ export class UploadDeviceUpdateComponent extends ComponentLifecycleEventEmitter 
     }
 
     checkProgress() {
+        if (!this.uploadEnabled())
+            return;
+
         this.progressPercentage = '';
 
         if (this.uploader.queue.length != 1)
@@ -104,15 +108,16 @@ export class UploadDeviceUpdateComponent extends ComponentLifecycleEventEmitter 
                 this.balloonMsg.showError("Upload Failed\n" + data.error);
             } else {
                 this.serverRestarting = true;
-                this.balloonMsg.showSuccess("Upload Complete<br/>" + data.message);
+                this.balloonMsg.showSuccess("Upload Complete\n" + data.message);
             }
 
         } else {
             this.progressPercentage = '';
-            this.balloonMsg.showError("Upload failed<br/> Status : " + status);
+            this.balloonMsg.showError("Upload failed\nStatus : " + status);
         }
 
         this.uploader.removeFromQueue(fileItem);
+        this.uploader = null;
     }
 
 

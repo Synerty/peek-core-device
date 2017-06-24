@@ -23,7 +23,7 @@ def upgrade():
     op.add_column('DeviceUpdate',
                   sa.Column('filePath', sa.String(length=150), nullable=False),
                   schema='core_device')
-    op.alter_column('DeviceUpdate', 'isEnabled', type_=sa.String(length=150),
+    op.alter_column('DeviceUpdate', 'isEnabled', type_=sa.Boolean,
                     server_default='0', schema='core_device')
     # ### end Alembic commands ###
 
