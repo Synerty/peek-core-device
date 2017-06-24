@@ -1,60 +1,29 @@
-import {Injectable, NgZone} from "@angular/core";
+import {Injectable} from "@angular/core";
 import {TitleService} from "@synerty/peek-util";
-import {
-    TupleDataObservableNameService,
-    TupleDataObserverService,
-    TupleDataOfflineObserverService,
-    TupleOfflineStorageNameService,
-    TupleOfflineStorageService,
-    TupleSelector,
-    VortexService,
-    VortexStatusService,
-    WebSqlFactoryService
-} from "@synerty/vortexjs";
-
-import {
-    deviceFilt,
-    deviceObservableName,
-    deviceTupleOfflineServiceName
-} from "./_private/PluginNames";
+import {Subject} from "rxjs";
+import {TupleSelector, VortexStatusService} from "@synerty/vortexjs";
 import {DeviceInfoTuple} from "./DeviceInfoTuple";
 import {HardwareInfo} from "./_private/hardware-info/hardware-info.mweb";
 import {DeviceNavService} from "./_private/device-nav.service";
+import {DeviceTupleService} from "./_private/device-tuple.service";
 
 
 @Injectable()
 export class DeviceEnrolmentService {
-    private offlineStorage: TupleOfflineStorageService;
-    private offlineObserver: TupleDataObserverService;
 
     private deviceInfo: DeviceInfoTuple = null;
     private hardwareInfo: HardwareInfo;
 
+    // There is no point having multiple services observing the same thing
+    // So lets create a nice observable for the device info.
+    deviceInfoObservable = new Subject<DeviceInfoTuple>();
+
 
     constructor(private nav: DeviceNavService,
-                webSqlFactory: WebSqlFactoryService,
-                vortexService: VortexService,
-                vortexStatusService: VortexStatusService,
-                zone: NgZone,
-                private titleService: TitleService) {
-        // Create the offline storage
-        this.offlineStorage = new TupleOfflineStorageService(
-            webSqlFactory,
-            new TupleOfflineStorageNameService(deviceTupleOfflineServiceName)
-        );
+                private titleService: TitleService,
+                private tupleService: DeviceTupleService) {
 
-        // Create the offline observer
-        this.offlineObserver = new TupleDataOfflineObserverService(
-            vortexService,
-            vortexStatusService,
-            zone,
-            new TupleDataObservableNameService(
-                deviceObservableName,
-                deviceFilt),
-            this.offlineStorage
-        );
-
-        this.hardwareInfo = new HardwareInfo(this.offlineStorage);
+        this.hardwareInfo = new HardwareInfo(this.tupleService.offlineStorage);
 
         this.hardwareInfo.uuid()
             .then(uuid => {
@@ -66,7 +35,7 @@ export class DeviceEnrolmentService {
                 );
 
                 // There is no point unsubscribing this
-                this.offlineObserver
+                this.tupleService.offlineObserver
                     .subscribeToTupleSelector(tupleSelector)
                     .subscribe((tuples: DeviceInfoTuple[]) => {
 
@@ -75,6 +44,7 @@ export class DeviceEnrolmentService {
                         else
                             this.deviceInfo = null;
 
+                        this.deviceInfoObservable.next(this.deviceInfo);
 
                         if (this.deviceInfo == null) {
                             titleService.setEnabled(false);

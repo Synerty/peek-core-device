@@ -1,23 +1,26 @@
 import logging
 
-from peek_plugin_base.server.PluginServerEntryHookABC import PluginServerEntryHookABC
+from txhttputil.site.FileUnderlayResource import FileUnderlayResource
 
+from peek_core_device._private.server.controller.DeviceUpdateController import \
+    DeviceUpdateController
+from peek_core_device._private.server.controller.EnrollmentController import \
+    EnrollmentController
+from peek_core_device._private.server.controller.OnlineController import OnlineController
+from peek_core_device._private.server.update_resources.DeviceUpdateUploadResource import \
+    DeviceUpdateUploadResource
 from peek_core_device._private.storage import DeclarativeBase
 from peek_core_device._private.storage.DeclarativeBase import loadStorageTuples
-from peek_plugin_base.server.PluginServerStorageEntryHookABC import \
-    PluginServerStorageEntryHookABC
-
 from peek_core_device._private.tuples import loadPrivateTuples
 from peek_core_device.tuples import loadPublicTuples
-
-from .TupleDataObservable import makeTupleDataObservableHandler
-
-from .TupleActionProcessor import makeTupleActionProcessorHandler
-from .controller.MainController import MainController
-
-from .admin_backend import makeAdminBackendHandlers
-
+from peek_plugin_base.server.PluginServerEntryHookABC import PluginServerEntryHookABC
+from peek_plugin_base.server.PluginServerStorageEntryHookABC import \
+    PluginServerStorageEntryHookABC
 from .DeviceApi import DeviceApi
+from .TupleActionProcessor import makeTupleActionProcessorHandler
+from .TupleDataObservable import makeTupleDataObservableHandler
+from .admin_backend import makeAdminBackendHandlers
+from .controller.MainController import MainController
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +35,11 @@ class ServerEntryHook(PluginServerEntryHookABC, PluginServerStorageEntryHookABC)
         self._loadedObjects = []
 
         self._api = None
+        self._deviceUpdatesPath = None
+
+    @property
+    def dbMetadata(self):
+        return DeclarativeBase.metadata
 
     def load(self) -> None:
         """ Load
@@ -40,14 +48,12 @@ class ServerEntryHook(PluginServerEntryHookABC, PluginServerStorageEntryHookABC)
         Place any custom initialiastion steps here.
 
         """
+        self._deviceUpdatesPath = self.platform.fileStorageDirectory / "device_update"
+        
         loadStorageTuples()
         loadPrivateTuples()
         loadPublicTuples()
         logger.debug("Loaded")
-
-    @property
-    def dbMetadata(self):
-        return DeclarativeBase.metadata
 
     def start(self):
         """ Start
@@ -59,14 +65,28 @@ class ServerEntryHook(PluginServerEntryHookABC, PluginServerStorageEntryHookABC)
 
         tupleObservable = makeTupleDataObservableHandler(self.dbSessionCreator)
 
-        self._loadedObjects.extend(
-            makeAdminBackendHandlers(tupleObservable, self.dbSessionCreator))
-
-        self._loadedObjects.append(tupleObservable)
-
         mainController = MainController(
             dbSessionCreator=self.dbSessionCreator,
             tupleObservable=tupleObservable)
+
+        # Support uploads from the admin UI
+        # noinspection PyTypeChecker
+        self.platform.addSiteResource(
+            b'create_device_update',
+            DeviceUpdateUploadResource(mainController.deviceUpdateController)
+        )
+        
+        # Add the resource that the client uses to download the updates from the server
+        updateDownloadResource = FileUnderlayResource()
+        updateDownloadResource.addFileSystemRoot(str(self._deviceUpdatesPath))
+        # noinspection PyTypeChecker
+        self.platform.addServerResource(b'device_update', updateDownloadResource)
+
+        self._loadedObjects.extend(
+            makeAdminBackendHandlers(tupleObservable, self.dbSessionCreator)
+        )
+
+        self._loadedObjects.append(tupleObservable)
 
         self._loadedObjects.append(mainController)
         self._loadedObjects.append(makeTupleActionProcessorHandler(mainController))
@@ -74,7 +94,6 @@ class ServerEntryHook(PluginServerEntryHookABC, PluginServerStorageEntryHookABC)
         # Initialise the API object that will be shared with other plugins
         self._api = DeviceApi(mainController)
         self._loadedObjects.append(self._api)
-
 
         logger.debug("Started")
 

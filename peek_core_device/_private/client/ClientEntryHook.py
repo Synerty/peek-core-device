@@ -3,6 +3,7 @@ import logging
 from twisted.internet.defer import inlineCallbacks
 
 from peek_core_device._private.client.DeviceOnlineHandler import DeviceOnlineHandler
+from peek_core_device._private.client.PeekHttpResourceProxy import PeekHttpResourceProxy
 from peek_plugin_base.client.PluginClientEntryHookABC import PluginClientEntryHookABC
 
 from peek_core_device._private.storage.DeclarativeBase import loadStorageTuples
@@ -47,6 +48,16 @@ class ClientEntryHook(PluginClientEntryHookABC):
         Place any custom initialiastion steps here.
 
         """
+
+        # Support file downloads for device updates
+        # noinspection PyTypeChecker
+        self.platform.addSiteResource(
+            b'device_update', # Matches resource path on server
+            PeekHttpResourceProxy(
+                self.platform.peekServerHost,
+                self.platform.peekServerHttpPort
+            )
+        )
 
         self._loadedObjects.append(makeTupleActionProcessorProxy())
 

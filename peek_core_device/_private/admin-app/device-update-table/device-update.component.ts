@@ -1,11 +1,15 @@
 import {Component} from "@angular/core";
+import {Ng2BalloonMsgService, UsrMsgLevel, UsrMsgType} from "@synerty/ng2-balloon-msg";
 import {
     ComponentLifecycleEventEmitter,
     TupleActionPushService,
     TupleDataObserverService,
     TupleSelector
 } from "@synerty/vortexjs";
-import {DeviceUpdateTuple} from "@peek/peek_core_device/_private";
+import {
+    AlterDeviceUpdateAction,
+    DeviceUpdateTuple
+} from "@peek/peek_core_device/_private";
 
 
 @Component({
@@ -16,7 +20,8 @@ export class DeviceUpdateComponent extends ComponentLifecycleEventEmitter {
 
     items: DeviceUpdateTuple[] = [];
 
-    constructor(private actionService: TupleActionPushService,
+    constructor(private balloonMsg: Ng2BalloonMsgService,
+                private actionService: TupleActionPushService,
                 private tupleDataObserver: TupleDataObserverService) {
         super();
 
@@ -30,16 +35,44 @@ export class DeviceUpdateComponent extends ComponentLifecycleEventEmitter {
         this.onDestroyEvent.subscribe(() => sup.unsubscribe());
     }
 
-    buildUpdateClicked() {
-        if (confirm("Are you sure you'd like to delete this device?")) {
-            // this.loader.del([item]);
-        }
+    deleteUpdateClicked(item) {
+        let action = new AlterDeviceUpdateAction();
+        action.deviceInfoId = item.id;
+        action.remove = true;
+
+
+        this.balloonMsg.showMessage(
+            "Are you sure you'd like to delete this update?",
+            UsrMsgLevel.Warning,
+            UsrMsgType.ConfirmCancel,
+            {confirmText: "Yes", cancelText: 'No'}
+        )
+            .then(() => this.sendAction(action));
+
     }
 
-    toggleUpdateEnabledClicked(item) {
-        if (confirm("Are you sure you'd like to delete this device?")) {
-            // this.loader.del([item]);
-        }
+
+    toggleUpdateEnabledClicked(item: DeviceUpdateTuple) {
+        let action = new AlterDeviceUpdateAction();
+        action.deviceInfoId = item.id;
+        action.remove = true;
+
+        let verb = item.isEnabled ? "DISABLE" : "enable";
+
+        this.balloonMsg.showMessage(
+            "Are you sure you'd like to ${verb} this update?",
+            UsrMsgLevel.Warning,
+            UsrMsgType.ConfirmCancel,
+            {confirmText: "Yes", cancelText: 'No'}
+        )
+            .then(() => this.sendAction(action));
     }
+
+    private sendAction(action: AlterDeviceUpdateAction) {
+        this.actionService.pushAction(action)
+            .then(() => this.balloonMsg.showSuccess("Success"))
+            .catch(e => this.balloonMsg.showError(e));
+    }
+
 
 }

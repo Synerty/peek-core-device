@@ -19,6 +19,7 @@ import {
     deviceFilt,
     deviceObservableName
 } from "@peek/peek_core_device/_private";
+import {UploadDeviceUpdateComponent} from "./upload-device-update/upload-device-update.component";
 
 
 export function tupleActionPushNameServiceFactory() {
@@ -58,7 +59,8 @@ export const pluginRoutes: Routes = [
         },
     ],
     declarations: [
-        DeviceComponent, DeviceInfoComponent, DeviceUpdateComponent, EditSettingComponent
+        DeviceComponent, DeviceInfoComponent, DeviceUpdateComponent,
+        UploadDeviceUpdateComponent, EditSettingComponent
     ]
 })
 export class DeviceModule {

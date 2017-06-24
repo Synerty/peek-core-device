@@ -3,6 +3,8 @@ import logging
 from twisted.internet import defer
 from twisted.internet.defer import Deferred, inlineCallbacks
 
+from peek_core_device._private.server.controller.DeviceUpdateController import \
+    DeviceUpdateController
 from peek_core_device._private.server.controller.EnrollmentController import \
     EnrollmentController
 from peek_core_device._private.server.controller.OnlineController import OnlineController
@@ -26,9 +28,18 @@ class MainController(TupleActionProcessorDelegateABC):
             dbSessionCreator, tupleObservable
         )
 
+        self._updateController = DeviceUpdateController(
+            dbSessionCreator, tupleObservable
+        )
+
+    @property
+    def deviceUpdateController(self):
+        return self._updateController
+
     def shutdown(self):
         self._enrollmentController.shutdown()
         self._onlineController.shutdown()
+        self._updateController.shutdown()
 
     @inlineCallbacks
     def processTupleAction(self, tupleAction: TupleActionABC) -> Deferred:
@@ -37,6 +48,10 @@ class MainController(TupleActionProcessorDelegateABC):
             defer.returnValue(result)
 
         result = yield self._onlineController.processTupleAction(tupleAction)
+        if result is not None:
+            defer.returnValue(result)
+
+        result = yield self._updateController.processTupleAction(tupleAction)
         if result is not None:
             defer.returnValue(result)
 

@@ -30,7 +30,8 @@ class DeviceUpdateTuple(Tuple, DeclarativeBase):
     buildDate = Column(DateTime, nullable=False)
     appVersion = Column(String(15), nullable=False)
     updateVersion = Column(String(15), nullable=False)
-    enabled = Column(Boolean, nullable=False)
+    filePath = Column(String(150), nullable=False)
+    isEnabled = Column(Boolean, nullable=False, server_default="0")
 
     __table_args__ = (
         Index("idx_DeviceUpdate_Version",

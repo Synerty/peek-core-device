@@ -22,6 +22,12 @@
 
         <!-- Edit Settings Tab -->
         <li role="presentation">
+            <a href="#editSetting" aria-controls="uploadDeviceUpdate" role="tab"
+               data-toggle="tab">Upload Device Update</a>
+        </li>
+
+        <!-- Edit Settings Tab -->
+        <li role="presentation">
             <a href="#editSetting" aria-controls="editSetting" role="tab"
                data-toggle="tab">Edit Settings</a>
         </li>
@@ -52,6 +58,11 @@
         <!-- Device Update Management -->
         <div role="tabpanel" class="tab-pane" id="deviceUpdate">
             <pl-device-device-update></pl-device-device-update>
+        </div>
+
+        <!-- Edit Settings Tab -->
+        <div role="tabpanel" class="tab-pane" id="uploadDeviceUpdate">
+            <core-device-upload-device-update></core-device-upload-device-update>
         </div>
 
         <!-- Edit Settings Tab -->

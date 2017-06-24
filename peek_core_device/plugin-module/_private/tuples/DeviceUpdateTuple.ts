@@ -12,6 +12,8 @@ export class DeviceUpdateTuple extends Tuple {
     buildDate: Date;
     appVersion: string;
     updateVersion: string;
+    filePath: string;
+    isEnabled: boolean;
 
     constructor() {
         super(DeviceUpdateTuple.tupleName)

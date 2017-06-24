@@ -1,25 +1,18 @@
-import {Injectable, NgZone} from "@angular/core";
+import {Injectable} from "@angular/core";
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 import {
     addTupleType,
     extend,
-    Payload,
     Tuple,
-    TupleOfflineStorageNameService,
-    TupleOfflineStorageService,
     TupleSelector,
     VortexService,
-    VortexStatusService,
-    WebSqlFactoryService
+    VortexStatusService
 } from "@synerty/vortexjs";
 
-import {
-    deviceFilt,
-    deviceTupleOfflineServiceName,
-    deviceTuplePrefix
-} from "./PluginNames";
+import {deviceFilt, deviceTuplePrefix} from "./PluginNames";
 import {HardwareInfo} from "./hardware-info/hardware-info.mweb";
 import {DeviceTypeEnum} from "./hardware-info/hardware-info.abstract";
+import {DeviceTupleService} from "./device-tuple.service";
 
 
 @addTupleType
@@ -37,7 +30,6 @@ export class ServerInfoTuple extends Tuple {
 
 @Injectable()
 export class DeviceServerService {
-    private offlineStorage: TupleOfflineStorageService;
 
     private tupleSelector: TupleSelector = new TupleSelector(
         ServerInfoTuple.tupleName, {}
@@ -50,19 +42,13 @@ export class DeviceServerService {
     private lastOnlineSub: any | null = null;
 
     constructor(private balloonMsg: Ng2BalloonMsgService,
-                webSqlFactory: WebSqlFactoryService,
                 private vortexService: VortexService,
                 private vortexStatusService: VortexStatusService,
-                zone: NgZone) {
-
-        // Create the offline storage
-        this.offlineStorage = new TupleOfflineStorageService(
-            webSqlFactory,
-            new TupleOfflineStorageNameService(deviceTupleOfflineServiceName)
-        );
+                private tupleService: DeviceTupleService) {
 
 
-        this.hardwareInfo = new HardwareInfo(this.offlineStorage);
+
+        this.hardwareInfo = new HardwareInfo(this.tupleService.offlineStorage);
         let type: DeviceTypeEnum = this.hardwareInfo.deviceType();
 
         switch (type) {
@@ -95,7 +81,7 @@ export class DeviceServerService {
         newTuple.serverPort = port;
 
         // Store the data
-        return this.offlineStorage
+        return this.tupleService.offlineStorage
             .saveTuples(this.tupleSelector, [newTuple])
             // Convert result to void
             .then(() => Promise.resolve())
@@ -110,7 +96,7 @@ export class DeviceServerService {
      * Load the connection info from the websql db and set set the vortex.
      */
     private loadConnInfo() {
-        this.offlineStorage
+        this.tupleService.offlineStorage
             .loadTuples(this.tupleSelector)
             .then((tuples: ServerInfoTuple[]) => {
                 // If we have a UUID already, then use that.

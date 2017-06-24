@@ -47,7 +47,7 @@ def upgrade():
     sa.Column('buildDate', sa.DateTime(), nullable=False),
     sa.Column('appVersion', sa.String(length=15), nullable=False),
     sa.Column('updateVersion', sa.String(length=15), nullable=False),
-    sa.Column('enabled', sa.Boolean(), nullable=False),
+    sa.Column('isEnabled', sa.Boolean(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     schema='core_device'
     )
