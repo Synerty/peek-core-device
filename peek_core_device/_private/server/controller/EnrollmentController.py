@@ -6,7 +6,7 @@ from uuid import uuid4
 from twisted.internet import reactor
 from twisted.internet.defer import Deferred
 
-from peek_core_device._private.server.controller.DeviceInfoNotifier import DeviceInfoNotifier
+from peek_core_device._private.server.controller.ObservableNotifier import ObservableNotifier
 from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
 from peek_core_device._private.storage.Setting import globalSetting, AUTO_ENROLLMENT
 from peek_core_device._private.tuples.EnrolDeviceAction import EnrolDeviceAction
@@ -56,8 +56,8 @@ class EnrollmentController:
             ormSession.add(deviceInfo)
             ormSession.commit()
 
-            DeviceInfoNotifier.notify(deviceId=deviceInfo.deviceId,
-                                      tupleObservable=self._tupleObservable)
+            ObservableNotifier.notifyDeviceInfo(deviceId=deviceInfo.deviceId,
+                                                tupleObservable=self._tupleObservable)
 
             ormSession.refresh(deviceInfo)
             ormSession.expunge_all()
@@ -90,8 +90,8 @@ class EnrollmentController:
 
             session.commit()
 
-            DeviceInfoNotifier.notify(deviceId=deviceId,
-                                      tupleObservable=self._tupleObservable)
+            ObservableNotifier.notifyDeviceInfo(deviceId=deviceId,
+                                                tupleObservable=self._tupleObservable)
 
             return []
 

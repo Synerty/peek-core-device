@@ -1,5 +1,5 @@
 import {Component, OnInit} from "@angular/core";
-import {ComponentLifecycleEventEmitter, VortexService} from "@synerty/vortexjs";
+import {ComponentLifecycleEventEmitter, VortexService, Payload} from "@synerty/vortexjs";
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 import {FileUploader} from "ng2-file-upload";
 import {
@@ -62,10 +62,12 @@ export class UploadDeviceUpdateComponent extends ComponentLifecycleEventEmitter 
         }
 
         let action = CreateDeviceUpdateAction();
-        action.
+        action.newUpdate = this.newUpdate;
+
+        let data = new Payload({}, [action]).toVortexMsg();
 
         this.uploader = new FileUploader({
-            url: '/peek_core_device/create_device_update?payload=' + ,
+            url: '/peek_core_device/create_device_update?payload=' + data,
             isHTML5: true,
             disableMultipart: true,
             queueLimit: 1,

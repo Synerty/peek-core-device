@@ -3,8 +3,8 @@ from typing import List
 
 from twisted.internet.defer import Deferred
 
-from peek_core_device._private.server.controller.DeviceInfoNotifier import \
-    DeviceInfoNotifier
+from peek_core_device._private.server.controller.ObservableNotifier import \
+    ObservableNotifier
 from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
 from peek_core_device._private.tuples.UpdateDeviceOnlineAction import \
     UpdateDeviceOnlineAction
@@ -52,8 +52,8 @@ class OnlineController:
 
             session.commit()
 
-            DeviceInfoNotifier.notify(deviceId=deviceId,
-                                      tupleObservable=self._tupleObservable)
+            ObservableNotifier.notifyDeviceInfo(deviceId=deviceId,
+                                                tupleObservable=self._tupleObservable)
 
             return []
 

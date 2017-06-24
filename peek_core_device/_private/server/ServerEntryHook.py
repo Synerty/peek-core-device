@@ -67,7 +67,8 @@ class ServerEntryHook(PluginServerEntryHookABC, PluginServerStorageEntryHookABC)
 
         mainController = MainController(
             dbSessionCreator=self.dbSessionCreator,
-            tupleObservable=tupleObservable)
+            tupleObservable=tupleObservable,
+            deviceUpdateFilePath=self._deviceUpdatesPath)
 
         # Support uploads from the admin UI
         # noinspection PyTypeChecker
