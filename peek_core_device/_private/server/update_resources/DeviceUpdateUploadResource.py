@@ -15,8 +15,8 @@ import logging
 
 from twisted.web.server import NOT_DONE_YET
 
-from peek_core_device._private.server.controller.DeviceUpdateController import \
-    DeviceUpdateController
+from peek_core_device._private.server.controller.UpdateController import \
+    UpdateController
 from peek_core_device._private.tuples.CreateDeviceUpdateAction import \
     CreateDeviceUpdateAction
 from txhttputil.site.BasicResource import BasicResource
@@ -32,7 +32,7 @@ class DeviceUpdateUploadResource(BasicResource):
     UPDATE_TYPE_PLATFORM = 0
     UPDATE_TYPE_PLUGIN = 1
 
-    def __init__(self, controller: DeviceUpdateController):
+    def __init__(self, controller: UpdateController):
         BasicResource.__init__(self)
         self._controller = controller
 

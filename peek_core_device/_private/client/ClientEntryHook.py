@@ -3,15 +3,12 @@ import logging
 from twisted.internet.defer import inlineCallbacks
 
 from peek_core_device._private.client.DeviceOnlineHandler import DeviceOnlineHandler
-from peek_core_device._private.client.PeekHttpResourceProxy import PeekHttpResourceProxy
-from peek_plugin_base.client.PluginClientEntryHookABC import PluginClientEntryHookABC
-
 from peek_core_device._private.storage.DeclarativeBase import loadStorageTuples
-from .DeviceTupleDataObservableProxy import makeDeviceTupleDataObservableProxy
-
 from peek_core_device._private.tuples import loadPrivateTuples
 from peek_core_device.tuples import loadPublicTuples
-
+from peek_plugin_base.client.PluginClientEntryHookABC import PluginClientEntryHookABC
+from txhttputil.downloader.HttpResourceProxy import HttpResourceProxy
+from .DeviceTupleDataObservableProxy import makeDeviceTupleDataObservableProxy
 from .DeviceTupleProcessorActionProxy import makeTupleActionProcessorProxy
 
 logger = logging.getLogger(__name__)
@@ -51,13 +48,15 @@ class ClientEntryHook(PluginClientEntryHookABC):
 
         # Support file downloads for device updates
         # noinspection PyTypeChecker
-        self.platform.addSiteResource(
-            b'device_update', # Matches resource path on server
-            PeekHttpResourceProxy(
-                self.platform.peekServerHost,
-                self.platform.peekServerHttpPort
-            )
+        proxyResource = HttpResourceProxy(
+            self.platform.peekServerHost,
+            self.platform.peekServerHttpPort
         )
+        # Matches resource path on server
+        # noinspection PyTypeChecker
+        self.platform.addDesktopResource(b'device_update', proxyResource)
+        # noinspection PyTypeChecker
+        self.platform.addMobileResource(b'device_update', proxyResource)
 
         self._loadedObjects.append(makeTupleActionProcessorProxy())
 

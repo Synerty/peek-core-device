@@ -1,15 +1,15 @@
-"""Initial version of tables
+"""Initial table creation
 
 Peek Plugin Database Migration Script
 
-Revision ID: 5de087ace66f
+Revision ID: d94277dd8aca
 Revises: 
-Create Date: 2017-06-20 21:20:38.641261
+Create Date: 2017-06-25 14:53:23.543928
 
 """
 
 # revision identifiers, used by Alembic.
-revision = '5de087ace66f'
+revision = 'd94277dd8aca'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -47,7 +47,9 @@ def upgrade():
     sa.Column('buildDate', sa.DateTime(), nullable=False),
     sa.Column('appVersion', sa.String(length=15), nullable=False),
     sa.Column('updateVersion', sa.String(length=15), nullable=False),
-    sa.Column('isEnabled', sa.Boolean(), nullable=False),
+    sa.Column('filePath', sa.String(length=150), nullable=False),
+    sa.Column('urlPath', sa.String(length=150), nullable=False),
+    sa.Column('isEnabled', sa.Boolean(), server_default='0', nullable=False),
     sa.PrimaryKeyConstraint('id'),
     schema='core_device'
     )

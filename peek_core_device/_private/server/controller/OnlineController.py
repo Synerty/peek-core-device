@@ -1,6 +1,7 @@
 import logging
 from typing import List
 
+from sqlalchemy.orm.exc import NoResultFound
 from twisted.internet.defer import Deferred
 
 from peek_core_device._private.server.controller.ObservableNotifier import \
@@ -56,6 +57,9 @@ class OnlineController:
                                                 tupleObservable=self._tupleObservable)
 
             return []
+
+        except NoResultFound:
+            pass
 
         finally:
             session.close()

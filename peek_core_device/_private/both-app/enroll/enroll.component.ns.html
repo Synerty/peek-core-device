@@ -1,29 +1,70 @@
-<StackLayout class="p-20">
-    <Button text="Back to Main" (tap)="mainClicked()"></Button>
+<ScrollView>
+    <StackLayout>
 
-    <GridLayout columns="4*, 1*" rows="auto" width="*">
-        <Label class="h3" col="0" text="String"></Label>
-        <Label class="h3" col="1" text="Int"></Label>
-    </GridLayout>
+        <StackLayout class="peek-information-section">
 
-    <ListView [items]="stringInts">
-        <ng-template let-item="item" let-i="index" let-odd="odd" let-even="even">
-            <StackLayout [class.odd]="odd" [class.even]="even">
-                <GridLayout columns="4*, 1*" rows="auto" width="*">
-                    <!-- String -->
-                    <Label class="h3 peek-field-data-text" row="0" col="0"
-                           textWrap="true"
-                           [text]="item.string1"></Label>
+            <label class="information-section-title" text="Enroll This Device"></label>
 
-                    <!-- Int -->
-                    <Label class="h3 peek-field-data-text" row="0" col="1"
-                           [text]="item.int1"></Label>
+            <!-- Int -->
+            <Label text="Each peek device must be enrolled before it can be used."
+                   class="p" textWrap="true"></Label>
+            <label class="p"></label>
 
-                </GridLayout>
-                <Button text="Toggle Caps" (tap)="toggleUpperCicked(item)"></Button>
-                <Button text="Increment Int" (tap)="incrementCicked(item)"></Button>
-                <Button text="Decrement Int" (tap)="decrementCicked(item)"></Button>
-            </StackLayout>
-        </ng-template>
-    </ListView>
-</StackLayout>
+        </StackLayout>
+
+        <StackLayout class="peek-details-section p-10">
+
+            <!-- Operating Zone, Category -->
+            <GridLayout rows="auto, auto" columns="*">
+                <!-- COL 0 -->
+                <Label row="0" col="0" class="details-section-title"
+                       text="Peek Server Hostname or IP:"></Label>
+                <TextField row="1" col="0" class="details-section-value  editable"
+                           [(ngModel)]="server.host"></TextField>
+
+            </GridLayout>
+
+            <!-- Operating Zone, Category -->
+            <GridLayout rows="auto, auto" columns="*, *, *">
+
+                <!-- COL 0 -->
+                <Label row="0" col="0" class="details-section-title"
+                       text="Http Port"></Label>
+                <TextField row="1" col="0" class="details-section-value editable"
+                           [(ngModel)]="httpPortStr"></TextField>
+
+                <!-- COL 1 -->
+                <Label row="0" col="1" class="details-section-title"
+                       text="WebSocket Port"></Label>
+                <TextField row="1" col="1" class="details-section-value editable"
+                           [(ngModel)]="websocketPortStr"></TextField>
+
+                <!-- COL 2 -->
+                <Label row="0" col="2" class="details-section-title"
+                       text="Use SSL"></Label>
+                <Switch row="1" col="2" class="" [(ngModel)]="server.useSsl" ></Switch>
+
+            </GridLayout>
+
+            <!-- Spacer -->
+            <Label class="details-section-title" text="{{server | json}}"></Label>
+
+            <!-- Operating Zone, Category -->
+            <GridLayout rows="auto, auto" columns="*">
+                <!-- COL 0 -->
+                <Label row="0" col="0" class="details-section-title"
+                       text="A unique description or asset id"></Label>
+                <TextField row="1" col="0" class="details-section-value  editable"
+                           [(ngModel)]="data.description"></TextField>
+
+            </GridLayout>
+
+            <Button text="Enroll" (tap)="enrollClicked()"></Button>
+
+            <!-- Int -->
+            <Label class="p" textWrap="true"
+                   text="This devices id is {{data.deviceId}}"></Label>
+
+        </StackLayout>
+    </StackLayout>
+</ScrollView>

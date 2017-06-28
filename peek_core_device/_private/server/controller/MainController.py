@@ -4,8 +4,8 @@ from pathlib import Path
 from twisted.internet import defer
 from twisted.internet.defer import Deferred, inlineCallbacks
 
-from peek_core_device._private.server.controller.DeviceUpdateController import \
-    DeviceUpdateController
+from peek_core_device._private.server.controller.UpdateController import \
+    UpdateController
 from peek_core_device._private.server.controller.EnrollmentController import \
     EnrollmentController
 from peek_core_device._private.server.controller.OnlineController import OnlineController
@@ -30,7 +30,7 @@ class MainController(TupleActionProcessorDelegateABC):
             dbSessionCreator, tupleObservable
         )
 
-        self._updateController = DeviceUpdateController(
+        self._updateController = UpdateController(
             dbSessionCreator, tupleObservable, deviceUpdateFilePath
         )
 

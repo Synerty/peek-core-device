@@ -10,7 +10,6 @@ import {
 } from "@synerty/vortexjs";
 
 import {deviceFilt, deviceTuplePrefix} from "./PluginNames";
-import {HardwareInfo} from "./hardware-info/hardware-info.mweb";
 import {DeviceTypeEnum} from "./hardware-info/hardware-info.abstract";
 import {DeviceTupleService} from "./device-tuple.service";
 
@@ -19,8 +18,10 @@ import {DeviceTupleService} from "./device-tuple.service";
 export class ServerInfoTuple extends Tuple {
     public static readonly tupleName = deviceTuplePrefix + "ServerInfoTuple";
 
-    serverHost: string;
-    serverPort: number;
+    host: string;
+    useSsl: boolean = false;
+    httpPort: number = 8000;
+    websocketPort: number = 8001;
 
     constructor() {
         super(ServerInfoTuple.tupleName);
@@ -35,9 +36,9 @@ export class DeviceServerService {
         ServerInfoTuple.tupleName, {}
     );
 
+    private serverInfo: ServerInfoTuple = new ServerInfoTuple();
 
     private readonly deviceOnlineFilt = extend({key: "device.online"}, deviceFilt);
-    private hardwareInfo: HardwareInfo;
 
     private lastOnlineSub: any | null = null;
 
@@ -46,25 +47,31 @@ export class DeviceServerService {
                 private vortexStatusService: VortexStatusService,
                 private tupleService: DeviceTupleService) {
 
+        let type: DeviceTypeEnum = this.tupleService.hardwareInfo.deviceType();
+
+        this.loadConnInfo()
+            .then(() => {
+
+                // If there is a host set, set the vortex
+                if (this.serverHost() != null && this.serverHost().length) {
+                    this.updateVortex();
+                }
+
+            });
 
 
-        this.hardwareInfo = new HardwareInfo(this.tupleService.offlineStorage);
-        let type: DeviceTypeEnum = this.hardwareInfo.deviceType();
+    }
 
-        switch (type) {
-            case DeviceTypeEnum.MOBILE_WEB:
-            case DeviceTypeEnum.DESKTOP_WEB:
-                let serverHost = location.host.split(':')[0];
-                let serverPort = 8001;
-                this.updateVortex(serverHost, serverPort);
-                break;
+    serverHost(): string {
+        return this.serverInfo.host;
+    }
 
-            default:
-                this.loadConnInfo();
-                break;
-        }
+    serverUseSsl(): boolean {
+        return this.serverInfo.useSsl;
+    }
 
-
+    serverHttpPort(): number {
+        return this.serverInfo.httpPort;
     }
 
 
@@ -72,17 +79,35 @@ export class DeviceServerService {
      *
      * Set the vortex server and port, persist the information to a websqldb
      */
-    setServerAndPort(host: string, port: number): Promise<void> {
-        this.setServerAndPort(host, port);
+    setServer(serverInfo: ServerInfoTuple): Promise<void> {
+        this.serverInfo = serverInfo;
 
-        // Create a new tuple to store
-        let newTuple = new ServerInfoTuple();
-        newTuple.serverHost = host;
-        newTuple.serverPort = port;
+        this.updateVortex();
+        this.setupOnlinePing();
 
         // Store the data
+        return this.saveConnInfo();
+    }
+
+    /** Load Conn Info
+     *
+     * Load the connection info from the websql db and set set the vortex.
+     */
+    private loadConnInfo(): Promise<void> {
         return this.tupleService.offlineStorage
-            .saveTuples(this.tupleSelector, [newTuple])
+            .loadTuples(this.tupleSelector)
+            .then((tuples: ServerInfoTuple[]) => {
+                if (tuples.length != 0) {
+                    this.serverInfo = tuples[0];
+                    return;
+                }
+            });
+    }
+
+    private saveConnInfo(): Promise<void> {
+        // Store the data
+        return this.tupleService.offlineStorage
+            .saveTuples(this.tupleSelector, [this.serverInfo])
             // Convert result to void
             .then(() => Promise.resolve())
             .catch(e => {
@@ -91,24 +116,12 @@ export class DeviceServerService {
             });
     }
 
-    /** Load Conn Info
-     *
-     * Load the connection info from the websql db and set set the vortex.
-     */
-    private loadConnInfo() {
-        this.tupleService.offlineStorage
-            .loadTuples(this.tupleSelector)
-            .then((tuples: ServerInfoTuple[]) => {
-                // If we have a UUID already, then use that.
-                if (tuples.length != 0) {
-                    let t = tuples[0];
-                    return;
-                }
-            });
-    }
+    private updateVortex() {
+        let host = this.serverInfo.host;
+        let port = this.serverInfo.websocketPort;
+        let prot =this.serverInfo.useSsl ? 'wss' : 'ws';
 
-    private updateVortex(host: string, port: number) {
-        VortexService.setVortexUrl(`ws://${host}:${port}/vortexws`);
+        VortexService.setVortexUrl(`${prot}://${host}:${port}/vortexws`);
         this.vortexService.reconnect();
 
         this.setupOnlinePing();
@@ -129,7 +142,7 @@ export class DeviceServerService {
         }
 
         // Setup the online ping
-        this.hardwareInfo
+        this.tupleService.hardwareInfo
             .uuid()
             .then(deviceId => {
                 let filt = extend({deviceId: deviceId}, this.deviceOnlineFilt);
@@ -141,7 +154,7 @@ export class DeviceServerService {
                     });
 
                 if (this.vortexStatusService.snapshot.isOnline)
-                        this.vortexService.sendFilt(filt);
+                    this.vortexService.sendFilt(filt);
 
 
             });

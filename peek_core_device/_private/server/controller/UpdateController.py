@@ -23,7 +23,7 @@ from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
 logger = logging.getLogger(__name__)
 
 
-class DeviceUpdateController:
+class UpdateController:
     def __init__(self, dbSessionCreator,
                  tupleObservable: TupleDataObservableHandler,
                  deviceUpdateFilePath: Path):
@@ -85,8 +85,9 @@ class DeviceUpdateController:
 
         # Create the file name
         filePath = '%s/%s.zip' % (
-        action.newUpdate.deviceType, action.newUpdate.updateVersion)
+            action.newUpdate.deviceType, action.newUpdate.updateVersion)
         action.newUpdate.filePath = filePath
+        action.newUpdate.urlPath = filePath.replace(r'\\', r'/')
 
         # Create the database object, If that fails from some integrity problem
         # Then the file will delete it's self still

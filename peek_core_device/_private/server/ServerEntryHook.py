@@ -2,8 +2,8 @@ import logging
 
 from txhttputil.site.FileUnderlayResource import FileUnderlayResource
 
-from peek_core_device._private.server.controller.DeviceUpdateController import \
-    DeviceUpdateController
+from peek_core_device._private.server.controller.UpdateController import \
+    UpdateController
 from peek_core_device._private.server.controller.EnrollmentController import \
     EnrollmentController
 from peek_core_device._private.server.controller.OnlineController import OnlineController
@@ -73,7 +73,7 @@ class ServerEntryHook(PluginServerEntryHookABC, PluginServerStorageEntryHookABC)
 
         # Support uploads from the admin UI
         # noinspection PyTypeChecker
-        self.platform.addSiteResource(
+        self.platform.addAdminResource(
             b'create_device_update',
             DeviceUpdateUploadResource(mainController.deviceUpdateController)
         )

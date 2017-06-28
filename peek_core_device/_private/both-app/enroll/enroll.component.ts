@@ -5,20 +5,15 @@ import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 import {
     DeviceNavService,
     DeviceServerService,
+    DeviceTupleService,
     EnrolDeviceAction,
     ServerInfoTuple
 } from "@peek/peek_core_device/_private";
 
 import {DeviceInfoTuple} from "@peek/peek_core_device";
-import {HardwareInfo} from "@peek/peek_core_device/_private/hardware-info/hardware-info.mweb";
 import {DeviceTypeEnum} from "@peek/peek_core_device/_private/hardware-info/hardware-info.abstract";
 
-import {
-    ComponentLifecycleEventEmitter,
-    TupleActionPushService,
-    TupleDataObserverService,
-    TupleOfflineStorageService
-} from "@synerty/vortexjs";
+import {ComponentLifecycleEventEmitter} from "@synerty/vortexjs";
 
 
 @Component({
@@ -30,49 +25,89 @@ export class EnrollComponent extends ComponentLifecycleEventEmitter implements O
 
     data: EnrolDeviceAction = new EnrolDeviceAction();
     server: ServerInfoTuple | null = null;
-    private hardwareInfo: HardwareInfo;
+
+    httpPortStr: string = '8000';
+    websocketPortStr: string = '8001';
+
+    deviceType: DeviceTypeEnum;
 
     constructor(private balloonMsg: Ng2BalloonMsgService,
                 private titleService: TitleService,
-                private actionService: TupleActionPushService,
-                private tupleDataObserver: TupleDataObserverService,
-                private tupleStorage: TupleOfflineStorageService,
+                private tupleService: DeviceTupleService,
                 private nav: DeviceNavService,
                 private deviceServerService: DeviceServerService) {
         super();
 
+        this.deviceType = this.tupleService.hardwareInfo.deviceType();
+        this.server = new ServerInfoTuple();
 
     }
 
     ngOnInit() {
+        //
+        switch (this.deviceType) {
+            case DeviceTypeEnum.MOBILE_WEB:
+            case DeviceTypeEnum.DESKTOP_WEB:
+                // If this is a web service, always use the host from the URL
+                this.server.host = location.host.split(':')[0];
+                this.server.useSsl = location.protocol.toLowerCase() == "https";
 
-        this.hardwareInfo = new HardwareInfo(this.tupleStorage);
+                if (location.host.split(':').length > 1) {
+                    this.server.httpPort = parseInt(location.host.split(':')[1]);
+                } else {
+                    this.server.httpPort = this.server.useSsl ? 443 : 80;
+                }
 
-        let type = this.hardwareInfo.deviceType();
+                this.httpPortStr = this.server.httpPort.toString();
+                break;
+
+            default:
+                break;
+        }
+
+        let t = this.deviceType;
 
         // Use DeviceInfoTuple to convert it.
         let deviceInfo = new DeviceInfoTuple();
-        deviceInfo.setDeviceType(type);
+        deviceInfo.setDeviceType(t);
         this.data.deviceType = deviceInfo.deviceType;
 
-        if (type != DeviceTypeEnum.MOBILE_WEB && type != DeviceTypeEnum.DESKTOP_WEB) {
-            this.server = new ServerInfoTuple();
-            this.server.serverPort = 8001;
-        }
-
-        this.hardwareInfo.uuid()
+        this.tupleService.hardwareInfo.uuid()
             .then(uuid => this.data.deviceId = uuid);
 
     }
 
-    enrollClicked() {
+    enrollEnabled(): boolean {
+        if (this.data.description == null || !this.data.description.length)
+            return false;
+
         if (this.server != null) {
-            this.deviceServerService.setServerAndPort(
-                this.server.serverHost, this.server.serverPort
-            );
+            if (this.server.host == null || !this.server.host.length)
+                return false;
+
+            if (!parseInt(this.websocketPortStr))
+                return false;
+
+            if (!parseInt(this.httpPortStr))
+                return false;
+
+        }
+        return true;
+    }
+
+    enrollClicked() {
+        try {
+            this.server.httpPort = parseInt(this.httpPortStr);
+            this.server.websocketPort = parseInt(this.websocketPortStr);
+
+        } catch (e) {
+            this.balloonMsg.showError("Port numbers must be integers.");
+            return;
         }
 
-        this.actionService.pushAction(this.data)
+        this.deviceServerService.setServer(this.server);
+
+        this.tupleService.tupleOfflineAction.pushAction(this.data)
             .then((tuples: DeviceInfoTuple[]) => {
                 // The service manages it from here
             })

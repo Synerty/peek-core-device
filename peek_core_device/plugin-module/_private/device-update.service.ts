@@ -7,25 +7,32 @@ import {DeviceTupleService} from "./device-tuple.service";
 import {DeviceInfoTuple} from "../DeviceInfoTuple";
 import {DeviceUpdateTuple} from "./tuples/DeviceUpdateTuple";
 import {DeviceUpdateLocalValuesTuple} from "./tuples/DeviceUpdateLocalValuesTuple";
+import {DeviceTypeEnum} from "./hardware-info/hardware-info.abstract";
+import {DeviceUpdateServiceDelegate} from "./device-update.service.web";
+import {DeviceServerService} from "./device-server.service";
 
 
 @Injectable()
 export class DeviceUpdateService {
 
     private lastSubscripton: any = null;
-
-
     private localUpdateValues: DeviceUpdateLocalValuesTuple | null = null;
 
+    private delegate: DeviceUpdateServiceDelegate;
 
     constructor(private balloonMsg: Ng2BalloonMsgService,
+                private serverService: DeviceServerService,
                 private tupleService: DeviceTupleService,
                 private enrolmentService: DeviceEnrolmentService,
                 private vortexStatusService: VortexStatusService) {
 
+        this.delegate = new DeviceUpdateServiceDelegate(serverService, balloonMsg);
+
+        let dt = this.tupleService.hardwareInfo.deviceType();
+        if (dt != DeviceTypeEnum.MOBILE_ANDROID && dt != DeviceTypeEnum.MOBILE_IOS)
+            return;
 
         // First, initialise the current state of our data
-
         this.tupleService.offlineStorage
             .loadTuples(new TupleSelector(DeviceUpdateLocalValuesTuple.tupleName, {}))
             .then((tuples: DeviceUpdateLocalValuesTuple[]) => {
@@ -71,17 +78,14 @@ export class DeviceUpdateService {
     }
 
     private checkUpdate(deviceUpdate: DeviceUpdateTuple) {
-        if (deviceUpdate.updateVersion != this.localUpdateValues.updateVersion) {
-            this.balloonMsg.showError(`Time to update to ${deviceUpdate.updateVersion}`);
-            console.log(`Time to update to ${deviceUpdate.updateVersion}`)
-        }
+        if (this.delegate.updateInProgress)
+            return;
 
-        // TODO, Code to download the update
+        if (deviceUpdate.updateVersion == this.localUpdateValues.updateVersion)
+            return;
 
-        // Download : `/peek_core_device/device_update/${deviceUpdate.filePath}
-        // Unzip
-        // Move
-        // Restart
+        console.log(`Time to update to ${deviceUpdate.updateVersion}`);
+        this.delegate.updateTo(deviceUpdate);
 
     }
 

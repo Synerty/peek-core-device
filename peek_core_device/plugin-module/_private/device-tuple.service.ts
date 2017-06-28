@@ -5,19 +5,20 @@ import {
     TupleDataOfflineObserverService,
     TupleOfflineStorageNameService,
     TupleOfflineStorageService,
-    TupleSelector,
     VortexService,
     VortexStatusService,
-    WebSqlFactoryService
+    WebSqlFactoryService,
+    TupleActionPushNameService,
+    TupleActionPushOfflineService
 } from "@synerty/vortexjs";
 
 import {
+    deviceActionProcessorName,
     deviceFilt,
     deviceObservableName,
     deviceTupleOfflineServiceName
 } from "./PluginNames";
-
-import {DeviceEnrolmentService} from "../device-enrolment.service";
+import {HardwareInfo} from "./hardware-info/hardware-info.mweb";
 
 
 /** Device Tuple Service
@@ -31,10 +32,12 @@ import {DeviceEnrolmentService} from "../device-enrolment.service";
  */
 @Injectable()
 export class DeviceTupleService {
-     offlineStorage: TupleOfflineStorageService;
-     offlineObserver: TupleDataObserverService;
-     observer: TupleDataObserverService;
+    offlineStorage: TupleOfflineStorageService;
+    offlineObserver: TupleDataObserverService;
+    observer: TupleDataObserverService;
+    tupleOfflineAction: TupleActionPushOfflineService;
 
+    hardwareInfo: HardwareInfo;
 
     constructor(webSqlFactory: WebSqlFactoryService,
                 vortexService: VortexService,
@@ -67,6 +70,16 @@ export class DeviceTupleService {
                 deviceObservableName,
                 deviceFilt)
         );
+
+        // Create the observer
+        this.tupleOfflineAction = new TupleActionPushOfflineService(
+            new TupleActionPushNameService(deviceActionProcessorName, deviceFilt),
+            vortexService,
+            vortexStatusService,
+            webSqlFactory
+        );
+
+        this.hardwareInfo = new HardwareInfo(this.offlineStorage);
 
     }
 

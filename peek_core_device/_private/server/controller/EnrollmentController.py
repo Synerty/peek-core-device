@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import List
 from uuid import uuid4
 
+from sqlalchemy.exc import IntegrityError
 from twisted.internet import reactor
 from twisted.internet.defer import Deferred
 
@@ -62,6 +63,13 @@ class EnrollmentController:
             ormSession.refresh(deviceInfo)
             ormSession.expunge_all()
             return [deviceInfo]
+
+        except IntegrityError as e:
+            if "DeviceInfo_deviceId_key" in str(e):
+                raise Exception("A device with that identifier already exists")
+
+            if "DeviceInfo_description_key" in str(e):
+                raise Exception("A device with that description already exists")
 
         finally:
             # Always close the session after we create it

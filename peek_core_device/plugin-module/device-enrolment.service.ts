@@ -3,7 +3,6 @@ import {TitleService} from "@synerty/peek-util";
 import {Subject} from "rxjs";
 import {TupleSelector, VortexStatusService} from "@synerty/vortexjs";
 import {DeviceInfoTuple} from "./DeviceInfoTuple";
-import {HardwareInfo} from "./_private/hardware-info/hardware-info.mweb";
 import {DeviceNavService} from "./_private/device-nav.service";
 import {DeviceTupleService} from "./_private/device-tuple.service";
 
@@ -12,7 +11,6 @@ import {DeviceTupleService} from "./_private/device-tuple.service";
 export class DeviceEnrolmentService {
 
     private deviceInfo: DeviceInfoTuple = null;
-    private hardwareInfo: HardwareInfo;
 
     // There is no point having multiple services observing the same thing
     // So lets create a nice observable for the device info.
@@ -23,9 +21,7 @@ export class DeviceEnrolmentService {
                 private titleService: TitleService,
                 private tupleService: DeviceTupleService) {
 
-        this.hardwareInfo = new HardwareInfo(this.tupleService.offlineStorage);
-
-        this.hardwareInfo.uuid()
+        this.tupleService.hardwareInfo.uuid()
             .then(uuid => {
                 // Create the tuple selector
                 let tupleSelector = new TupleSelector(
