@@ -3,6 +3,7 @@ export {DeviceUpdateTuple} from "./tuples/DeviceUpdateTuple";
 export {SettingPropertyTuple} from "./tuples/SettingPropertyTuple";
 
 export {EnrolDeviceAction} from "./tuples/EnrolDeviceAction";
+export {UpdateAppliedAction} from "./tuples/UpdateAppliedAction";
 export {UpdateEnrollmentAction} from "./tuples/admin/UpdateEnrollmentAction";
 
 export {AlterDeviceUpdateAction} from "./tuples/admin/AlterDeviceUpdateAction";

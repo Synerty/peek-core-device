@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import {TupleSelector, VortexStatusService} from "@synerty/vortexjs";
-import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
+import {Ng2BalloonMsgService, UsrMsgLevel, UsrMsgType} from "@synerty/ng2-balloon-msg";
 
 import {DeviceEnrolmentService} from "../device-enrolment.service";
 import {DeviceTupleService} from "./device-tuple.service";
@@ -10,6 +10,7 @@ import {DeviceUpdateLocalValuesTuple} from "./tuples/DeviceUpdateLocalValuesTupl
 import {DeviceTypeEnum} from "./hardware-info/hardware-info.abstract";
 import {DeviceUpdateServiceDelegate} from "./device-update.service.web";
 import {DeviceServerService} from "./device-server.service";
+import {UpdateAppliedAction} from "./tuples/UpdateAppliedAction";
 
 
 @Injectable()
@@ -29,8 +30,10 @@ export class DeviceUpdateService {
         this.delegate = new DeviceUpdateServiceDelegate(serverService, balloonMsg);
 
         let dt = this.tupleService.hardwareInfo.deviceType();
-        if (dt != DeviceTypeEnum.MOBILE_ANDROID && dt != DeviceTypeEnum.MOBILE_IOS)
+        if (dt != DeviceTypeEnum.MOBILE_ANDROID && dt != DeviceTypeEnum.MOBILE_IOS) {
+            console.log("Skipping updates as this is not nativescript");
             return;
+        }
 
         // First, initialise the current state of our data
         this.tupleService.offlineStorage
@@ -48,6 +51,8 @@ export class DeviceUpdateService {
                     .subscribe((deviceInfo: DeviceInfoTuple) => {
                         this.resubscribeToUpdates(deviceInfo);
                     });
+
+                this.resubscribeToUpdates(this.enrolmentService.deviceInfo);
             })
             .catch(e => {
                 this.balloonMsg.showError(`Failed to load local device update info ${e}`);
@@ -62,7 +67,7 @@ export class DeviceUpdateService {
             this.lastSubscripton = null;
         }
 
-        if (deviceInfo == null || deviceInfo.isEnrolled == false)
+        if (deviceInfo == null || !deviceInfo.isEnrolled)
             return;
 
         this.lastSubscripton = this.tupleService.observer
@@ -73,19 +78,54 @@ export class DeviceUpdateService {
                 if (tuples.length == 0)
                     return;
 
-                this.checkUpdate(tuples[0])
+                this.checkUpdate(deviceInfo, tuples[0])
             });
     }
 
-    private checkUpdate(deviceUpdate: DeviceUpdateTuple) {
+    private checkUpdate(deviceInfo: DeviceInfoTuple, deviceUpdate: DeviceUpdateTuple) {
         if (this.delegate.updateInProgress)
             return;
 
         if (deviceUpdate.updateVersion == this.localUpdateValues.updateVersion)
             return;
 
-        console.log(`Time to update to ${deviceUpdate.updateVersion}`);
-        this.delegate.updateTo(deviceUpdate);
+        console.log(`Starting update to ${deviceUpdate.updateVersion}`);
+
+        this.delegate.updateTo(deviceUpdate)
+            .then(() => {
+                // Update the local stored tuple
+                this.localUpdateValues.updateVersion = deviceUpdate.updateVersion;
+                this.storeLocalValues();
+
+                // Update the action
+                let doneAction = new UpdateAppliedAction();
+                doneAction.deviceId = deviceInfo.deviceId;
+                doneAction.updateVersion = deviceUpdate.updateVersion;
+                this.tupleService.tupleOfflineAction.pushAction(doneAction);
+
+                let msg = `Update ${deviceUpdate.updateVersion} has been`
+                    + ` downloaded, please restart the app to apply the update`;
+
+                this.balloonMsg.showMessage(
+                    msg,
+                    UsrMsgLevel.Success,
+                    UsrMsgType.Confirm, {
+                        confirmText: "I will do that now!",
+                        dialogTitle: "Update Applied"
+                    }
+                );
+
+
+            })
+            .catch(e => {
+                this.balloonMsg.showError(e);
+
+                // Update the action
+                let doneAction = new UpdateAppliedAction();
+                doneAction.deviceId = deviceInfo.deviceId;
+                doneAction.error = e;
+                return this.tupleService.tupleOfflineAction.pushAction(doneAction);
+            });
 
     }
 

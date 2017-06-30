@@ -32,6 +32,7 @@ class DeviceUpdateTuple(Tuple, DeclarativeBase):
     updateVersion = Column(String(15), nullable=False)
     filePath = Column(String(150), nullable=False)
     urlPath = Column(String(150), nullable=False)
+    fileSize = Column(Integer, nullable=False)
     isEnabled = Column(Boolean, nullable=False, server_default="0")
 
     __table_args__ = (

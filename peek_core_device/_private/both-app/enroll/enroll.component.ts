@@ -24,10 +24,6 @@ import {ComponentLifecycleEventEmitter} from "@synerty/vortexjs";
 export class EnrollComponent extends ComponentLifecycleEventEmitter implements OnInit {
 
     data: EnrolDeviceAction = new EnrolDeviceAction();
-    server: ServerInfoTuple | null = null;
-
-    httpPortStr: string = '8000';
-    websocketPortStr: string = '8001';
 
     deviceType: DeviceTypeEnum;
 
@@ -39,31 +35,10 @@ export class EnrollComponent extends ComponentLifecycleEventEmitter implements O
         super();
 
         this.deviceType = this.tupleService.hardwareInfo.deviceType();
-        this.server = new ServerInfoTuple();
 
     }
 
     ngOnInit() {
-        //
-        switch (this.deviceType) {
-            case DeviceTypeEnum.MOBILE_WEB:
-            case DeviceTypeEnum.DESKTOP_WEB:
-                // If this is a web service, always use the host from the URL
-                this.server.host = location.host.split(':')[0];
-                this.server.useSsl = location.protocol.toLowerCase() == "https";
-
-                if (location.host.split(':').length > 1) {
-                    this.server.httpPort = parseInt(location.host.split(':')[1]);
-                } else {
-                    this.server.httpPort = this.server.useSsl ? 443 : 80;
-                }
-
-                this.httpPortStr = this.server.httpPort.toString();
-                break;
-
-            default:
-                break;
-        }
 
         let t = this.deviceType;
 
@@ -81,31 +56,12 @@ export class EnrollComponent extends ComponentLifecycleEventEmitter implements O
         if (this.data.description == null || !this.data.description.length)
             return false;
 
-        if (this.server != null) {
-            if (this.server.host == null || !this.server.host.length)
-                return false;
 
-            if (!parseInt(this.websocketPortStr))
-                return false;
-
-            if (!parseInt(this.httpPortStr))
-                return false;
-
-        }
         return true;
     }
 
     enrollClicked() {
-        try {
-            this.server.httpPort = parseInt(this.httpPortStr);
-            this.server.websocketPort = parseInt(this.websocketPortStr);
 
-        } catch (e) {
-            this.balloonMsg.showError("Port numbers must be integers.");
-            return;
-        }
-
-        this.deviceServerService.setServer(this.server);
 
         this.tupleService.tupleOfflineAction.pushAction(this.data)
             .then((tuples: DeviceInfoTuple[]) => {

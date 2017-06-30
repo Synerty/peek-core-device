@@ -26,6 +26,8 @@ import {EnrollComponent} from "./enroll/enroll.component";
 // Import the names we need for the
 import {deviceActionProcessorName} from "@peek/peek_core_device/_private";
 import {EnrollingComponent} from "./enrolling/enrolling.component";
+import {ConnectComponent} from "./connect/connect.component";
+import {ConnectingComponent} from "./connecting/connecting.component";
 
 
 export function tupleActionPushNameServiceFactory() {
@@ -51,6 +53,14 @@ export const pluginRoutes: Routes = [
     {
         path: 'enroll',
         component: EnrollComponent
+    },
+    {
+        path: 'connect',
+        component: ConnectComponent
+    },
+    {
+        path: 'connecting',
+        component: ConnectingComponent
     },
     {
         path: '',
@@ -85,7 +95,13 @@ export const pluginRoutes: Routes = [
             useFactory: tupleDataObservableNameServiceFactory
         },
     ],
-    declarations: [DeviceComponent, EnrollComponent, EnrollingComponent]
+    declarations: [
+        DeviceComponent,
+        EnrollComponent,
+        EnrollingComponent,
+        ConnectComponent,
+        ConnectingComponent
+    ]
 })
 export class DeviceModule {
 }

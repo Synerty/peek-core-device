@@ -14,6 +14,7 @@ export class DeviceUpdateTuple extends Tuple {
     updateVersion: string;
     filePath: string;
     urlPath: string;
+    fileSize: number;
     isEnabled: boolean;
 
     constructor() {

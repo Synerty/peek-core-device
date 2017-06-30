@@ -19,16 +19,16 @@ class DeviceUpdateTupleProvider(TuplesProviderABC):
     def makeVortexMsg(self, filt: dict,
                       tupleSelector: TupleSelector) -> Union[Deferred, bytes]:
         # Potential filters can be placed here.
-        deviceToken = tupleSelector.selector.get("deviceToken")
+        deviceId = tupleSelector.selector.get("deviceId")
 
         ormSession = self._ormSessionCreator()
         try:
 
             deviceInfo = None
-            if deviceToken is not None:
+            if deviceId is not None:
                 deviceInfo = (
                     ormSession.query(DeviceInfoTuple)
-                        .filter(DeviceInfoTuple.deviceToken == deviceToken)
+                        .filter(DeviceInfoTuple.deviceId == deviceId)
                         .one()
                 )
 
@@ -42,13 +42,15 @@ class DeviceUpdateTupleProvider(TuplesProviderABC):
                 updates = (
                     ormSession.query(DeviceUpdateTuple)
                         .filter(DeviceUpdateTuple.deviceType == deviceInfo.deviceType)
-                        .filter(DeviceUpdateTuple.enabled == True)
+                        .filter(DeviceUpdateTuple.isEnabled == True)
                         .order_by(DeviceUpdateTuple.buildDate)
                         .all()
                 )
 
                 if updates:
-                    tuples = updates[-1]
+                    update = updates[-1]
+                    if update.updateVersion != deviceInfo.updateVersion:
+                        tuples = [update]
 
             # Else, this is the admin interface, return all of them.
             else:

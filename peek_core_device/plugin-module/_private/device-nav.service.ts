@@ -13,6 +13,14 @@ export class DeviceNavService {
         this.router.navigate(['']);
     }
 
+    toConnect() {
+        this.router.navigate([deviceBaseUrl, 'connect']);
+    }
+
+    toConnecting() {
+        this.router.navigate([deviceBaseUrl, 'connecting']);
+    }
+
     toEnroll() {
         this.router.navigate([deviceBaseUrl, 'enroll']);
     }

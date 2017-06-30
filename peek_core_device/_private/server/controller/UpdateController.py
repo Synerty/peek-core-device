@@ -9,11 +9,13 @@ from twisted.internet.defer import Deferred, inlineCallbacks, returnValue
 
 from peek_core_device._private.server.controller.ObservableNotifier import \
     ObservableNotifier
+from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
 from peek_core_device._private.storage.DeviceUpdateTuple import DeviceUpdateTuple
 from peek_core_device._private.tuples.AlterDeviceUpdateAction import \
     AlterDeviceUpdateAction
 from peek_core_device._private.tuples.CreateDeviceUpdateAction import \
     CreateDeviceUpdateAction
+from peek_core_device._private.tuples.UpdateAppliedAction import UpdateAppliedAction
 from txhttputil.site.SpooledNamedTemporaryFile import SpooledNamedTemporaryFile
 from vortex.DeferUtil import deferToThreadWrapWithLogger
 from vortex.Tuple import Tuple
@@ -38,6 +40,9 @@ class UpdateController:
 
         if isinstance(tupleAction, AlterDeviceUpdateAction):
             return self._processAdminAlter(tupleAction)
+
+        if isinstance(tupleAction, UpdateAppliedAction):
+            return self._processDeviceUpdated(tupleAction)
 
     @deferToThreadWrapWithLogger(logger)
     def _processAdminAlter(self, action: AlterDeviceUpdateAction) -> List[Tuple]:
@@ -88,6 +93,7 @@ class UpdateController:
             action.newUpdate.deviceType, action.newUpdate.updateVersion)
         action.newUpdate.filePath = filePath
         action.newUpdate.urlPath = filePath.replace(r'\\', r'/')
+        action.newUpdate.fileSize = Path(namedTempFile.name).stat().st_size
 
         # Create the database object, If that fails from some integrity problem
         # Then the file will delete it's self still
@@ -124,3 +130,39 @@ class UpdateController:
 
         finally:
             ormSession.close()
+
+
+
+    @deferToThreadWrapWithLogger(logger)
+    def _processDeviceUpdated(self, action: UpdateAppliedAction) -> List[Tuple]:
+        """ Process Device Updated
+
+        This action is sent when the device has applied an update, or attempted to.
+
+        :rtype: Deferred
+        """
+        session = self._dbSessionCreator()
+        try:
+            deviceInfo = (
+                session.query(DeviceInfoTuple)
+                    .filter(DeviceInfoTuple.deviceId == action.deviceId)
+                    .one()
+            )
+
+            deviceId = deviceInfo.deviceId
+
+            if action.appVersion is not None:
+                deviceInfo.appVersion = action.appVersion
+
+            if action.updateVersion is not None:
+                deviceInfo.updateVersion = action.updateVersion
+
+            session.commit()
+
+            ObservableNotifier.notifyDeviceInfo(deviceId=deviceId,
+                                                tupleObservable=self._tupleObservable)
+
+            return []
+
+        finally:
+            session.close()

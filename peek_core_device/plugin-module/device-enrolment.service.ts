@@ -10,7 +10,7 @@ import {DeviceTupleService} from "./_private/device-tuple.service";
 @Injectable()
 export class DeviceEnrolmentService {
 
-    private deviceInfo: DeviceInfoTuple = null;
+    deviceInfo: DeviceInfoTuple = null;
 
     // There is no point having multiple services observing the same thing
     // So lets create a nice observable for the device info.
@@ -19,6 +19,7 @@ export class DeviceEnrolmentService {
 
     constructor(private nav: DeviceNavService,
                 private titleService: TitleService,
+                private vortexStatusService: VortexStatusService,
                 private tupleService: DeviceTupleService) {
 
         this.tupleService.hardwareInfo.uuid()
@@ -43,9 +44,12 @@ export class DeviceEnrolmentService {
                         this.deviceInfoObservable.next(this.deviceInfo);
 
                         if (this.deviceInfo == null) {
-                            titleService.setEnabled(false);
-                            titleService.setTitle('');
-                            this.nav.toEnroll();
+                            if (this.vortexStatusService.snapshot.isOnline) {
+                                titleService.setEnabled(false);
+                                titleService.setTitle('');
+                                this.nav.toEnroll();
+                            }
+                            // If it's offline, do nothing
 
                         } else if (!this.deviceInfo.isEnrolled) {
                             titleService.setEnabled(false);

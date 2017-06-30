@@ -15,7 +15,8 @@ export class DeviceUpdateServiceDelegate {
         return false;
     }
 
-    updateTo(deviceUpdate: DeviceUpdateTuple) {
+    updateTo(deviceUpdate: DeviceUpdateTuple) :Promise<void>{
+        return Promise.resolve();
     }
 
 }

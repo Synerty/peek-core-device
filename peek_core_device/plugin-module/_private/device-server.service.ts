@@ -12,6 +12,7 @@ import {
 import {deviceFilt, deviceTuplePrefix} from "./PluginNames";
 import {DeviceTypeEnum} from "./hardware-info/hardware-info.abstract";
 import {DeviceTupleService} from "./device-tuple.service";
+import {DeviceNavService} from "./device-nav.service";
 
 
 @addTupleType
@@ -42,7 +43,8 @@ export class DeviceServerService {
 
     private lastOnlineSub: any | null = null;
 
-    constructor(private balloonMsg: Ng2BalloonMsgService,
+    constructor(private nav: DeviceNavService,
+                private balloonMsg: Ng2BalloonMsgService,
                 private vortexService: VortexService,
                 private vortexStatusService: VortexStatusService,
                 private tupleService: DeviceTupleService) {
@@ -53,24 +55,25 @@ export class DeviceServerService {
             .then(() => {
 
                 // If there is a host set, set the vortex
-                if (this.serverHost() != null && this.serverHost().length) {
+                if (this.serverHost == null || !this.serverHost.length) {
+                    this.nav.toConnect();
+                } else {
                     this.updateVortex();
                 }
 
             });
 
-
     }
 
-    serverHost(): string {
+    get serverHost(): string {
         return this.serverInfo.host;
     }
 
-    serverUseSsl(): boolean {
+    get serverUseSsl(): boolean {
         return this.serverInfo.useSsl;
     }
 
-    serverHttpPort(): number {
+    get serverHttpPort(): number {
         return this.serverInfo.httpPort;
     }
 
@@ -119,7 +122,7 @@ export class DeviceServerService {
     private updateVortex() {
         let host = this.serverInfo.host;
         let port = this.serverInfo.websocketPort;
-        let prot =this.serverInfo.useSsl ? 'wss' : 'ws';
+        let prot = this.serverInfo.useSsl ? 'wss' : 'ws';
 
         VortexService.setVortexUrl(`${prot}://${host}:${port}/vortexws`);
         this.vortexService.reconnect();
