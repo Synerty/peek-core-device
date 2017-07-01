@@ -1,26 +1,44 @@
+import logging
+from typing import Optional
+
+from twisted.internet.defer import Deferred
+
 from peek_core_device._private.server.controller.MainController import MainController
+from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
 from peek_core_device.server.DeviceApiABC import DeviceApiABC
+from vortex.DeferUtil import deferToThreadWrapWithLogger, noMainThread
+
+logger = logging.getLogger(__name__)
 
 
 class DeviceApi(DeviceApiABC):
-    def __init__(self, mainController: MainController):
+    def __init__(self, mainController: MainController,
+                 ormSessionCreator):
         self._mainController = mainController
+        self._ormSessionCreator = ormSessionCreator
 
-    #
-    # def doSomethingGood(self, somethingsDescription: str) -> DoSomethingTuple:
-    #     """ Do Something Good
-    #
-    #     Add a new task to the users device.
-    #
-    #     :param somethingsDescription: An arbitrary string
-    #
-    #     """
-    #
-    #     # Here we could pass on the request to the self._mainController if we wanted.
-    #     # EG self._mainController.somethingCalled(somethingsDescription)
-    #
-    #     return DoSomethingTuple(result="SUCCESS : " + somethingsDescription)
+    @deferToThreadWrapWithLogger(logger)
+    def deviceDescription(self, deviceToken: str) -> Deferred:
+        return self.deviceDescriptionBlocking(deviceToken)
 
+    def deviceDescriptionBlocking(self, deviceToken: str) -> Optional[str]:
+        noMainThread()
+
+        ormSession = self._ormSessionCreator()
+        try:
+            all = (
+                ormSession.query(DeviceInfoTuple)
+                    .filter(DeviceInfoTuple.deviceToken == deviceToken)
+                .all()
+            )
+
+            if not all:
+                return None
+
+            return all[0].description
+
+        finally:
+            ormSession.close()
 
     def shutdown(self):
         pass

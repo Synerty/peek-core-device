@@ -94,7 +94,7 @@ class ServerEntryHook(PluginServerEntryHookABC, PluginServerStorageEntryHookABC)
         self._loadedObjects.append(makeTupleActionProcessorHandler(mainController))
 
         # Initialise the API object that will be shared with other plugins
-        self._api = DeviceApi(mainController)
+        self._api = DeviceApi(mainController, self.dbSessionCreator)
         self._loadedObjects.append(self._api)
 
         logger.debug("Started")

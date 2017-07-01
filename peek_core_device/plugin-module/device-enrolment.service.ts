@@ -74,7 +74,9 @@ export class DeviceEnrolmentService {
     }
 
     enrolmentToken(): string | null {
-        return null;
+        if (this.deviceInfo == null)
+            return null;
+        return this.deviceInfo.deviceToken;
 
     }
 
