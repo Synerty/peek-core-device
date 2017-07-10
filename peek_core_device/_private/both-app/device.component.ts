@@ -1,4 +1,5 @@
 import {Component} from "@angular/core";
+import { DeviceNavService } from "@peek/peek_core_device/_private";
 
 @Component({
     selector: 'core-device',
@@ -7,7 +8,7 @@ import {Component} from "@angular/core";
 })
 export class DeviceComponent {
 
-    constructor() {
+    constructor(public nav: DeviceNavService) {
 
     }
 

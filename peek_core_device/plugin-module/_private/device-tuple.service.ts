@@ -9,7 +9,8 @@ import {
     VortexStatusService,
     WebSqlFactoryService,
     TupleActionPushNameService,
-    TupleActionPushOfflineService
+    TupleActionPushOfflineService,
+    TupleStorageFactoryService
 } from "@synerty/vortexjs";
 
 import {
@@ -39,14 +40,15 @@ export class DeviceTupleService {
 
     hardwareInfo: HardwareInfo;
 
-    constructor(webSqlFactory: WebSqlFactoryService,
+    constructor(storageFactory: TupleStorageFactoryService,
+                webSqlFactory: WebSqlFactoryService,
                 vortexService: VortexService,
                 vortexStatusService: VortexStatusService,
                 zone: NgZone) {
 
         // Create the offline storage
         this.offlineStorage = new TupleOfflineStorageService(
-            webSqlFactory,
+            storageFactory,
             new TupleOfflineStorageNameService(deviceTupleOfflineServiceName)
         );
 

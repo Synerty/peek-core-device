@@ -65,7 +65,7 @@ export const pluginRoutes: Routes = [
     {
         path: '',
         pathMatch: 'full',
-        component: EnrollComponent
+        component: DeviceComponent
     }
 
 ];

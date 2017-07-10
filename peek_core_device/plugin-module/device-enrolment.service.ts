@@ -5,6 +5,7 @@ import {TupleSelector, VortexStatusService} from "@synerty/vortexjs";
 import {DeviceInfoTuple} from "./DeviceInfoTuple";
 import {DeviceNavService} from "./_private/device-nav.service";
 import {DeviceTupleService} from "./_private/device-tuple.service";
+import {DeviceServerService} from "./_private/device-server.service";
 
 
 @Injectable()
@@ -20,7 +21,8 @@ export class DeviceEnrolmentService {
     constructor(private nav: DeviceNavService,
                 private titleService: TitleService,
                 private vortexStatusService: VortexStatusService,
-                private tupleService: DeviceTupleService) {
+                private tupleService: DeviceTupleService,
+                private serverService: DeviceServerService) {
 
         this.tupleService.hardwareInfo.uuid()
             .then(uuid => {
@@ -43,13 +45,12 @@ export class DeviceEnrolmentService {
 
                         this.deviceInfoObservable.next(this.deviceInfo);
 
-                        if (this.deviceInfo == null) {
-                            if (this.vortexStatusService.snapshot.isOnline) {
-                                titleService.setEnabled(false);
-                                titleService.setTitle('');
-                                this.nav.toEnroll();
-                            }
-                            // If it's offline, do nothing
+                        if (!this.serverService.isSetup || !this.vortexStatusService.snapshot.isOnline) {
+                            // Do Nothing
+                        } else if (this.deviceInfo == null) {
+                            titleService.setEnabled(false);
+                            titleService.setTitle('');
+                            this.nav.toEnroll();
 
                         } else if (!this.deviceInfo.isEnrolled) {
                             titleService.setEnabled(false);

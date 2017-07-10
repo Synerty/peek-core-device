@@ -54,6 +54,11 @@ class EnrollmentController:
             deviceInfo.createdDate = datetime.utcnow()
             deviceInfo.appVersion = '0.0.0'
             deviceInfo.isEnrolled = globalSetting(ormSession, AUTO_ENROLLMENT)
+
+            # TODO, Move these to their own tuple
+            deviceInfo.lastOnline = datetime.utcnow()
+            deviceInfo.isOnline = True
+
             ormSession.add(deviceInfo)
             ormSession.commit()
 

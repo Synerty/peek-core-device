@@ -59,7 +59,7 @@ class OnlineController:
             return []
 
         except NoResultFound:
-            pass
+            return []
 
         finally:
             session.close()

@@ -55,7 +55,7 @@ export class DeviceServerService {
             .then(() => {
 
                 // If there is a host set, set the vortex
-                if (this.serverHost == null || !this.serverHost.length) {
+                if (!this.isSetup) {
                     this.nav.toConnect();
                 } else {
                     this.updateVortex();
@@ -63,6 +63,10 @@ export class DeviceServerService {
 
             });
 
+    }
+
+    get isSetup():boolean {
+        return this.serverHost != null && this.serverHost.length != 0;
     }
 
     get serverHost(): string {
