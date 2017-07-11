@@ -93,7 +93,7 @@ export const pluginRoutes: Routes = [
         TupleDataObserverService, TupleDataOfflineObserverService, {
             provide: TupleDataObservableNameService,
             useFactory: tupleDataObservableNameServiceFactory
-        },
+        }
     ],
     declarations: [
         DeviceComponent,

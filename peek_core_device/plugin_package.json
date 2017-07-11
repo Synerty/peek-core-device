@@ -30,7 +30,7 @@
     "client": {
     },
     "mobile": {
-        "showHomeLink": true,
+        "showHomeLink": false,
         "appDir": "_private/both-app",
         "appModule": "device.module#DeviceModule",
         "assetDir": "_private/both-assets",
@@ -54,6 +54,11 @@
             {
                 "file": "_private/device-nav.service",
                 "class": "DeviceNavService",
+                "persistent": false
+            },
+            {
+                "file": "device-enrolled.guard",
+                "class": "DeviceEnrolledGuard",
                 "persistent": false
             },
             {

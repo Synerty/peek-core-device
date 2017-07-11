@@ -40,6 +40,17 @@ export class ConnectComponent extends ComponentLifecycleEventEmitter implements 
         this.deviceType = this.tupleService.hardwareInfo.deviceType();
         this.server = new ServerInfoTuple();
 
+        // Make sure we're not on this page when things are fine.
+        this.doCheckEvent
+            .takeUntil(this.onDestroyEvent)
+            .subscribe(() => {
+                if (this.deviceServerService.isConnected)
+                    this.nav.toHome();
+                else if (this.deviceServerService.isSetup)
+                    this.nav.toConnecting()
+            });
+
+
     }
 
     ngOnInit() {

@@ -10,7 +10,7 @@ import {
     ServerInfoTuple
 } from "@peek/peek_core_device/_private";
 
-import {DeviceInfoTuple} from "@peek/peek_core_device";
+import {DeviceEnrolmentService, DeviceInfoTuple} from "@peek/peek_core_device";
 import {DeviceTypeEnum} from "@peek/peek_core_device/_private/hardware-info/hardware-info.abstract";
 
 import {ComponentLifecycleEventEmitter} from "@synerty/vortexjs";
@@ -31,10 +31,24 @@ export class EnrollComponent extends ComponentLifecycleEventEmitter implements O
                 private titleService: TitleService,
                 private tupleService: DeviceTupleService,
                 private nav: DeviceNavService,
-                private deviceServerService: DeviceServerService) {
+                private enrolmentService: DeviceEnrolmentService) {
         super();
 
         this.deviceType = this.tupleService.hardwareInfo.deviceType();
+        this.titleService.setEnabled(false);
+        this.titleService.setTitle('');
+
+        // Make sure we're not on this page when things are fine.
+        this.doCheckEvent
+            .takeUntil(this.onDestroyEvent)
+            .subscribe(() => {
+                if (this.enrolmentService.isEnrolled()) {
+                    this.titleService.setEnabled(false);
+                    this.nav.toHome();
+                } else if (this.enrolmentService.isSetup()) {
+                    this.nav.toEnrolling();
+                }
+            });
 
     }
 

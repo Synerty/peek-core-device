@@ -44,31 +44,38 @@ export class DeviceEnrolmentService {
                             this.deviceInfo = null;
 
                         this.deviceInfoObservable.next(this.deviceInfo);
-
-                        if (!this.serverService.isSetup || !this.vortexStatusService.snapshot.isOnline) {
-                            // Do Nothing
-                        } else if (this.deviceInfo == null) {
-                            titleService.setEnabled(false);
-                            titleService.setTitle('');
-                            this.nav.toEnroll();
-
-                        } else if (!this.deviceInfo.isEnrolled) {
-                            titleService.setEnabled(false);
-                            titleService.setTitle('');
-                            this.nav.toEnrolling();
-
-                        } else {
-                            titleService.setEnabled(true);
-                            console.log("Device Enrollment Confirmed");
-                            this.nav.toHome();
-
-                        }
-
+                        this.checkEnrolment();
                     });
             });
 
+    }
+
+    checkEnrolment(): void {
+        if (!this.serverService.isSetup)
+            return;
+
+        // Do Nothing
+        if (this.deviceInfo == null) {
+            console.log("Device Enrollment Has Not Started");
+            this.nav.toEnroll();
+            return;
+        }
+
+        if (!this.deviceInfo.isEnrolled) {
+            console.log("Device Enrollment Is Waiting Approval");
+            this.nav.toEnrolling();
+            return;
+        }
+
+        this.titleService.setEnabled(true);
+        console.log("Device Enrollment Confirmed");
 
     }
+
+    isSetup() :boolean {
+        return this.deviceInfo != null;
+    }
+
 
     isEnrolled(): boolean {
         return this.deviceInfo != null && this.deviceInfo.isEnrolled;

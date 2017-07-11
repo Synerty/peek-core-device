@@ -23,6 +23,7 @@ export class ServerInfoTuple extends Tuple {
     useSsl: boolean = false;
     httpPort: number = 8000;
     websocketPort: number = 8001;
+    hasConnected: boolean = false;
 
     constructor() {
         super(ServerInfoTuple.tupleName);
@@ -55,18 +56,31 @@ export class DeviceServerService {
             .then(() => {
 
                 // If there is a host set, set the vortex
-                if (!this.isSetup) {
-                    this.nav.toConnect();
-                } else {
+                if (this.isSetup) {
                     this.updateVortex();
-                }
+                } else {
+                    this.nav.toConnect();
 
+                    let sub = this.vortexStatusService.isOnline
+                        .filter(online => online == true)
+                        .subscribe(() => {
+                            this.serverInfo.hasConnected = true;
+                            this.saveConnInfo();
+                            this.balloonMsg.showSuccess("Reconnection Successful");
+                            sub.unsubscribe();
+                            this.nav.toHome();
+                        });
+                }
             });
 
     }
 
-    get isSetup():boolean {
-        return this.serverHost != null && this.serverHost.length != 0;
+    get isSetup(): boolean {
+        return this.serverInfo.hasConnected;
+    }
+
+    get isConnected(): boolean {
+        return this.isSetup && this.vortexStatusService.snapshot.isOnline;
     }
 
     get serverHost(): string {

@@ -1,21 +1,16 @@
 import {Component} from "@angular/core";
-/*
-import {Router} from "@angular/router";
 import {TitleService} from "@synerty/peek-util";
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 
-import {
-    ComponentLifecycleEventEmitter,
-    TupleActionPushService,
-    TupleDataObserverService,
-    TupleOfflineStorageService
-} from "@synerty/vortexjs";
+import {ComponentLifecycleEventEmitter} from "@synerty/vortexjs";
 
-import {EnrolDeviceAction, HardwareInfo} from "@peek/peek_core_device/_private";
-*/
 import {
-    ComponentLifecycleEventEmitter,
-} from "@synerty/vortexjs";
+    DeviceNavService,
+    EnrolDeviceAction,
+    HardwareInfo
+} from "@peek/peek_core_device/_private";
+import {DeviceEnrolmentService} from "@peek/peek_core_device";
+
 
 @Component({
     selector: 'core-device-enrolling',
@@ -23,45 +18,30 @@ import {
     moduleId: module.id
 })
 export class EnrollingComponent extends ComponentLifecycleEventEmitter {
-/*
     data: EnrolDeviceAction = new EnrolDeviceAction();
     private hardwareInfo: HardwareInfo;
 
     constructor(private balloonMsg: Ng2BalloonMsgService,
                 private titleService: TitleService,
-                private actionService: TupleActionPushService,
-                private tupleDataObserver: TupleDataObserverService,
-                private tupleStorage: TupleOfflineStorageService,
-                private router: Router) {
+                private nav: DeviceNavService,
+                private enrolmentService: DeviceEnrolmentService) {
         super();
-        titleService.setEnabled(false);
+        this.titleService.setEnabled(false);
+        this.titleService.setTitle('');
 
-        this.hardwareInfo = new HardwareInfo(tupleStorage);
-
-        this.hardwareInfo.uuid()
-            .then(uuid => this.data.deviceId = uuid);
-
-
-        this.data.serverHost = location.host.split(':')[0];
-        this.data.serverPort = 8001;
-
-        // Set the deviceId, Check for an existing value first
-
-    }
-
-    enrolCicked() {
-        this.actionService.pushAction(this.data)
-            .then((tuples) => {
-
-                alert('success');
-
-                this.titleService.setEnabled(true);
-
-            })
-            .catch((err) => {
-                alert(err);
+        // Make sure we're not on this page when things are fine.
+        this.doCheckEvent
+            .takeUntil(this.onDestroyEvent)
+            .subscribe(() => {
+                if (this.enrolmentService.isEnrolled()) {
+                    this.titleService.setEnabled(false);
+                    this.nav.toHome();
+                } else if (!this.enrolmentService.isSetup()) {
+                    this.nav.toEnroll();
+                }
             });
+
     }
-*/
+
 
 }
