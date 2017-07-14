@@ -14,7 +14,7 @@ import {DeviceEnrolmentService} from "@peek/peek_core_device";
 
 @Component({
     selector: 'core-device-enrolling',
-    templateUrl: 'enrolling.component.mweb.html',
+    templateUrl: 'enrolling.component.web.html',
     moduleId: module.id
 })
 export class EnrollingComponent extends ComponentLifecycleEventEmitter {

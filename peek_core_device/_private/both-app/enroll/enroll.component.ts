@@ -18,7 +18,7 @@ import {ComponentLifecycleEventEmitter} from "@synerty/vortexjs";
 
 @Component({
     selector: 'core-device-enroll',
-    templateUrl: 'enroll.component.mweb.html',
+    templateUrl: 'enroll.component.web.html',
     moduleId: module.id
 })
 export class EnrollComponent extends ComponentLifecycleEventEmitter implements OnInit {

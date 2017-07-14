@@ -6,7 +6,7 @@ import {DeviceNavService, DeviceServerService} from "@peek/peek_core_device/_pri
 
 @Component({
     selector: 'core-device-enrolling',
-    templateUrl: 'connecting.component.mweb.html',
+    templateUrl: 'connecting.component.web.html',
     moduleId: module.id
 })
 export class ConnectingComponent extends ComponentLifecycleEventEmitter {
