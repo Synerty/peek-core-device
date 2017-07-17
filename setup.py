@@ -11,7 +11,7 @@ author = "Synerty"
 author_email = 'contact@synerty.com'
 py_package_name = "peek_core_device"
 pip_package_name = py_package_name.replace('_', '-')
-package_version = '0.6.0.1'
+package_version = '0.6.5'
 description = 'Peek Core Device - Device management for the peek platform.'
 
 download_url = 'https://bitbucket.org/synerty/%s/get/%s.zip'
