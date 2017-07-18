@@ -61,22 +61,16 @@ export class DeviceServerService {
                 } else {
                     this.nav.toConnect();
 
-                    let sub = this.vortexStatusService.isOnline
-                        .filter(online => online == true)
-                        .subscribe(() => {
-                            this.serverInfo.hasConnected = true;
-                            this.saveConnInfo();
-                            this.balloonMsg.showSuccess("Reconnection Successful");
-                            sub.unsubscribe();
-                            this.nav.toHome();
-                        });
+
                 }
             });
 
     }
 
     get isSetup(): boolean {
-        return this.serverInfo.hasConnected;
+        return this.serverInfo != null
+            && this.serverInfo.host != null
+            && this.serverInfo.hasConnected;
     }
 
     get isConnected(): boolean {
@@ -103,8 +97,17 @@ export class DeviceServerService {
     setServer(serverInfo: ServerInfoTuple): Promise<void> {
         this.serverInfo = serverInfo;
 
+        let sub = this.vortexStatusService.isOnline
+            .filter(online => online == true)
+            .subscribe(() => {
+                this.serverInfo.hasConnected = true;
+                this.saveConnInfo();
+                this.balloonMsg.showSuccess("Reconnection Successful");
+                sub.unsubscribe();
+                this.nav.toHome();
+            });
+
         this.updateVortex();
-        this.setupOnlinePing();
 
         // Store the data
         return this.saveConnInfo();

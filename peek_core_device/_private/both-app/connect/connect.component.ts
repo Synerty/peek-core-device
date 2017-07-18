@@ -43,13 +43,7 @@ export class ConnectComponent extends ComponentLifecycleEventEmitter implements 
         // Make sure we're not on this page when things are fine.
         this.doCheckEvent
             .takeUntil(this.onDestroyEvent)
-            .subscribe(() => {
-                if (this.deviceServerService.isConnected)
-                    this.nav.toHome();
-                else if (this.deviceServerService.isSetup)
-                    this.nav.toConnecting()
-            });
-
+            .subscribe(() => this._checkNav());
 
     }
 
@@ -75,6 +69,13 @@ export class ConnectComponent extends ComponentLifecycleEventEmitter implements 
                 break;
         }
 
+    }
+
+    private _checkNav() {
+        if (this.deviceServerService.isConnected)
+            this.nav.toHome();
+        else if (this.deviceServerService.isSetup)
+            this.nav.toConnecting()
     }
 
     connectEnabled(): boolean {
@@ -103,9 +104,10 @@ export class ConnectComponent extends ComponentLifecycleEventEmitter implements 
             return;
         }
 
-        this.deviceServerService.setServer(this.server);
+        this.deviceServerService.setServer(this.server)
+            .then(() => this.nav.toConnecting());
 
-        this.nav.toConnecting();
+
     }
 
 
