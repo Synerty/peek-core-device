@@ -50,6 +50,18 @@ export class DeviceEnrolmentService {
 
     }
 
+    get serverHost(): string {
+        return this.serverService.serverHost;
+    }
+
+    get serverUseSsl(): boolean {
+        return this.serverService.serverUseSsl;
+    }
+
+    get serverHttpPort(): number {
+        return this.serverService.serverHttpPort;
+    }
+
     checkEnrolment(): void {
         if (!this.serverService.isSetup)
             return;
