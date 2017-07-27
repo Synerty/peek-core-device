@@ -69,7 +69,7 @@
         ]
     },
     "desktop": {
-        "showHomeLink": true,
+        "showHomeLink": false,
         "appDir": "_private/both-app",
         "appModule": "device.module#DeviceModule",
         "assetDir": "_private/both-assets",
@@ -86,14 +86,24 @@
                 "persistent": true
             },
             {
+                "file": "_private/device-server.service",
+                "class": "DeviceServerService",
+                "persistent": true
+            },
+            {
                 "file": "_private/device-nav.service",
                 "class": "DeviceNavService",
                 "persistent": false
             },
             {
-                "file": "_private/device-server.service",
-                "class": "DeviceServerService",
-                "persistent": true
+                "file": "device-enrolled.guard",
+                "class": "DeviceEnrolledGuard",
+                "persistent": false
+            },
+            {
+                "file": "_private/device-tuple.service",
+                "class": "DeviceTupleService",
+                "persistent": false
             }
         ]
     }

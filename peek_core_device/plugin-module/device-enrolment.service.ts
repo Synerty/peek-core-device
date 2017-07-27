@@ -79,7 +79,6 @@ export class DeviceEnrolmentService {
             return;
         }
 
-        this.titleService.setEnabled(true);
         console.log("Device Enrollment Confirmed");
 
     }

@@ -1,5 +1,6 @@
 import {Injectable, NgZone} from "@angular/core";
 import {
+    TupleActionPushOfflineSingletonService,
     TupleDataObservableNameService,
     TupleDataObserverService,
     TupleDataOfflineObserverService,
@@ -7,7 +8,6 @@ import {
     TupleOfflineStorageService,
     VortexService,
     VortexStatusService,
-    WebSqlFactoryService,
     TupleActionPushNameService,
     TupleActionPushOfflineService,
     TupleStorageFactoryService
@@ -41,7 +41,7 @@ export class DeviceTupleService {
     hardwareInfo: HardwareInfo;
 
     constructor(storageFactory: TupleStorageFactoryService,
-                webSqlFactory: WebSqlFactoryService,
+                actionSingletonService: TupleActionPushOfflineSingletonService,
                 vortexService: VortexService,
                 vortexStatusService: VortexStatusService,
                 zone: NgZone) {
@@ -78,7 +78,7 @@ export class DeviceTupleService {
             new TupleActionPushNameService(deviceActionProcessorName, deviceFilt),
             vortexService,
             vortexStatusService,
-            webSqlFactory
+            actionSingletonService
         );
 
         this.hardwareInfo = new HardwareInfo(this.offlineStorage);
