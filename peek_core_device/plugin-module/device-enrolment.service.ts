@@ -62,6 +62,10 @@ export class DeviceEnrolmentService {
         return this.serverService.serverHttpPort;
     }
 
+    get serverWebsocketPort(): number {
+        return this.serverService.serverWebsocketPort;
+    }
+
     checkEnrolment(): void {
         if (!this.serverService.isSetup)
             return;

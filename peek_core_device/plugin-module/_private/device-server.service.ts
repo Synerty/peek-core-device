@@ -89,6 +89,10 @@ export class DeviceServerService {
         return this.serverInfo.httpPort;
     }
 
+    get serverWebsocketPort(): number {
+        return this.serverInfo.websocketPort;
+    }
+
 
     /** Set Server and Port
      *
