@@ -33,7 +33,6 @@
         "showHomeLink": false,
         "appDir": "_private/both-app",
         "appModule": "device.module#DeviceModule",
-        "assetDir": "_private/both-assets",
         "moduleDir": "plugin-module",
         "rootServices": [
             {
@@ -72,7 +71,6 @@
         "showHomeLink": false,
         "appDir": "_private/both-app",
         "appModule": "device.module#DeviceModule",
-        "assetDir": "_private/both-assets",
         "moduleDir": "plugin-module",
         "rootServices": [
             {
