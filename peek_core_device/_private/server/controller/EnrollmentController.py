@@ -4,10 +4,10 @@ from typing import List
 from uuid import uuid4
 
 from sqlalchemy.exc import IntegrityError
-from twisted.internet import reactor
 from twisted.internet.defer import Deferred
 
-from peek_core_device._private.server.controller.ObservableNotifier import ObservableNotifier
+from peek_core_device._private.server.controller.ObservableNotifier import \
+    ObservableNotifier
 from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
 from peek_core_device._private.storage.Setting import globalSetting, AUTO_ENROLLMENT
 from peek_core_device._private.tuples.EnrolDeviceAction import EnrolDeviceAction
@@ -15,7 +15,6 @@ from peek_core_device._private.tuples.UpdateEnrollmentAction import UpdateEnroll
 from vortex.DeferUtil import deferToThreadWrapWithLogger
 from vortex.Tuple import Tuple
 from vortex.TupleAction import TupleActionABC
-from vortex.TupleSelector import TupleSelector
 from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
 
 logger = logging.getLogger(__name__)
@@ -37,7 +36,6 @@ class EnrollmentController:
         if isinstance(tupleAction, UpdateEnrollmentAction):
             return self._processAdminUpdateEnrolment(tupleAction)
 
-
     @deferToThreadWrapWithLogger(logger)
     def _processDeviceEnrolment(self, action: EnrolDeviceAction) -> List[Tuple]:
         """ Process Device Enrolment
@@ -46,6 +44,16 @@ class EnrollmentController:
         """
         ormSession = self._dbSessionCreator()
         try:
+            # There should only be one item that exists if it exists.
+            existing = (
+                ormSession.query(DeviceInfoTuple)
+                    .filter(DeviceInfoTuple.deviceId == action.deviceId)
+                    .all()
+            )
+
+            if existing:
+                return list(existing)
+
             deviceInfo = DeviceInfoTuple()
             deviceInfo.description = action.description
             deviceInfo.deviceId = action.deviceId
@@ -75,6 +83,8 @@ class EnrollmentController:
 
             if "DeviceInfo_description_key" in str(e):
                 raise Exception("A device with that description already exists")
+
+            raise
 
         finally:
             # Always close the session after we create it

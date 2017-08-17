@@ -53,7 +53,6 @@ export class EnrollComponent extends ComponentLifecycleEventEmitter implements O
     }
 
     ngOnInit() {
-
         let t = this.deviceType;
 
         // Use DeviceInfoTuple to convert it.
@@ -70,13 +69,11 @@ export class EnrollComponent extends ComponentLifecycleEventEmitter implements O
         if (this.data.description == null || !this.data.description.length)
             return false;
 
-
         return true;
+
     }
 
     enrollClicked() {
-
-
         this.tupleService.tupleOfflineAction.pushAction(this.data)
             .then((tuples: DeviceInfoTuple[]) => {
                 // The service manages it from here
@@ -84,6 +81,7 @@ export class EnrollComponent extends ComponentLifecycleEventEmitter implements O
             .catch((err) => {
                 this.balloonMsg.showError(err);
             });
+
     }
 
 
