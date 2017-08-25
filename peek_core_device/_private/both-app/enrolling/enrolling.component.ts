@@ -30,14 +30,15 @@ export class EnrollingComponent extends ComponentLifecycleEventEmitter {
         this.titleService.setTitle('');
 
         // Make sure we're not on this page when things are fine.
-        this.doCheckEvent
+        let sub  = this.doCheckEvent
             .takeUntil(this.onDestroyEvent)
             .subscribe(() => {
                 if (this.enrolmentService.isEnrolled()) {
-                    this.titleService.setEnabled(false);
                     this.nav.toHome();
+                    sub.unsubscribe();
                 } else if (!this.enrolmentService.isSetup()) {
                     this.nav.toEnroll();
+                    sub.unsubscribe();
                 }
             });
 

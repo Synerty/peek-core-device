@@ -13,7 +13,7 @@ import {deviceFilt, deviceTuplePrefix} from "./PluginNames";
 import {DeviceTypeEnum} from "./hardware-info/hardware-info.abstract";
 import {DeviceTupleService} from "./device-tuple.service";
 import {DeviceNavService} from "./device-nav.service";
-
+import {Observable, Subject} from "rxjs";
 
 @addTupleType
 export class ServerInfoTuple extends Tuple {
@@ -39,6 +39,7 @@ export class DeviceServerService {
     );
 
     private serverInfo: ServerInfoTuple = new ServerInfoTuple();
+    private serverInfoSubject = new Subject<ServerInfoTuple>();
 
     private readonly deviceOnlineFilt = extend({key: "device.online"}, deviceFilt);
 
@@ -60,11 +61,13 @@ export class DeviceServerService {
                     this.updateVortex();
                 } else {
                     this.nav.toConnect();
-
-
                 }
             });
 
+    }
+
+    get connInfoObserver(): Observable<ServerInfoTuple> {
+        return this.serverInfoSubject;
     }
 
     get isSetup(): boolean {
@@ -127,12 +130,14 @@ export class DeviceServerService {
             .then((tuples: ServerInfoTuple[]) => {
                 if (tuples.length != 0) {
                     this.serverInfo = tuples[0];
-                    return;
+                    this.serverInfoSubject.next(this.serverInfo);
                 }
             });
     }
 
     private saveConnInfo(): Promise<void> {
+        this.serverInfoSubject.next(this.serverInfo);
+
         // Store the data
         return this.tupleService.offlineStorage
             .saveTuples(this.tupleSelector, [this.serverInfo])

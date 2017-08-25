@@ -16,13 +16,16 @@ export class ConnectingComponent extends ComponentLifecycleEventEmitter {
         super();
 
         // Make sure we're not on this page when things are fine.
-        this.doCheckEvent
+        let sub = this.doCheckEvent
             .takeUntil(this.onDestroyEvent)
             .subscribe(() => {
-                if (this.deviceServerService.isConnected)
-                    this.nav.toHome();
-                else if (!this.deviceServerService.isSetup)
+                if (this.deviceServerService.isConnected) {
+                    this.nav.toEnroll();
+                    sub.unsubscribe();
+                } else if (!this.deviceServerService.isSetup) {
                     this.nav.toConnect();
+                    sub.unsubscribe();
+                }
             });
 
     }

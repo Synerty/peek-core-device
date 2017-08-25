@@ -50,23 +50,24 @@ export class DeviceEnrolmentService {
 
     }
 
-    get serverHost(): string {
-        return this.serverService.serverHost;
+    get serverHttpUrl(): string {
+        let host = this.serverService.serverHost;
+        let httpProtocol = this.serverService.serverUseSsl ? 'https' : 'http';
+        let httpPort = this.serverService.serverHttpPort;
+
+        return `${httpProtocol}://${host}:${httpPort}`;
     }
 
-    get serverUseSsl(): boolean {
-        return this.serverService.serverUseSsl;
-    }
+    get serverWebsocketUrl(): string {
+        let host = this.serverService.serverHost;
+        let wsProtocol = this.serverService.serverUseSsl ? 'wss' : 'ws';
+        let wsPort = this.serverService.serverWebsocketPort;
 
-    get serverHttpPort(): number {
-        return this.serverService.serverHttpPort;
-    }
-
-    get serverWebsocketPort(): number {
-        return this.serverService.serverWebsocketPort;
+        return `${wsProtocol}://${host}:${wsPort}`;
     }
 
     checkEnrolment(): void {
+
         if (!this.serverService.isSetup)
             return;
 
@@ -87,7 +88,7 @@ export class DeviceEnrolmentService {
 
     }
 
-    isSetup() :boolean {
+    isSetup(): boolean {
         return this.deviceInfo != null;
     }
 

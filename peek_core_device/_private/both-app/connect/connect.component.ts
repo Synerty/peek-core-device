@@ -23,7 +23,7 @@ import {ComponentLifecycleEventEmitter} from "@synerty/vortexjs";
 })
 export class ConnectComponent extends ComponentLifecycleEventEmitter implements OnInit {
 
-    server: ServerInfoTuple | null = null;
+    server: ServerInfoTuple = new ServerInfoTuple();
 
     httpPortStr: string = '8000';
     websocketPortStr: string = '8001';
@@ -38,12 +38,25 @@ export class ConnectComponent extends ComponentLifecycleEventEmitter implements 
         super();
 
         this.deviceType = this.tupleService.hardwareInfo.deviceType();
-        this.server = new ServerInfoTuple();
+
+        this.deviceServerService.connInfoObserver
+            .takeUntil(this.onDestroyEvent)
+            .subscribe((info: ServerInfoTuple) => {
+                this.server = info;
+            });
 
         // Make sure we're not on this page when things are fine.
-        this.doCheckEvent
+        let sub = this.doCheckEvent
             .takeUntil(this.onDestroyEvent)
-            .subscribe(() => this._checkNav());
+            .subscribe(() => {
+                if (this.deviceServerService.isConnected) {
+                    this.nav.toEnroll();
+                    sub.unsubscribe();
+                } else if (this.deviceServerService.isSetup) {
+                    this.nav.toConnecting();
+                    sub.unsubscribe();
+                }
+            });
 
     }
 
@@ -71,12 +84,6 @@ export class ConnectComponent extends ComponentLifecycleEventEmitter implements 
 
     }
 
-    private _checkNav() {
-        if (this.deviceServerService.isConnected)
-            this.nav.toHome();
-        else if (this.deviceServerService.isSetup)
-            this.nav.toConnecting()
-    }
 
     connectEnabled(): boolean {
 
@@ -107,7 +114,10 @@ export class ConnectComponent extends ComponentLifecycleEventEmitter implements 
         this.deviceServerService.setServer(this.server)
             .then(() => this.nav.toConnecting());
 
+    }
 
+    setUseSsl(val:boolean) {
+        this.server.useSsl = val;
     }
 
 

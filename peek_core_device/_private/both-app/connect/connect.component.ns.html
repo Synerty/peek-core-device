@@ -42,10 +42,10 @@
                 <!-- COL 2 -->
                 <Label row="0" col="2" class="details-section-title"
                        text="Use SSL"></Label>
-                <Switch row="1" col="2" class="" [(ngModel)]="server.useSsl" ></Switch>
+                <Switch row="1" col="2" class="" #useSslSw [checked]="server?.useSsl"
+                        (checkedChange)="setUseSsl(useSslSw.checked)" ></Switch>
 
             </GridLayout>
-
 
 
             <Button text="Connect" (tap)="connectClicked()"></Button>
