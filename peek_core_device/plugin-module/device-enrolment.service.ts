@@ -58,12 +58,12 @@ export class DeviceEnrolmentService {
         return `${httpProtocol}://${host}:${httpPort}`;
     }
 
-    get serverWebsocketUrl(): string {
+    get serverWebsocketVortexUrl(): string {
         let host = this.serverService.serverHost;
         let wsProtocol = this.serverService.serverUseSsl ? 'wss' : 'ws';
         let wsPort = this.serverService.serverWebsocketPort;
 
-        return `${wsProtocol}://${host}:${wsPort}`;
+        return `${wsProtocol}://${host}:${wsPort}/vortexws`;
     }
 
     checkEnrolment(): void {
