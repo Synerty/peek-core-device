@@ -18,14 +18,19 @@
             <!-- Operating Zone, Category -->
             <GridLayout rows="auto, auto" columns="*">
                 <!-- COL 0 -->
-                <Label row="0" col="0" class="details-section-title"
+                <Label row="0" col="0"
+                       class="details-section-title"
                        text="A unique description or asset id"></Label>
-                <TextField row="1" col="0" class="details-section-value  editable"
+                <TextField row="1" col="0"
+                           class="details-section-value  editable"
+                           hint="Insert Device id"
                            [(ngModel)]="data.description"></TextField>
 
             </GridLayout>
 
-            <Button text="Enroll" (tap)="enrollClicked()"></Button>
+            <Button class="btn"
+                    text="Enroll"
+                    (tap)="enrollClicked()"></Button>
 
             <!-- Int -->
             <Label class="p" textWrap="true"
