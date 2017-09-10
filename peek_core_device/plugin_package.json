@@ -2,7 +2,7 @@
     "plugin": {
         "title": "Device",
         "packageName": "peek_core_device",
-    "version":"0.7.1",
+    "version":"0.7.2",
         "buildNumber": "#PLUGIN_BUILD#",
         "buildDate": "#BUILD_DATE#",
         "creator": "Synerty Pty Ltd",
