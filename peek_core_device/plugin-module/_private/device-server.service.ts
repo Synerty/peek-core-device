@@ -96,6 +96,17 @@ export class DeviceServerService {
         return this.serverInfo.websocketPort;
     }
 
+    private weHaveConnected():void {
+        this.serverInfo.hasConnected = true;
+        this.saveConnInfo();
+        this.nav.toHome();
+    }
+
+    setWorkOffline():void {
+        this.weHaveConnected();
+        this.balloonMsg.showWarning("Working Offline");
+    }
+
 
     /** Set Server and Port
      *
@@ -104,14 +115,12 @@ export class DeviceServerService {
     setServer(serverInfo: ServerInfoTuple): Promise<void> {
         this.serverInfo = serverInfo;
 
-        let sub = this.vortexStatusService.isOnline
+        this.vortexStatusService.isOnline
             .filter(online => online == true)
+            .first()
             .subscribe(() => {
-                this.serverInfo.hasConnected = true;
-                this.saveConnInfo();
+                this.weHaveConnected();
                 this.balloonMsg.showSuccess("Reconnection Successful");
-                sub.unsubscribe();
-                this.nav.toHome();
             });
 
         this.updateVortex();

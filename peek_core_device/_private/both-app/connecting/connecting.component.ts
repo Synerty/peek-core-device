@@ -34,4 +34,9 @@ export class ConnectingComponent extends ComponentLifecycleEventEmitter {
         this.nav.toConnect();
     }
 
+    workOfflineClicked() {
+        this.deviceServerService.setWorkOffline();
+    }
+
+
 }
