@@ -14,6 +14,7 @@ import {DeviceTypeEnum} from "./hardware-info/hardware-info.abstract";
 import {DeviceTupleService} from "./device-tuple.service";
 import {DeviceNavService} from "./device-nav.service";
 import {Observable, Subject} from "rxjs";
+import {WebClientVortexDetailsTuple} from "./tuples/WebClientVortexDetailsTuple";
 
 @addTupleType
 export class ServerInfoTuple extends Tuple {
@@ -45,6 +46,8 @@ export class DeviceServerService {
 
     private lastOnlineSub: any | null = null;
 
+    private isWeb: boolean = false;
+
     constructor(private nav: DeviceNavService,
                 private balloonMsg: Ng2BalloonMsgService,
                 private vortexService: VortexService,
@@ -53,15 +56,52 @@ export class DeviceServerService {
 
         let type: DeviceTypeEnum = this.tupleService.hardwareInfo.deviceType();
 
+        this.isWeb = type == DeviceTypeEnum.MOBILE_WEB
+            || type == DeviceTypeEnum.DESKTOP_WEB;
+
         this.loadConnInfo()
             .then(() => {
 
                 // If there is a host set, set the vortex
                 if (this.isSetup) {
                     this.updateVortex();
-                } else {
-                    this.nav.toConnect();
+                    return;
                 }
+
+                // If this is web, then we can request the websocket details.
+                if (!this.isWeb) {
+                    this.nav.toConnect();
+                    return;
+                }
+
+                this.nav.toConnecting();
+
+                this.tupleService.observer
+                    .pollForTuples(new TupleSelector(
+                        WebClientVortexDetailsTuple.tupleName, {}
+                    ))
+                    .then((tuples: WebClientVortexDetailsTuple[]) => {
+                        if (!tuples.length) {
+                            this.nav.toConnect();
+                            return;
+                        }
+
+                        let conn = this.extractHttpDetails();
+                        // conn.host = tuples[0].host;
+                        conn.websocketPort = tuples[0].websocketPort;
+                        // conn.useSsl = tuples[0].useSsl;
+                        // conn.httpPort = tuples[0].httpPort;
+
+                        this.setServer(conn);
+
+                    })
+                    .catch(e => {
+                        this.balloonMsg.showError(
+                            `Failed to load websocket details ${e}`
+                        );
+                        this.nav.toConnect();
+                    });
+
             });
 
     }
@@ -96,13 +136,32 @@ export class DeviceServerService {
         return this.serverInfo.websocketPort;
     }
 
-    private weHaveConnected():void {
+    extractHttpDetails(): ServerInfoTuple {
+        if (!this.isWeb) {
+            throw new Error("This method is only for the web version of the app");
+        }
+
+        let conn = new ServerInfoTuple();
+
+        conn.host = location.host.split(':')[0];
+        conn.useSsl = location.protocol.toLowerCase() == "https";
+
+        if (location.host.split(':').length > 1) {
+            conn.httpPort = parseInt(location.host.split(':')[1]);
+        } else {
+            conn.httpPort = conn.useSsl ? 443 : 80;
+        }
+
+        return conn;
+    }
+
+    private weHaveConnected(): void {
         this.serverInfo.hasConnected = true;
         this.saveConnInfo();
         this.nav.toHome();
     }
 
-    setWorkOffline():void {
+    setWorkOffline(): void {
         this.weHaveConnected();
         this.balloonMsg.showWarning("Working Offline");
     }

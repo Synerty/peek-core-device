@@ -66,15 +66,7 @@ export class ConnectComponent extends ComponentLifecycleEventEmitter implements 
             case DeviceTypeEnum.MOBILE_WEB:
             case DeviceTypeEnum.DESKTOP_WEB:
                 // If this is a web service, always use the host from the URL
-                this.server.host = location.host.split(':')[0];
-                this.server.useSsl = location.protocol.toLowerCase() == "https";
-
-                if (location.host.split(':').length > 1) {
-                    this.server.httpPort = parseInt(location.host.split(':')[1]);
-                } else {
-                    this.server.httpPort = this.server.useSsl ? 443 : 80;
-                }
-
+                this.server = this.deviceServerService.extractHttpDetails();
                 this.httpPortStr = this.server.httpPort.toString();
                 break;
 

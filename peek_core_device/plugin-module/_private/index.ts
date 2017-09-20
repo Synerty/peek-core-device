@@ -1,4 +1,7 @@
 export * from "./PluginNames";
+
+export {WebClientVortexDetailsTuple} from "./tuples/WebClientVortexDetailsTuple";
+
 export {DeviceUpdateTuple} from "./tuples/DeviceUpdateTuple";
 export {SettingPropertyTuple} from "./tuples/SettingPropertyTuple";
 
@@ -8,6 +11,7 @@ export {UpdateEnrollmentAction} from "./tuples/admin/UpdateEnrollmentAction";
 
 export {AlterDeviceUpdateAction} from "./tuples/admin/AlterDeviceUpdateAction";
 export {CreateDeviceUpdateAction} from "./tuples/admin/CreateDeviceUpdateAction";
+
 
 export {HardwareInfo} from "./hardware-info/hardware-info.mweb";
 export {DeviceTypeEnum} from "./hardware-info/hardware-info.abstract";
