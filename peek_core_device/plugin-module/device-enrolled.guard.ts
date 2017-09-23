@@ -17,8 +17,6 @@ export class DeviceEnrolledGuard implements CanActivate {
     canActivate(route: ActivatedRouteSnapshot,
                 state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
 
-        console.log(route);
-
         if (!this.serverService.isSetup) {
             this.nav.toConnect();
             return false;
@@ -30,9 +28,11 @@ export class DeviceEnrolledGuard implements CanActivate {
         }
 
         // This will take care of navigating to where to need to go to enroll
-        this.enrolmentService.checkEnrolment();
+        if (this.enrolmentService.checkEnrolment()) {
+            this.titleService.setEnabled(true);
+            return true;
+        }
 
-        // Return true, otherwise the router just ends up in an infinite loop
         return false;
     }
 }

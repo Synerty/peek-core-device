@@ -66,26 +66,25 @@ export class DeviceEnrolmentService {
         return `${wsProtocol}://${host}:${wsPort}/vortexws`;
     }
 
-    checkEnrolment(): void {
+    checkEnrolment(): boolean {
 
         if (!this.serverService.isSetup)
-            return;
+            return false;
 
         // Do Nothing
         if (this.deviceInfo == null) {
             console.log("Device Enrollment Has Not Started");
             this.nav.toEnroll();
-            return;
+            return false;
         }
 
         if (!this.deviceInfo.isEnrolled) {
             console.log("Device Enrollment Is Waiting Approval");
             this.nav.toEnrolling();
-            return;
+            return false;
         }
 
-        console.log("Device Enrollment Confirmed");
-
+        return true;
     }
 
     isSetup(): boolean {

@@ -1,4 +1,4 @@
-import {Component} from "@angular/core";
+import {Component, OnInit} from "@angular/core";
 import {TitleService} from "@synerty/peek-util";
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 
@@ -17,7 +17,7 @@ import {DeviceEnrolmentService} from "@peek/peek_core_device";
     templateUrl: 'enrolling.component.web.html',
     moduleId: module.id
 })
-export class EnrollingComponent extends ComponentLifecycleEventEmitter {
+export class EnrollingComponent extends ComponentLifecycleEventEmitter  implements OnInit{
     data: EnrolDeviceAction = new EnrolDeviceAction();
     private hardwareInfo: HardwareInfo;
 
@@ -26,8 +26,6 @@ export class EnrollingComponent extends ComponentLifecycleEventEmitter {
                 private nav: DeviceNavService,
                 private enrolmentService: DeviceEnrolmentService) {
         super();
-        this.titleService.setEnabled(false);
-        this.titleService.setTitle('');
 
         // Make sure we're not on this page when things are fine.
         let sub  = this.doCheckEvent
@@ -42,6 +40,11 @@ export class EnrollingComponent extends ComponentLifecycleEventEmitter {
                 }
             });
 
+    }
+
+    ngOnInit() {
+        this.titleService.setEnabled(false);
+        this.titleService.setTitle('');
     }
 
 

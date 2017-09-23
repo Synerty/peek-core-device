@@ -37,6 +37,7 @@ export class ConnectComponent extends ComponentLifecycleEventEmitter implements 
                 private deviceServerService: DeviceServerService) {
         super();
 
+
         this.deviceType = this.tupleService.hardwareInfo.deviceType();
 
         this.deviceServerService.connInfoObserver
@@ -61,6 +62,8 @@ export class ConnectComponent extends ComponentLifecycleEventEmitter implements 
     }
 
     ngOnInit() {
+        this.titleService.setEnabled(false);
+        this.titleService.setTitle('');
         //
         switch (this.deviceType) {
             case DeviceTypeEnum.MOBILE_WEB:

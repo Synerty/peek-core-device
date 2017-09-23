@@ -35,8 +35,6 @@ export class EnrollComponent extends ComponentLifecycleEventEmitter implements O
         super();
 
         this.deviceType = this.tupleService.hardwareInfo.deviceType();
-        this.titleService.setEnabled(false);
-        this.titleService.setTitle('');
 
         // Make sure we're not on this page when things are fine.
         let sub = this.doCheckEvent
@@ -54,6 +52,9 @@ export class EnrollComponent extends ComponentLifecycleEventEmitter implements O
     }
 
     ngOnInit() {
+        this.titleService.setEnabled(false);
+        this.titleService.setTitle('');
+
         let t = this.deviceType;
 
         // Use DeviceInfoTuple to convert it.

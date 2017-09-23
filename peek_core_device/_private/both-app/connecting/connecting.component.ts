@@ -1,4 +1,5 @@
-import {Component} from "@angular/core";
+import {Component, OnInit} from "@angular/core";
+import {TitleService} from "@synerty/peek-util";
 
 import {ComponentLifecycleEventEmitter} from "@synerty/vortexjs";
 
@@ -9,11 +10,13 @@ import {DeviceNavService, DeviceServerService} from "@peek/peek_core_device/_pri
     templateUrl: 'connecting.component.web.html',
     moduleId: module.id
 })
-export class ConnectingComponent extends ComponentLifecycleEventEmitter {
+export class ConnectingComponent extends ComponentLifecycleEventEmitter  implements OnInit {
 
-    constructor(private nav: DeviceNavService,
+    constructor(private titleService: TitleService,
+                private nav: DeviceNavService,
                 private deviceServerService: DeviceServerService) {
         super();
+
 
         // Make sure we're not on this page when things are fine.
         let sub = this.doCheckEvent
@@ -28,6 +31,11 @@ export class ConnectingComponent extends ComponentLifecycleEventEmitter {
                 }
             });
 
+    }
+
+    ngOnInit() {
+        this.titleService.setEnabled(false);
+        this.titleService.setTitle('');
     }
 
     reconnectClicked() {

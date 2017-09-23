@@ -106,6 +106,8 @@ export class DeviceUpdateService {
                 let msg = `Update ${deviceUpdate.updateVersion} has been`
                     + ` downloaded, please restart the app to apply the update`;
 
+                console.log(msg);
+
                 this.balloonMsg.showMessage(
                     msg,
                     UsrMsgLevel.Success,
