@@ -46,7 +46,7 @@ export class DeviceServerService {
 
     private lastOnlineSub: any | null = null;
 
-    private isWeb: boolean = false;
+    private _isWeb: boolean = false;
 
     private _isLoading = true;
 
@@ -58,7 +58,7 @@ export class DeviceServerService {
 
         let type: DeviceTypeEnum = this.tupleService.hardwareInfo.deviceType();
 
-        this.isWeb = type == DeviceTypeEnum.MOBILE_WEB
+        this._isWeb = type == DeviceTypeEnum.MOBILE_WEB
             || type == DeviceTypeEnum.DESKTOP_WEB;
 
         this.loadConnInfo()
@@ -71,7 +71,7 @@ export class DeviceServerService {
                 }
 
                 // If this is web, then we can request the websocket details.
-                if (!this.isWeb) {
+                if (!this._isWeb) {
                     this.nav.toConnect();
                     return;
                 }
@@ -106,6 +106,10 @@ export class DeviceServerService {
 
             });
 
+    }
+
+    get isWeb():boolean {
+        return this._isWeb;
     }
 
     get connInfoObserver(): Observable<ServerInfoTuple> {
@@ -143,7 +147,7 @@ export class DeviceServerService {
     }
 
     extractHttpDetails(): ServerInfoTuple {
-        if (!this.isWeb) {
+        if (!this._isWeb) {
             throw new Error("This method is only for the web version of the app");
         }
 
