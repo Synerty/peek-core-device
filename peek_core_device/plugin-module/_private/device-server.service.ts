@@ -48,6 +48,8 @@ export class DeviceServerService {
 
     private isWeb: boolean = false;
 
+    private _isLoading = true;
+
     constructor(private nav: DeviceNavService,
                 private balloonMsg: Ng2BalloonMsgService,
                 private vortexService: VortexService,
@@ -108,6 +110,10 @@ export class DeviceServerService {
 
     get connInfoObserver(): Observable<ServerInfoTuple> {
         return this.serverInfoSubject;
+    }
+
+    get isLoading(): boolean {
+        return this._isLoading;
     }
 
     get isSetup(): boolean {
@@ -197,6 +203,8 @@ export class DeviceServerService {
             .loadTuples(this.tupleSelector)
             .then((tuples: ServerInfoTuple[]) => {
                 if (tuples.length != 0) {
+                    this._isLoading = false;
+
                     this.serverInfo = tuples[0];
                     this.serverInfoSubject.next(this.serverInfo);
                 }

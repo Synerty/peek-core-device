@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import {TitleService} from "@synerty/peek-util";
-import {Subject} from "rxjs";
+import {Subject, Observable} from "rxjs";
 import {TupleSelector, VortexStatusService} from "@synerty/vortexjs";
 import {DeviceInfoTuple} from "./DeviceInfoTuple";
 import {DeviceNavService} from "./_private/device-nav.service";
@@ -15,7 +15,9 @@ export class DeviceEnrolmentService {
 
     // There is no point having multiple services observing the same thing
     // So lets create a nice observable for the device info.
-    deviceInfoObservable = new Subject<DeviceInfoTuple>();
+    private deviceInfoSubject = new Subject<DeviceInfoTuple>();
+
+    private _isLoading = true;
 
 
     constructor(private nav: DeviceNavService,
@@ -37,13 +39,14 @@ export class DeviceEnrolmentService {
                 this.tupleService.offlineObserver
                     .subscribeToTupleSelector(tupleSelector)
                     .subscribe((tuples: DeviceInfoTuple[]) => {
-
+                        this._isLoading = false;
+                        
                         if (tuples.length == 1)
                             this.deviceInfo = tuples[0];
                         else
                             this.deviceInfo = null;
 
-                        this.deviceInfoObservable.next(this.deviceInfo);
+                        this.deviceInfoSubject.next(this.deviceInfo);
                         this.checkEnrolment();
                     });
             });
@@ -85,6 +88,14 @@ export class DeviceEnrolmentService {
         }
 
         return true;
+    }
+    
+    deviceInfoObservable() : Observable<DeviceInfoTuple> {
+        return this.deviceInfoSubject;
+    }
+
+    isLoading(): boolean {
+        return this._isLoading;
     }
 
     isSetup(): boolean {

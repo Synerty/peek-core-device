@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot} from "@angular/router";
+import {ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot} from "@angular/router";
 import {TitleService} from "@synerty/peek-util";
 import {DeviceEnrolmentService} from "./device-enrolment.service";
 import {DeviceNavService} from "./_private/device-nav.service";
@@ -17,10 +17,35 @@ export class DeviceEnrolledGuard implements CanActivate {
     canActivate(route: ActivatedRouteSnapshot,
                 state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
 
+        // If the server service is still loading, come back later
+        // This only applies to when the app is initialising
+        if (this.serverService.isLoading) {
+            return new Promise((resolve) => {
+                this.serverService.connInfoObserver
+                    .first()
+                    .subscribe(() => {
+                        resolve(this.canActivate(route, state));
+                    });
+            });
+        }
+
         if (!this.serverService.isSetup) {
             this.nav.toConnect();
             return false;
         }
+
+        // If the enrolment service is still loading, the come back later
+        // This only applies to when the app is initialising
+        if (this.enrolmentService.isLoading()) {
+            return new Promise((resolve) => {
+                this.enrolmentService.deviceInfoObservable()
+                    .first()
+                    .subscribe(() => {
+                        resolve(this.canActivate(route, state));
+                    });
+            });
+        }
+
 
         if (this.enrolmentService.isEnrolled()) {
             this.titleService.setEnabled(true);

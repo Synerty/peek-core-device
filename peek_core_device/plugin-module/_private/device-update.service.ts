@@ -47,7 +47,7 @@ export class DeviceUpdateService {
                 // Why should we care if we're enrolled or not to check for updates?
                 // Devices that are not enrolled should not be able to access any thing on
                 // the servers.
-                this.enrolmentService.deviceInfoObservable
+                this.enrolmentService.deviceInfoObservable()
                     .subscribe((deviceInfo: DeviceInfoTuple) => {
                         this.resubscribeToUpdates(deviceInfo);
                     });
