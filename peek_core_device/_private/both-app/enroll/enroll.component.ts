@@ -76,9 +76,9 @@ export class EnrollComponent extends ComponentLifecycleEventEmitter implements O
     }
 
     enrollClicked() {
-        this.tupleService.tupleOfflineAction.pushAction(this.data)
+        this.tupleService.tupleAction.pushAction(this.data)
             .then((tuples: DeviceInfoTuple[]) => {
-                // The service manages it from here
+                this.balloonMsg.showSuccess("Enrollement successful");
             })
             .catch((err) => {
                 this.balloonMsg.showError(err);

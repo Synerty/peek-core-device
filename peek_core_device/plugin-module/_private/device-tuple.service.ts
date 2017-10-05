@@ -10,7 +10,8 @@ import {
     VortexStatusService,
     TupleActionPushNameService,
     TupleActionPushOfflineService,
-    TupleStorageFactoryService
+    TupleStorageFactoryService,
+    TupleActionPushService
 } from "@synerty/vortexjs";
 
 import {
@@ -36,6 +37,8 @@ export class DeviceTupleService {
     offlineStorage: TupleOfflineStorageService;
     offlineObserver: TupleDataObserverService;
     observer: TupleDataObserverService;
+
+    tupleAction: TupleActionPushService;
     tupleOfflineAction: TupleActionPushOfflineService;
 
     hardwareInfo: HardwareInfo;
@@ -71,6 +74,13 @@ export class DeviceTupleService {
             new TupleDataObservableNameService(
                 deviceObservableName,
                 deviceFilt)
+        );
+
+        // Create the observer
+        this.tupleAction = new TupleActionPushService(
+            new TupleActionPushNameService(deviceActionProcessorName, deviceFilt),
+            vortexService,
+            vortexStatusService
         );
 
         // Create the observer
