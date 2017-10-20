@@ -206,12 +206,14 @@ export class DeviceServerService {
         return this.tupleService.offlineStorage
             .loadTuples(this.tupleSelector)
             .then((tuples: ServerInfoTuple[]) => {
-                if (tuples.length != 0) {
-                    this._isLoading = false;
-
-                    this.serverInfo = tuples[0];
-                    this.serverInfoSubject.next(this.serverInfo);
+                if (!tuples.length) {
+                    return;
                 }
+
+                this._isLoading = false;
+                this.serverInfo = tuples[0];
+                this.serverInfoSubject.next(this.serverInfo);
+
             });
     }
 
@@ -222,7 +224,11 @@ export class DeviceServerService {
         return this.tupleService.offlineStorage
             .saveTuples(this.tupleSelector, [this.serverInfo])
             // Convert result to void
-            .then(() => Promise.resolve())
+            .then(() => {
+                this._isLoading = false;
+                this.serverInfoSubject.next(this.serverInfo);
+                Promise.resolve();
+            })
             .catch(e => {
                 console.log(e);
                 this.balloonMsg.showError(`Error storing server details ${e}`);
