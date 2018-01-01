@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import List
 from uuid import uuid4
 
+import pytz
 from sqlalchemy.exc import IntegrityError
 from twisted.internet.defer import Deferred
 
@@ -59,12 +60,12 @@ class EnrollmentController:
             deviceInfo.deviceId = action.deviceId
             deviceInfo.deviceType = action.deviceType
             deviceInfo.deviceToken = str(uuid4())
-            deviceInfo.createdDate = datetime.utcnow()
+            deviceInfo.createdDate = datetime.now(pytz.utc)
             deviceInfo.appVersion = '0.0.0'
             deviceInfo.isEnrolled = globalSetting(ormSession, AUTO_ENROLLMENT)
 
             # TODO, Move these to their own tuple
-            deviceInfo.lastOnline = datetime.utcnow()
+            deviceInfo.lastOnline = datetime.now(pytz.utc)
             deviceInfo.isOnline = True
 
             ormSession.add(deviceInfo)

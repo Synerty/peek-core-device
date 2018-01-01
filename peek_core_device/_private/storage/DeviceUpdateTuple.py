@@ -27,7 +27,7 @@ class DeviceUpdateTuple(Tuple, DeclarativeBase):
     id = Column(Integer, primary_key=True)
     deviceType = Column(String(20), nullable=False)
     description = Column(String, nullable=False)
-    buildDate = Column(DateTime, nullable=False)
+    buildDate = Column(DateTime(True), nullable=False)
     appVersion = Column(String(15), nullable=False)
     updateVersion = Column(String(15), nullable=False)
     filePath = Column(String(150), nullable=False)

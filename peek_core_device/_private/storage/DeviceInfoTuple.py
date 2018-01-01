@@ -35,8 +35,8 @@ class DeviceInfoTuple(Tuple, DeclarativeBase):
     deviceToken = Column(String(50), nullable=False, unique=True)
     appVersion = Column(String(15), nullable=False)
     updateVersion = Column(String(15))  # Null means it hasn't updated
-    lastOnline = Column(DateTime)
-    lastUpdateCheck = Column(DateTime)
-    createdDate = Column(DateTime, nullable=False)
+    lastOnline = Column(DateTime(True))
+    lastUpdateCheck = Column(DateTime(True))
+    createdDate = Column(DateTime(True), nullable=False)
     isOnline = Column(Boolean, nullable=False, server_default='0')
     isEnrolled = Column(Boolean, nullable=False, server_default='0')

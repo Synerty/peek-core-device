@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Union
 
+import pytz
 from twisted.internet.defer import Deferred
 
 from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
@@ -32,7 +33,7 @@ class DeviceUpdateTupleProvider(TuplesProviderABC):
                         .one()
                 )
 
-                deviceInfo.lastUpdateCheck = datetime.utcnow()
+                deviceInfo.lastUpdateCheck = datetime.now(pytz.utc)
                 ormSession.commit()
 
             tuples = []

@@ -4,6 +4,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import List
 
+import pytz
 import shutil
 from twisted.internet.defer import Deferred, inlineCallbacks, returnValue
 
@@ -119,7 +120,7 @@ class UpdateController:
         """
         ormSession = self._dbSessionCreator()
         try:
-            newUpdate.buildDate = datetime.utcnow()
+            newUpdate.buildDate = datetime.now(pytz.utc)
             newUpdate.isEnabled = False
             ormSession.add(newUpdate)
             ormSession.commit()
