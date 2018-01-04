@@ -8,8 +8,8 @@ import pytz
 import shutil
 from twisted.internet.defer import Deferred, inlineCallbacks, returnValue
 
-from peek_core_device._private.server.controller.ObservableNotifier import \
-    ObservableNotifier
+from peek_core_device._private.server.controller.NotifierController import \
+    NotifierController
 from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
 from peek_core_device._private.storage.DeviceUpdateTuple import DeviceUpdateTuple
 from peek_core_device._private.tuples.AlterDeviceUpdateAction import \
@@ -28,10 +28,10 @@ logger = logging.getLogger(__name__)
 
 class UpdateController:
     def __init__(self, dbSessionCreator,
-                 tupleObservable: TupleDataObservableHandler,
+                 notifierController: NotifierController,
                  deviceUpdateFilePath: Path):
         self._dbSessionCreator = dbSessionCreator
-        self._tupleObservable = tupleObservable
+        self._notifierController = notifierController
         self._deviceUpdateFilePath = deviceUpdateFilePath
 
     def shutdown(self):
@@ -68,8 +68,7 @@ class UpdateController:
 
             session.commit()
 
-            ObservableNotifier.notifyDeviceUpdate(deviceType=deviceType,
-                                                  tupleObservable=self._tupleObservable)
+            self._notifierController.notifyDeviceUpdate(deviceType=deviceType)
 
             return []
 
@@ -106,8 +105,9 @@ class UpdateController:
         shutil.move(namedTempFile.name, str(absFilePath))
         namedTempFile.delete = False
 
-        ObservableNotifier.notifyDeviceUpdate(deviceType=deviceUpdateTuple.deviceType,
-                                              tupleObservable=self._tupleObservable)
+        self._notifierController.notifyDeviceUpdate(
+            deviceType=deviceUpdateTuple.deviceType
+        )
 
         returnValue("%s:%s Created Successfully"
                     % (deviceUpdateTuple.deviceType, deviceUpdateTuple.updateVersion))
@@ -160,8 +160,7 @@ class UpdateController:
 
             session.commit()
 
-            ObservableNotifier.notifyDeviceInfo(deviceId=deviceId,
-                                                tupleObservable=self._tupleObservable)
+            self._notifierController.notifyDeviceInfo(deviceId=deviceId)
 
             return []
 

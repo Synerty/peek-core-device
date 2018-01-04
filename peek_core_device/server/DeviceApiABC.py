@@ -1,6 +1,7 @@
 from typing import Optional
 
 from abc import ABCMeta, abstractmethod
+from rx import Observable
 from twisted.internet.defer import Deferred
 
 
@@ -22,7 +23,6 @@ class DeviceApiABC(metaclass=ABCMeta):
 
         """
 
-
     @abstractmethod
     def deviceDescriptionBlocking(self, deviceToken: str) -> Optional[str]:
         """ Device Description
@@ -31,5 +31,15 @@ class DeviceApiABC(metaclass=ABCMeta):
 
         :param deviceToken: The token for the device to retrieve the description for
         :return: The device description or None
+
+        """
+
+    @abstractmethod
+    def deviceOnlineStatus(self) -> Observable:
+        """ Device Online Stauts
+
+        Subscribe to device online status
+
+        :return: An observable that fires when devices go online or offline.
 
         """

@@ -4,6 +4,8 @@ from pathlib import Path
 from twisted.internet import defer
 from twisted.internet.defer import Deferred, inlineCallbacks
 
+from peek_core_device._private.server.controller.NotifierController import \
+    NotifierController
 from peek_core_device._private.server.controller.UpdateController import \
     UpdateController
 from peek_core_device._private.server.controller.EnrollmentController import \
@@ -17,21 +19,21 @@ logger = logging.getLogger(__name__)
 
 
 class MainController(TupleActionProcessorDelegateABC):
-    def __init__(self, dbSessionCreator, tupleObservable: TupleDataObservableHandler,
+    def __init__(self, dbSessionCreator, notifierController: NotifierController,
                  deviceUpdateFilePath: Path):
         self._dbSessionCreator = dbSessionCreator
-        self._tupleObservable = tupleObservable
+        self._notifierController = notifierController
 
         self._enrollmentController = EnrollmentController(
-            dbSessionCreator, tupleObservable
+            dbSessionCreator, notifierController
         )
 
         self._onlineController = OnlineController(
-            dbSessionCreator, tupleObservable
+            dbSessionCreator, notifierController
         )
 
         self._updateController = UpdateController(
-            dbSessionCreator, tupleObservable, deviceUpdateFilePath
+            dbSessionCreator, notifierController, deviceUpdateFilePath
         )
 
     @property

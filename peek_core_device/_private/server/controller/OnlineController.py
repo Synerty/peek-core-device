@@ -4,23 +4,22 @@ from typing import List
 from sqlalchemy.orm.exc import NoResultFound
 from twisted.internet.defer import Deferred
 
-from peek_core_device._private.server.controller.ObservableNotifier import \
-    ObservableNotifier
+from peek_core_device._private.server.controller.NotifierController import \
+    NotifierController
 from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
 from peek_core_device._private.tuples.UpdateDeviceOnlineAction import \
     UpdateDeviceOnlineAction
 from vortex.DeferUtil import deferToThreadWrapWithLogger
 from vortex.Tuple import Tuple
 from vortex.TupleAction import TupleActionABC
-from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
 
 logger = logging.getLogger(__name__)
 
 
 class OnlineController:
-    def __init__(self, dbSessionCreator, tupleObservable: TupleDataObservableHandler):
+    def __init__(self, dbSessionCreator, notifierController: NotifierController):
         self._dbSessionCreator = dbSessionCreator
-        self._tupleObservable = tupleObservable
+        self._notifierController = notifierController
 
         self._setAllDevicesOfflineBlocking()
 
@@ -53,8 +52,12 @@ class OnlineController:
 
             session.commit()
 
-            ObservableNotifier.notifyDeviceInfo(deviceId=deviceId,
-                                                tupleObservable=self._tupleObservable)
+            self._notifierController.notifyDeviceInfo(deviceId=deviceId)
+            self._notifierController.notifyDeviceOnline(
+                deviceInfo.deviceId,
+                deviceInfo.deviceToken,
+                deviceInfo.isOnline
+            )
 
             return []
 

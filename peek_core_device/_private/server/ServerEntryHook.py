@@ -1,5 +1,7 @@
 import logging
 
+from peek_core_device._private.server.controller.NotifierController import \
+    NotifierController
 from txhttputil.site.FileUnderlayResource import FileUnderlayResource
 
 from peek_core_device._private.server.controller.UpdateController import \
@@ -65,11 +67,16 @@ class ServerEntryHook(PluginServerEntryHookABC, PluginServerStorageEntryHookABC)
         """
 
         tupleObservable = makeTupleDataObservableHandler(self.dbSessionCreator)
+        self._loadedObjects.append(tupleObservable)
+
+        notifierController = NotifierController(tupleObservable=tupleObservable)
+        self._loadedObjects.append(notifierController)
 
         mainController = MainController(
             dbSessionCreator=self.dbSessionCreator,
-            tupleObservable=tupleObservable,
+            notifierController=notifierController,
             deviceUpdateFilePath=self._deviceUpdatesPath)
+        self._loadedObjects.append(mainController)
 
         # Support uploads from the admin UI
         # noinspection PyTypeChecker
@@ -88,14 +95,14 @@ class ServerEntryHook(PluginServerEntryHookABC, PluginServerStorageEntryHookABC)
             makeAdminBackendHandlers(tupleObservable, self.dbSessionCreator)
         )
 
-        self._loadedObjects.append(tupleObservable)
-
-        self._loadedObjects.append(mainController)
+        # Make the Action Processor Handler
         self._loadedObjects.append(makeTupleActionProcessorHandler(mainController))
 
         # Initialise the API object that will be shared with other plugins
         self._api = DeviceApi(mainController, self.dbSessionCreator)
         self._loadedObjects.append(self._api)
+
+        notifierController.setApi(self._api)
 
         logger.debug("Started")
 

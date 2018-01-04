@@ -1,6 +1,6 @@
 import logging
+from typing import List
 
-from twisted.internet.defer import DeferredList
 from twisted.internet.task import LoopingCall
 
 from peek_core_device._private.PluginNames import deviceFilt, deviceActionProcessorName
@@ -57,20 +57,26 @@ class DeviceOnlineHandler:
         self._onlineDeviceIdsByUuid = {}
 
     def _poll(self):
-        onlineVortexUuids = set(VortexFactory.getRemoteVortexUuids())
-        onlineDeviceVortexUuids = set(self._onlineDeviceIdsByUuid)
+        try:
+            onlineVortexUuids = set(VortexFactory.getRemoteVortexUuids())
+            onlineDeviceVortexUuids = set(self._onlineDeviceIdsByUuid)
 
-        devicesThatHaveGoneOffline = onlineDeviceVortexUuids - onlineVortexUuids
+            devicesThatHaveGoneOffline = onlineDeviceVortexUuids - onlineVortexUuids
 
-        deviceIds = []
-        for vortexUuid in devicesThatHaveGoneOffline:
-            deviceIds.append( self._onlineDeviceIdsByUuid.pop(vortexUuid))
+            deviceIds = []
+            for vortexUuid in devicesThatHaveGoneOffline:
+                deviceIds.append(self._onlineDeviceIdsByUuid.pop(vortexUuid))
 
-        self._sendOfflineForDeviceIds(deviceIds)
+            self._sendOfflineForDeviceIds(deviceIds)
 
+        except Exception as e:
+            logger.exception(e)
 
     def _process(self, payload: Payload, vortexUuid: str, **kwargs):
         deviceId = payload.filt["deviceId"]
+
+        if vortexUuid in self._onlineDeviceIdsByUuid:
+            return
 
         self._onlineDeviceIdsByUuid[vortexUuid] = deviceId
 
@@ -81,7 +87,7 @@ class DeviceOnlineHandler:
         d = self._actionClient.pushAction(action)
         d.addErrback(vortexLogFailure, logger, consumeError=True)
 
-    def _sendOfflineForDeviceIds(self, deviceIds:[str]):
+    def _sendOfflineForDeviceIds(self, deviceIds: List[str]):
 
         for deviceId in deviceIds:
             action = UpdateDeviceOnlineAction()

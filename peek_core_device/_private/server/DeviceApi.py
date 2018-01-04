@@ -1,11 +1,14 @@
 import logging
 from typing import Optional
 
+from rx import Observable
+from rx.subjects import Subject
 from twisted.internet.defer import Deferred
 
 from peek_core_device._private.server.controller.MainController import MainController
 from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
 from peek_core_device.server.DeviceApiABC import DeviceApiABC
+from peek_core_device.tuples.DeviceOnlineDetailTuple import DeviceOnlineDetailTuple
 from vortex.DeferUtil import deferToThreadWrapWithLogger, noMainThread
 
 logger = logging.getLogger(__name__)
@@ -16,6 +19,11 @@ class DeviceApi(DeviceApiABC):
                  ormSessionCreator):
         self._mainController = mainController
         self._ormSessionCreator = ormSessionCreator
+
+        self._deviceOnlineSubject = Subject()
+
+    def shutdown(self):
+        pass
 
     @deferToThreadWrapWithLogger(logger)
     def deviceDescription(self, deviceToken: str) -> Deferred:
@@ -29,7 +37,7 @@ class DeviceApi(DeviceApiABC):
             all = (
                 ormSession.query(DeviceInfoTuple)
                     .filter(DeviceInfoTuple.deviceToken == deviceToken)
-                .all()
+                    .all()
             )
 
             if not all:
@@ -40,5 +48,14 @@ class DeviceApi(DeviceApiABC):
         finally:
             ormSession.close()
 
-    def shutdown(self):
-        pass
+    def deviceOnlineStatus(self) -> Observable:
+        return self._deviceOnlineSubject
+
+    def notifyOfOnlineStatus(self, deviceId: str, deviceToken: str, status: bool):
+        self._deviceOnlineSubject.on_next(
+            DeviceOnlineDetailTuple(
+                deviceToken=deviceToken,
+                deviceId=deviceId,
+                onlineStatus=status
+            )
+        )

@@ -7,8 +7,8 @@ import pytz
 from sqlalchemy.exc import IntegrityError
 from twisted.internet.defer import Deferred
 
-from peek_core_device._private.server.controller.ObservableNotifier import \
-    ObservableNotifier
+from peek_core_device._private.server.controller.NotifierController import \
+    NotifierController
 from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
 from peek_core_device._private.storage.Setting import globalSetting, AUTO_ENROLLMENT
 from peek_core_device._private.tuples.EnrolDeviceAction import EnrolDeviceAction
@@ -22,9 +22,9 @@ logger = logging.getLogger(__name__)
 
 
 class EnrollmentController:
-    def __init__(self, dbSessionCreator, tupleObservable: TupleDataObservableHandler):
+    def __init__(self, dbSessionCreator, notifierController: NotifierController):
         self._dbSessionCreator = dbSessionCreator
-        self._tupleObservable = tupleObservable
+        self._notifierController = notifierController
 
     def shutdown(self):
         pass
@@ -71,8 +71,7 @@ class EnrollmentController:
             ormSession.add(deviceInfo)
             ormSession.commit()
 
-            ObservableNotifier.notifyDeviceInfo(deviceId=deviceInfo.deviceId,
-                                                tupleObservable=self._tupleObservable)
+            self._notifierController.notifyDeviceInfo(deviceId=deviceInfo.deviceId)
 
             ormSession.refresh(deviceInfo)
             ormSession.expunge_all()
@@ -114,8 +113,7 @@ class EnrollmentController:
 
             session.commit()
 
-            ObservableNotifier.notifyDeviceInfo(deviceId=deviceId,
-                                                tupleObservable=self._tupleObservable)
+            self._notifierController.notifyDeviceInfo(deviceId=deviceId)
 
             return []
 
