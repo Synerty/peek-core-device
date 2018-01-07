@@ -15,7 +15,7 @@ export class DeviceEnrolledGuard implements CanActivate {
     }
 
     canActivate(route: ActivatedRouteSnapshot,
-                state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+                state: RouterStateSnapshot):  Promise<boolean> | boolean {
 
         // If the server service is still loading, come back later
         // This only applies to when the app is initialising
