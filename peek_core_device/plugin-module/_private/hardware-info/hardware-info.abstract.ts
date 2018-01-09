@@ -1,6 +1,6 @@
 import {Tuple, TupleOfflineStorageService, TupleSelector,addTupleType} from "@synerty/vortexjs";
 
-import {deviceTuplePrefix} from "@peek/peek_core_device/_private";
+import {deviceTuplePrefix} from "@peek/peek_core_device/_private/PluginNames";
 
 import {Md5} from "ts-md5/dist/md5";
 
