@@ -15,8 +15,7 @@
         "client",
         "mobile",
         "desktop",
-        "doc-admin",
-        "doc-user"
+        "doc-admin"
     ],
     "doc-admin": {
         "docDir": "doc-admin",
@@ -25,8 +24,7 @@
     },
     "doc-user": {
         "docDir": "doc-user",
-        "docRst": "index.rst",
-        "hasApi": true
+        "docRst": "index.rst"
     },
     "server": {
     },
