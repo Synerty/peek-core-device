@@ -2,7 +2,7 @@
     "plugin": {
         "title": "Device",
         "packageName": "peek_core_device",
-    "version":"0.8.1",
+        "version": "0.8.1",
         "buildNumber": "#PLUGIN_BUILD#",
         "buildDate": "#BUILD_DATE#",
         "creator": "Synerty Pty Ltd",
@@ -14,8 +14,20 @@
         "admin",
         "client",
         "mobile",
-        "desktop"
+        "desktop",
+        "doc-admin",
+        "doc-user"
     ],
+    "doc-admin": {
+        "docDir": "doc-admin",
+        "docRst": "index.rst",
+        "hasApi": true
+    },
+    "doc-user": {
+        "docDir": "doc-user",
+        "docRst": "index.rst",
+        "hasApi": true
+    },
     "server": {
     },
     "storage": {
