@@ -15,7 +15,8 @@
         "client",
         "mobile",
         "desktop",
-        "doc-admin"
+        "doc-admin",
+        "doc-user"
     ],
     "doc-admin": {
         "docDir": "doc-admin",
