@@ -67,6 +67,9 @@ class DeviceOnlineHandler:
             for vortexUuid in devicesThatHaveGoneOffline:
                 deviceIds.append(self._onlineDeviceIdsByUuid.pop(vortexUuid))
 
+            # Make sure the device hasn't come back online as a difference vortex UUID
+            deviceIds = list(set(deviceIds) - set(self._onlineDeviceIdsByUuid.values()))
+
             self._sendOfflineForDeviceIds(deviceIds)
 
         except Exception as e:
