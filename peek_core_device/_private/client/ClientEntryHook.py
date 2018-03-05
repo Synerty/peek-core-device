@@ -47,6 +47,8 @@ class ClientEntryHook(PluginClientEntryHookABC):
 
         """
 
+        # ----------------
+        # Setup Photo Resource Proxy
         # Support file downloads for device updates
         # noinspection PyTypeChecker
         proxyResource = HttpResourceProxy(
@@ -60,12 +62,20 @@ class ClientEntryHook(PluginClientEntryHookABC):
         # noinspection PyTypeChecker
         self.platform.addMobileResource(b'device_update', proxyResource)
 
+        # ----------------
+        # Action Processor Proxy
         self._loadedObjects.append(makeTupleActionProcessorProxy())
 
+        # ----------------
+        # Data Observable Proxy
         self._loadedObjects.append(makeDeviceTupleDataObservableProxy())
 
+        # ----------------
+        # Online Handler
         self._loadedObjects.append(DeviceOnlineHandler())
 
+        # ----------------
+        # Update Download Handler
         self._loadedObjects.append(
             UpdateDownloadHandler(self.platform.fileStorageDirectory,
                                   self.platform.peekServerHost,
