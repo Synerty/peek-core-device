@@ -13,7 +13,8 @@ import {deviceFilt, deviceTuplePrefix} from "./PluginNames";
 import {DeviceTypeEnum} from "./hardware-info/hardware-info.abstract";
 import {DeviceTupleService} from "./device-tuple.service";
 import {DeviceNavService} from "./device-nav.service";
-import {Observable, Subject} from "rxjs";
+import {Observable} from "rxjs/Observable";
+import {Subject} from "rxjs/Subject";
 import {WebClientVortexDetailsTuple} from "./tuples/WebClientVortexDetailsTuple";
 
 @addTupleType

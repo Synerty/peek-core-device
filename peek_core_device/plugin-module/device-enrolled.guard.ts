@@ -4,7 +4,7 @@ import {TitleService} from "@synerty/peek-util";
 import {DeviceEnrolmentService} from "./device-enrolment.service";
 import {DeviceNavService} from "./_private/device-nav.service";
 import {DeviceServerService} from "./_private/device-server.service";
-import {Observable} from "rxjs";
+import {Observable} from "rxjs/Observable";
 
 @Injectable()
 export class DeviceEnrolledGuard implements CanActivate {
