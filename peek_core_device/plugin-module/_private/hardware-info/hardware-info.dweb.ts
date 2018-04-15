@@ -1,4 +1,5 @@
-import {DeviceTypeEnum, HardwareInfoI, webUuid} from "./hardware-info.abstract";
+import {DeviceTypeEnum, HardwareInfoI} from "./hardware-info.abstract";
+import {webUuid} from "./hardware-info.web";
 import {TupleOfflineStorageService} from "@synerty/vortexjs";
 
 export class HardwareInfo implements HardwareInfoI {

@@ -1,8 +1,6 @@
 import {CommonModule} from "@angular/common";
 import {NgModule} from "@angular/core";
 import {Routes} from "@angular/router";
-// Import a small abstraction library to switch between nativescript and web
-import {PeekModuleFactory} from "@synerty/peek-util/index.web";
 // Import the default route component
 import {DeviceComponent} from "./device.component";
 // Import the required classes from VortexJS
@@ -28,7 +26,7 @@ import {deviceActionProcessorName} from "@peek/peek_core_device/_private";
 import {EnrollingComponent} from "./enrolling/enrolling.component";
 import {ConnectComponent} from "./connect/connect.component";
 import {ConnectingComponent} from "./connecting/connecting.component";
-
+import {PeekModuleFactory} from "@synerty/peek-util-web";
 
 export function tupleActionPushNameServiceFactory() {
     return new TupleActionPushNameService(
