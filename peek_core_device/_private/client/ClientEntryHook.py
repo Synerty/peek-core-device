@@ -3,7 +3,6 @@ import logging
 from twisted.internet.defer import inlineCallbacks
 
 from peek_core_device._private.client.DeviceOnlineHandler import DeviceOnlineHandler
-from peek_core_device._private.client.UpdateDownloadHandler import UpdateDownloadHandler
 from peek_core_device._private.storage.DeclarativeBase import loadStorageTuples
 from peek_core_device._private.tuples import loadPrivateTuples
 from peek_core_device.tuples import loadPublicTuples
@@ -74,13 +73,13 @@ class ClientEntryHook(PluginClientEntryHookABC):
         # Online Handler
         self._loadedObjects.append(DeviceOnlineHandler())
 
-        # ----------------
-        # Update Download Handler
-        self._loadedObjects.append(
-            UpdateDownloadHandler(self.platform.fileStorageDirectory,
-                                  self.platform.peekServerHost,
-                                  self.platform.peekServerHttpPort)
-        )
+        # # ----------------
+        # # Update Download Handler
+        # self._loadedObjects.append(
+        #     UpdateDownloadHandler(self.platform.fileStorageDirectory,
+        #                           self.platform.peekServerHost,
+        #                           self.platform.peekServerHttpPort)
+        # )
 
         logger.debug("Started")
 

@@ -11,6 +11,7 @@ from peek_plugin_base.PeekVortexUtil import peekServerName
 from vortex.DeferUtil import vortexLogFailure
 from vortex.Payload import Payload
 from vortex.PayloadEndpoint import PayloadEndpoint
+from vortex.PayloadEnvelope import PayloadEnvelope
 from vortex.VortexFactory import VortexFactory
 from vortex.handler.TupleDataActionClient import TupleDataActionClient
 from vortex.handler.TupleDataObservableProxyHandler import TupleDataObservableProxyHandler
@@ -75,8 +76,8 @@ class DeviceOnlineHandler:
         except Exception as e:
             logger.exception(e)
 
-    def _process(self, payload: Payload, vortexUuid: str, **kwargs):
-        deviceId = payload.filt["deviceId"]
+    def _process(self, payloadEnvelope: PayloadEnvelope, vortexUuid: str, **kwargs):
+        deviceId = payloadEnvelope.filt["deviceId"]
 
         if vortexUuid in self._onlineDeviceIdsByUuid:
             return
