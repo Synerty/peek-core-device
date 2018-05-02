@@ -1,5 +1,10 @@
 import {Component, OnInit} from "@angular/core";
-import {ComponentLifecycleEventEmitter, Payload, VortexService} from "@synerty/vortexjs";
+import {
+    ComponentLifecycleEventEmitter,
+    Payload,
+    PayloadEnvelope,
+    VortexService
+} from "@synerty/vortexjs";
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 import {FileUploader} from "ng2-file-upload";
 import {
@@ -66,7 +71,8 @@ export class UploadDeviceUpdateComponent extends ComponentLifecycleEventEmitter 
         action.newUpdate = this.newUpdate;
 
         new Payload({}, [action])
-            .toVortexMsg()
+            .makePayloadEnvelope()
+            .then((payloadEnvelope: PayloadEnvelope) => payloadEnvelope.toVortexMsg())
             .then((vortexMsg: string) => {
                 let data = encodeURIComponent(vortexMsg);
 
