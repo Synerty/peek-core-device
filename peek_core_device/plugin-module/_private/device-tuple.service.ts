@@ -1,17 +1,17 @@
 import {Injectable, NgZone} from "@angular/core";
 import {
+    TupleActionPushNameService,
+    TupleActionPushOfflineService,
     TupleActionPushOfflineSingletonService,
+    TupleActionPushService,
     TupleDataObservableNameService,
     TupleDataObserverService,
     TupleDataOfflineObserverService,
     TupleOfflineStorageNameService,
     TupleOfflineStorageService,
-    VortexService,
-    VortexStatusService,
-    TupleActionPushNameService,
-    TupleActionPushOfflineService,
     TupleStorageFactoryService,
-    TupleActionPushService
+    VortexService,
+    VortexStatusService
 } from "@synerty/vortexjs";
 
 import {
@@ -35,7 +35,7 @@ import {HardwareInfo} from "./hardware-info/hardware-info.mweb";
 @Injectable()
 export class DeviceTupleService {
     offlineStorage: TupleOfflineStorageService;
-    offlineObserver: TupleDataObserverService;
+    offlineObserver: TupleDataOfflineObserverService;
     observer: TupleDataObserverService;
 
     tupleAction: TupleActionPushService;
@@ -46,8 +46,7 @@ export class DeviceTupleService {
     constructor(storageFactory: TupleStorageFactoryService,
                 actionSingletonService: TupleActionPushOfflineSingletonService,
                 vortexService: VortexService,
-                vortexStatusService: VortexStatusService,
-                zone: NgZone) {
+                vortexStatusService: VortexStatusService) {
 
         // Create the offline storage
         this.offlineStorage = new TupleOfflineStorageService(
@@ -59,22 +58,12 @@ export class DeviceTupleService {
         this.offlineObserver = new TupleDataOfflineObserverService(
             vortexService,
             vortexStatusService,
-            zone,
-            new TupleDataObservableNameService(
-                deviceObservableName,
-                deviceFilt),
+            new TupleDataObservableNameService(deviceObservableName, deviceFilt),
             this.offlineStorage
         );
 
         // Create the observer
-        this.observer = new TupleDataObserverService(
-            vortexService,
-            vortexStatusService,
-            zone,
-            new TupleDataObservableNameService(
-                deviceObservableName,
-                deviceFilt)
-        );
+        this.observer = new TupleDataObserverService(this.offlineObserver);
 
         // Create the observer
         this.tupleAction = new TupleActionPushService(
