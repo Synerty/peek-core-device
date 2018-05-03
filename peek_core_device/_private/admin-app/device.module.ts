@@ -9,7 +9,10 @@ import {
     TupleActionPushNameService,
     TupleActionPushService,
     TupleDataObservableNameService,
-    TupleDataObserverService
+    TupleDataObserverService,
+    TupleOfflineStorageNameService,
+    TupleOfflineStorageService,
+    TupleDataOfflineObserverService
 } from "@synerty/vortexjs";
 // Import our components
 import {DeviceComponent} from "./device.component";
@@ -18,7 +21,8 @@ import {DeviceInfoComponent} from "./device-info-table/device-info.component";
 import {
     deviceActionProcessorName,
     deviceFilt,
-    deviceObservableName
+    deviceObservableName,
+    deviceTupleOfflineServiceName
 } from "@peek/peek_core_device/_private";
 import {UploadDeviceUpdateComponent} from "./upload-device-update/upload-device-update.component";
 
@@ -31,6 +35,10 @@ export function tupleActionPushNameServiceFactory() {
 export function tupleDataObservableNameServiceFactory() {
     return new TupleDataObservableNameService(
         deviceObservableName, deviceFilt);
+}
+
+export function tupleOfflineStorageNameServiceFactory() {
+    return new TupleOfflineStorageNameService(deviceTupleOfflineServiceName);
 }
 
 // Define the routes for this Angular module
@@ -55,7 +63,11 @@ export const pluginRoutes: Routes = [
             provide: TupleActionPushNameService,
             useFactory: tupleActionPushNameServiceFactory
         },
-        TupleDataObserverService, {
+        TupleOfflineStorageService, {
+            provide: TupleOfflineStorageNameService,
+            useFactory: tupleOfflineStorageNameServiceFactory
+        },
+        TupleDataObserverService, TupleDataOfflineObserverService, {
             provide: TupleDataObservableNameService,
             useFactory: tupleDataObservableNameServiceFactory
         },
