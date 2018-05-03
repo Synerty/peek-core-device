@@ -55,15 +55,16 @@ export class DeviceTupleService {
         );
 
         // Create the offline observer
+        let observerName = new TupleDataObservableNameService(deviceObservableName, deviceFilt);
         this.offlineObserver = new TupleDataOfflineObserverService(
             vortexService,
             vortexStatusService,
-            new TupleDataObservableNameService(deviceObservableName, deviceFilt),
+            observerName,
             this.offlineStorage
         );
 
         // Create the observer
-        this.observer = new TupleDataObserverService(this.offlineObserver);
+        this.observer = new TupleDataObserverService(this.offlineObserver, observerName);
 
         // Create the observer
         this.tupleAction = new TupleActionPushService(
