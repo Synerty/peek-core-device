@@ -109,7 +109,7 @@ export class DeviceServerService {
 
     }
 
-    get isWeb():boolean {
+    get isWeb(): boolean {
         return this._isWeb;
     }
 
@@ -207,12 +207,12 @@ export class DeviceServerService {
         return this.tupleService.offlineStorage
             .loadTuples(this.tupleSelector)
             .then((tuples: ServerInfoTuple[]) => {
-                if (!tuples.length) {
-                    return;
+                this._isLoading = false;
+
+                if (tuples.length) {
+                    this.serverInfo = tuples[0];
                 }
 
-                this._isLoading = false;
-                this.serverInfo = tuples[0];
                 this.serverInfoSubject.next(this.serverInfo);
 
             });
@@ -226,7 +226,6 @@ export class DeviceServerService {
             .saveTuples(this.tupleSelector, [this.serverInfo])
             // Convert result to void
             .then(() => {
-                this._isLoading = false;
                 this.serverInfoSubject.next(this.serverInfo);
                 Promise.resolve();
             })

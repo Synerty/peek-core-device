@@ -11,14 +11,16 @@
                text="Server connecting is in progress.
 If you see this screen for more than 10 seconds, there is a problem some where."></Label>
 
+        <ActivityIndicator [busy]="1"></ActivityIndicator>
 
-            <Button class="btn"
-                    text="Reconnect"
-                    (tap)="reconnectClicked()"></Button>
 
-            <Button class="btn"
-                    text="Work Offline"
-                    (tap)="workOfflineClicked()"></Button>
+        <Button class="btn"
+                text="Reconnect"
+                (tap)="reconnectClicked()"></Button>
+
+        <Button class="btn"
+                text="Work Offline"
+                (tap)="workOfflineClicked()"></Button>
 
     </StackLayout>
 </StackLayout>

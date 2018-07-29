@@ -2,7 +2,7 @@
     "plugin": {
         "title": "Device",
         "packageName": "peek_core_device",
-    "version":"1.0.0",
+        "version": "1.0.0",
         "buildNumber": "#PLUGIN_BUILD#",
         "buildDate": "#BUILD_DATE#",
         "creator": "Synerty Pty Ltd",
@@ -45,6 +45,12 @@
         "appDir": "_private/both-app",
         "appModule": "device.module#DeviceModule",
         "moduleDir": "plugin-module",
+        "rootModules": [
+            {
+                "file": "device-loading.module",
+                "class": "DeviceLoadingModule"
+            }
+        ],
         "rootServices": [
             {
                 "file": "device-enrolment.service",
@@ -75,6 +81,11 @@
                 "file": "_private/device-tuple.service",
                 "class": "DeviceTupleService",
                 "persistent": false
+            },
+            {
+                "file": "device-status.service",
+                "class": "DeviceStatusService",
+                "persistent": true
             }
         ]
     },
@@ -83,6 +94,12 @@
         "appDir": "_private/both-app",
         "appModule": "device.module#DeviceModule",
         "moduleDir": "plugin-module",
+        "rootModules": [
+            {
+                "file": "device-loading.module",
+                "class": "DeviceLoadingModule"
+            }
+        ],
         "rootServices": [
             {
                 "file": "device-enrolment.service",
@@ -113,6 +130,11 @@
                 "file": "_private/device-tuple.service",
                 "class": "DeviceTupleService",
                 "persistent": false
+            },
+            {
+                "file": "device-status.service",
+                "class": "DeviceStatusService",
+                "persistent": true
             }
         ]
     }

@@ -19,8 +19,7 @@ export class DeviceEnrolledGuard implements CanActivate {
 
         // If the server service is still loading, come back later
         // This only applies to when the app is initialising
-        // Applyhing this to NativeScript causes it to not load at all
-        if (this.serverService.isWeb && this.serverService.isLoading) {
+        if (this.serverService.isLoading) {
             return new Promise((resolve) => {
                 this.serverService.connInfoObserver
                     .first()
@@ -37,8 +36,7 @@ export class DeviceEnrolledGuard implements CanActivate {
 
         // If the enrolment service is still loading, the come back later
         // This only applies to when the app is initialising
-        // Applyhing this to NativeScript causes it to not load at all
-        if (this.serverService.isWeb && this.enrolmentService.isLoading()) {
+        if (this.enrolmentService.isLoading()) {
             return new Promise((resolve) => {
                 this.enrolmentService.deviceInfoObservable()
                     .first()
