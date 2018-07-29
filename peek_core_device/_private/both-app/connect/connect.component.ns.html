@@ -13,7 +13,7 @@
 
         <StackLayout class="peek-details-section p-20">
 
-            <!-- Operating Zone, Category -->
+            <!-- Server hostname -->
             <GridLayout rows="auto, auto" columns="*">
                 <!-- COL 0 -->
                 <Label row="0" col="0" class="details-section-title"
@@ -22,11 +22,13 @@
                            class="details-section-value  editable"
                            autocorrect="false"
                            hint="Insert Hostname or IP"
+                           returnKeyType="done"
+                           (returnPress)="connectClicked()"
                            [(ngModel)]="server.host"></TextField>
 
             </GridLayout>
 
-            <!-- Operating Zone, Category -->
+            <!-- More details -->
             <GridLayout rows="auto, auto" columns="*, *, *">
 
                 <!-- COL 0 -->
