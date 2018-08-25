@@ -117,6 +117,10 @@ export class DeviceServerService {
         return this.serverInfoSubject;
     }
 
+    get connInfo(): ServerInfoTuple {
+        return this.serverInfo;
+    }
+
     get isLoading(): boolean {
         return this._isLoading;
     }
