@@ -4,7 +4,7 @@ import {TupleOfflineStorageService} from "@synerty/vortexjs";
 import * as app from "tns-core-modules/application";
 import * as platform from "tns-core-modules/platform";
 
-let nsUuid = require("nativescript-uuid");
+let nsUuid = require("nativescript-ios-uuid");
 
 export class HardwareInfo implements HardwareInfoI {
     constructor( private tupleStorage: TupleOfflineStorageService) {
