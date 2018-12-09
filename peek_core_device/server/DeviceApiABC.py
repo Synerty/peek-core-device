@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from abc import ABCMeta, abstractmethod
 from rx import Observable
@@ -11,6 +11,17 @@ class DeviceApiABC(metaclass=ABCMeta):
     This is the public API for the part of the plugin that runs on the server service.
 
     """
+
+    @abstractmethod
+    def deviceDetails(self, deviceTokens: List[str]) -> Deferred:
+        """ Device Details
+
+        Retrieve the details for the devices with the device tokens provided.
+
+        :param deviceTokens: A list of device token strings
+        :return: A Deferred that will fire with :code:`List[DeviceDetailTuple]`
+
+        """
 
     @abstractmethod
     def deviceDescription(self, deviceToken: str) -> Deferred:
