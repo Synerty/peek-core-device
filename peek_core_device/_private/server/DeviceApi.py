@@ -1,15 +1,16 @@
 import logging
-from typing import Optional
+from typing import Optional, List
 
 from rx import Observable
 from rx.subjects import Subject
 from twisted.internet.defer import Deferred
+from vortex.DeferUtil import deferToThreadWrapWithLogger, noMainThread
 
 from peek_core_device._private.server.controller.MainController import MainController
 from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
 from peek_core_device.server.DeviceApiABC import DeviceApiABC
+from peek_core_device.tuples.DeviceDetailTuple import DeviceDetailTuple
 from peek_core_device.tuples.DeviceOnlineDetailTuple import DeviceOnlineDetailTuple
-from vortex.DeferUtil import deferToThreadWrapWithLogger, noMainThread
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +27,30 @@ class DeviceApi(DeviceApiABC):
         pass
 
     @deferToThreadWrapWithLogger(logger)
+    def deviceDetails(self, deviceTokens: List[str]) -> Deferred:
+        ormSession = self._ormSessionCreator()
+        try:
+            all = ormSession.query(DeviceInfoTuple) \
+                .filter(DeviceInfoTuple.deviceToken.in_(deviceTokens)) \
+                .all()
+
+            tuples = [
+                DeviceDetailTuple(
+                    deviceToken=d.deviceToken,
+                    deviceType=d.deviceType,
+                    description=d.description,
+                    lastOnline=d.lastOnline,
+                    isOnline=d.isOnline,
+                )
+                for d in all
+            ]
+
+            return tuples
+
+        finally:
+            ormSession.close()
+
+    @deferToThreadWrapWithLogger(logger)
     def deviceDescription(self, deviceToken: str) -> Deferred:
         return self.deviceDescriptionBlocking(deviceToken)
 
@@ -34,11 +59,9 @@ class DeviceApi(DeviceApiABC):
 
         ormSession = self._ormSessionCreator()
         try:
-            all = (
-                ormSession.query(DeviceInfoTuple)
-                    .filter(DeviceInfoTuple.deviceToken == deviceToken)
-                    .all()
-            )
+            all = ormSession.query(DeviceInfoTuple) \
+                .filter(DeviceInfoTuple.deviceToken == deviceToken) \
+                .all()
 
             if not all:
                 return None
