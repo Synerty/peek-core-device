@@ -15,13 +15,18 @@
         "client",
         "mobile",
         "desktop",
+        "doc-dev",
         "doc-admin",
         "doc-user"
     ],
-    "doc-admin": {
-        "docDir": "doc-admin",
+    "doc-dev": {
+        "docDir": "doc-dev",
         "docRst": "index.rst",
         "hasApi": true
+    },
+    "doc-admin": {
+        "docDir": "doc-admin",
+        "docRst": "index.rst"
     },
     "doc-user": {
         "docDir": "doc-user",
