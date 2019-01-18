@@ -6,8 +6,8 @@ This section describes how to perform administration tasks for the Device plugin
 Enrolling Devices
 `````````````````
 
-The document type names displayed to the user can be update via the admin UI.
-To update the names, follow this procedure:
+The enrolled devices are displayed to the administrator via the admin UI.
+To remove, enroll or unenroll devices, follow this procedure:
 
 ----
 
