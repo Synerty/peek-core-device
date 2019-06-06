@@ -1,6 +1,5 @@
 import {CommonModule} from "@angular/common";
 import {NgModule} from "@angular/core";
-import {Routes} from "@angular/router";
 // Import the default route component
 import {DeviceComponent} from "./device.component";
 // Import the required classes from VortexJS
@@ -27,6 +26,7 @@ import {EnrollingComponent} from "./enrolling/enrolling.component";
 import {ConnectComponent} from "./connect/connect.component";
 import {ConnectingComponent} from "./connecting/connecting.component";
 import {PeekModuleFactory} from "@synerty/peek-util-web";
+import {pluginRoutes} from "./device.routes";
 
 export function tupleActionPushNameServiceFactory() {
     return new TupleActionPushNameService(
@@ -41,32 +41,6 @@ export function tupleDataObservableNameServiceFactory() {
 export function tupleOfflineStorageNameServiceFactory() {
     return new TupleOfflineStorageNameService(deviceTupleOfflineServiceName);
 }
-
-// Define the child routes for this plugin
-export const pluginRoutes: Routes = [
-    {
-        path: 'enrolling',
-        component: EnrollingComponent
-    },
-    {
-        path: 'enroll',
-        component: EnrollComponent
-    },
-    {
-        path: 'connect',
-        component: ConnectComponent
-    },
-    {
-        path: 'connecting',
-        component: ConnectingComponent
-    },
-    {
-        path: '',
-        pathMatch: 'full',
-        component: DeviceComponent
-    }
-
-];
 
 // Define the root module for this plugin.
 // This module is loaded by the lazy loader, what ever this defines is what is started.

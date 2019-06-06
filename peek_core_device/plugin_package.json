@@ -2,7 +2,7 @@
     "plugin": {
         "title": "Device",
         "packageName": "peek_core_device",
-    "version":"1.3.0",
+        "version": "1.3.0",
         "buildNumber": "#PLUGIN_BUILD#",
         "buildDate": "#BUILD_DATE#",
         "creator": "Synerty Pty Ltd",
@@ -48,7 +48,6 @@
     "mobile": {
         "showHomeLink": false,
         "appDir": "_private/both-app",
-        "appModule": "device.module#DeviceModule",
         "moduleDir": "plugin-module",
         "cfgDir": "_private/both-cfg",
         "cfgModule": "core-device-cfg.module#CoreDeviceCfgModule",
@@ -99,7 +98,6 @@
     "desktop": {
         "showHomeLink": false,
         "appDir": "_private/both-app",
-        "appModule": "device.module#DeviceModule",
         "moduleDir": "plugin-module",
         "cfgDir": "_private/both-cfg",
         "cfgModule": "core-device-cfg.module#CoreDeviceCfgModule",
