@@ -11,7 +11,6 @@ PY_PACKAGE="peek_core_device"
 # Or select one of the index servers defined in ~/.pypirc
 PYPI_PUBLISH="pypi"
 
-
 #------------------------------------------------------------------------------
 PIP_PACKAGE=${PY_PACKAGE//_/-} # Replace _ with -
 HAS_GIT=`ls -d .git 2> /dev/null`
@@ -65,7 +64,7 @@ PIPY_ALIAS="${2-$PYPI_PUBLISH}"
 
 if [ -n "${PIPY_ALIAS}" ]; then
     echo "Pushing to pypi index server PIPY_ALIAS"
-    python setup.py sdist upload 
+    python setup.py sdist --format=gztar upload
 else
     echo "Not publishing to any pypi indexes"
 fi
