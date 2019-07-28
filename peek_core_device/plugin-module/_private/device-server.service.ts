@@ -10,12 +10,10 @@ import {
 } from "@synerty/vortexjs";
 
 import {deviceFilt, deviceTuplePrefix} from "./PluginNames";
-import {DeviceTypeEnum} from "./hardware-info/hardware-info.abstract";
 import {DeviceTupleService} from "./device-tuple.service";
 import {DeviceNavService} from "./device-nav.service";
 import {Observable} from "rxjs/Observable";
 import {Subject} from "rxjs/Subject";
-import {WebClientVortexDetailsTuple} from "./tuples/WebClientVortexDetailsTuple";
 
 @addTupleType
 export class ServerInfoTuple extends Tuple {
@@ -57,10 +55,24 @@ export class DeviceServerService {
                 private vortexStatusService: VortexStatusService,
                 private tupleService: DeviceTupleService) {
 
-        let type: DeviceTypeEnum = this.tupleService.hardwareInfo.deviceType();
+        this._isWeb = this.tupleService.hardwareInfo.isWeb();
 
-        this._isWeb = type == DeviceTypeEnum.MOBILE_WEB
-            || type == DeviceTypeEnum.DESKTOP_WEB;
+        // Web doesn't need connection details,
+        // The websocket now connects to the same port as the http server.
+        if (this.isWeb) {
+            this._isLoading = false;
+            this.serverInfo = this.extractHttpDetails();
+            this.serverInfo.hasConnected = true;
+            this.nav.toHome();
+
+        } else {
+            this._loadNsWebsocket();
+
+        }
+
+    }
+
+    private _loadNsWebsocket() {
 
         this.loadConnInfo()
             .then(() => {
@@ -71,39 +83,7 @@ export class DeviceServerService {
                     return;
                 }
 
-                // If this is web, then we can request the websocket details.
-                if (!this._isWeb) {
-                    this.nav.toConnect();
-                    return;
-                }
-
-                this.nav.toConnecting();
-
-                this.tupleService.observer
-                    .pollForTuples(new TupleSelector(
-                        WebClientVortexDetailsTuple.tupleName, {}
-                    ))
-                    .then((tuples: WebClientVortexDetailsTuple[]) => {
-                        if (!tuples.length) {
-                            this.nav.toConnect();
-                            return;
-                        }
-
-                        let conn = this.extractHttpDetails();
-                        // conn.host = tuples[0].host;
-                        conn.websocketPort = tuples[0].websocketPort;
-                        // conn.useSsl = tuples[0].useSsl;
-                        // conn.httpPort = tuples[0].httpPort;
-
-                        this.setServer(conn);
-
-                    })
-                    .catch(e => {
-                        this.balloonMsg.showError(
-                            `Failed to load websocket details ${e}`
-                        );
-                        this.nav.toConnect();
-                    });
+                this.nav.toConnect();
 
             });
 
@@ -151,7 +131,7 @@ export class DeviceServerService {
         return this.serverInfo.websocketPort;
     }
 
-    extractHttpDetails(): ServerInfoTuple {
+    private extractHttpDetails(): ServerInfoTuple {
         if (!this._isWeb) {
             throw new Error("This method is only for the web version of the app");
         }
@@ -166,6 +146,9 @@ export class DeviceServerService {
         } else {
             conn.httpPort = conn.useSsl ? 443 : 80;
         }
+
+        // The websocket port is now the HTTP port
+        conn.websocketPort = conn.httpPort;
 
         return conn;
     }

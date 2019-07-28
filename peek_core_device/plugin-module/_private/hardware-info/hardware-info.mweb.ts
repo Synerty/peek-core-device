@@ -3,8 +3,9 @@ import {webUuid} from "./hardware-info.web";
 import {TupleOfflineStorageService} from "@synerty/vortexjs";
 
 
-export class HardwareInfo implements HardwareInfoI {
-    constructor( private tupleStorage: TupleOfflineStorageService) {
+export class HardwareInfo extends HardwareInfoI {
+    constructor(private tupleStorage: TupleOfflineStorageService) {
+        super();
 
     }
 

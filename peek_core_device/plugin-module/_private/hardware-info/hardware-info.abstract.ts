@@ -1,7 +1,3 @@
-import {Tuple, TupleOfflineStorageService, TupleSelector,addTupleType} from "@synerty/vortexjs";
-
-
-
 export enum DeviceTypeEnum {
     MOBILE_WEB,
     MOBILE_IOS,
@@ -12,8 +8,15 @@ export enum DeviceTypeEnum {
 }
 
 
-export interface HardwareInfoI {
-    uuid(): Promise<string> ;
-    description(): string;
-    deviceType(): DeviceTypeEnum;
+export abstract class HardwareInfoI {
+    abstract uuid(): Promise<string> ;
+
+    abstract description(): string;
+
+    abstract deviceType(): DeviceTypeEnum;
+
+    isWeb(): boolean {
+        return this.deviceType() == DeviceTypeEnum.MOBILE_WEB
+            || this.deviceType() == DeviceTypeEnum.DESKTOP_WEB;
+    }
 }

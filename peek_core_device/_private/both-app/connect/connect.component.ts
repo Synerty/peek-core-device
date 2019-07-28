@@ -29,6 +29,7 @@ export class ConnectComponent extends ComponentLifecycleEventEmitter implements 
     websocketPortStr: string = '8001';
 
     deviceType: DeviceTypeEnum;
+    isWeb: boolean;
 
     constructor(private balloonMsg: Ng2BalloonMsgService,
                 private titleService: TitleService,
@@ -39,6 +40,7 @@ export class ConnectComponent extends ComponentLifecycleEventEmitter implements 
 
 
         this.deviceType = this.tupleService.hardwareInfo.deviceType();
+        this.isWeb = this.tupleService.hardwareInfo.isWeb();
 
         this.deviceServerService.connInfoObserver
             .takeUntil(this.onDestroyEvent)
@@ -64,19 +66,6 @@ export class ConnectComponent extends ComponentLifecycleEventEmitter implements 
     ngOnInit() {
         this.titleService.setEnabled(false);
         this.titleService.setTitle('');
-        //
-        switch (this.deviceType) {
-            case DeviceTypeEnum.MOBILE_WEB:
-            case DeviceTypeEnum.DESKTOP_WEB:
-                // If this is a web service, always use the host from the URL
-                this.server = this.deviceServerService.extractHttpDetails();
-                this.httpPortStr = this.server.httpPort.toString();
-                break;
-
-            default:
-                break;
-        }
-
     }
 
 

@@ -1,6 +1,5 @@
 export * from "./PluginNames";
 
-export {WebClientVortexDetailsTuple} from "./tuples/WebClientVortexDetailsTuple";
 
 export {DeviceUpdateTuple} from "./tuples/DeviceUpdateTuple";
 export {SettingPropertyTuple} from "./tuples/SettingPropertyTuple";
