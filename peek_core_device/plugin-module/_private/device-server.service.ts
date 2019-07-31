@@ -63,7 +63,6 @@ export class DeviceServerService {
             this._isLoading = false;
             this.serverInfo = this.extractHttpDetails();
             this.serverInfo.hasConnected = true;
-            this.nav.toHome();
 
         } else {
             this._loadNsWebsocket();
