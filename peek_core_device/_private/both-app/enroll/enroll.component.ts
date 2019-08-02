@@ -4,10 +4,8 @@ import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 
 import {
     DeviceNavService,
-    DeviceServerService,
     DeviceTupleService,
-    EnrolDeviceAction,
-    ServerInfoTuple
+    EnrolDeviceAction
 } from "@peek/peek_core_device/_private";
 
 import {DeviceEnrolmentService, DeviceInfoTuple} from "@peek/peek_core_device";
@@ -76,6 +74,12 @@ export class EnrollComponent extends ComponentLifecycleEventEmitter implements O
     }
 
     enrollClicked() {
+        if (!this.enrollEnabled()) {
+            this.balloonMsg
+                .showWarning("Please enter a unique description for this device");
+            return;
+        }
+
         this.tupleService.tupleAction.pushAction(this.data)
             .then((tuples: DeviceInfoTuple[]) => {
                 this.balloonMsg.showSuccess("Enrollement successful");
