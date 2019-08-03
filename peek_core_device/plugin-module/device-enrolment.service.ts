@@ -41,7 +41,7 @@ export class DeviceEnrolmentService {
                     .subscribeToTupleSelector(tupleSelector)
                     .subscribe((tuples: DeviceInfoTuple[]) => {
                         this._isLoading = false;
-                        
+
                         if (tuples.length == 1)
                             this.deviceInfo = tuples[0];
                         else
@@ -90,14 +90,24 @@ export class DeviceEnrolmentService {
 
         return true;
     }
-    
-    deviceInfoObservable() : Observable<DeviceInfoTuple> {
+
+    deviceInfoObservable(): Observable<DeviceInfoTuple> {
         return this.deviceInfoSubject;
+    }
+
+    isFieldService(): boolean {
+        return this.tupleService.hardwareInfo.isField();
+    }
+
+    isOfficeService(): boolean {
+        return this.tupleService.hardwareInfo.isOffice();
     }
 
     isLoading(): boolean {
         return this._isLoading;
     }
+
+
 
     isSetup(): boolean {
         return this.deviceInfo != null;
