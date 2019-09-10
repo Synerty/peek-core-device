@@ -36,18 +36,19 @@ export class DeviceEnrolmentService {
                     }
                 );
 
-                // There is no point unsubscribing this
+                // There is no point unsubscribe this
                 this.tupleService.offlineObserver
                     .subscribeToTupleSelector(tupleSelector)
                     .subscribe((tuples: DeviceInfoTuple[]) => {
                         this._isLoading = false;
 
-                        if (tuples.length == 1)
+                        if (tuples.length == 1) {
                             this.deviceInfo = tuples[0];
-                        else
+                            this.deviceInfoSubject.next(this.deviceInfo);
+                        } else {
                             this.deviceInfo = null;
+                        }
 
-                        this.deviceInfoSubject.next(this.deviceInfo);
                         this.checkEnrolment();
                     });
             });
@@ -106,7 +107,6 @@ export class DeviceEnrolmentService {
     isLoading(): boolean {
         return this._isLoading;
     }
-
 
 
     isSetup(): boolean {
