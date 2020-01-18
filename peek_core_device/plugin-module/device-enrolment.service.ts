@@ -36,7 +36,7 @@ export class DeviceEnrolmentService {
                     }
                 );
 
-                // There is no point unsubscribe this
+                // This is an application perminent subscription
                 this.tupleService.offlineObserver
                     .subscribeToTupleSelector(tupleSelector)
                     .subscribe((tuples: DeviceInfoTuple[]) => {

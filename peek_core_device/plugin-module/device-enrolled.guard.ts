@@ -4,7 +4,7 @@ import {TitleService} from "@synerty/peek-util";
 import {DeviceEnrolmentService} from "./device-enrolment.service";
 import {DeviceNavService} from "./_private/device-nav.service";
 import {DeviceServerService} from "./_private/device-server.service";
-import {Observable} from "rxjs/Observable";
+import {first} from "rxjs/operators";
 
 @Injectable()
 export class DeviceEnrolledGuard implements CanActivate {
@@ -22,7 +22,7 @@ export class DeviceEnrolledGuard implements CanActivate {
         if (this.serverService.isLoading) {
             return new Promise((resolve) => {
                 this.serverService.connInfoObserver
-                    .first()
+                    .pipe(first())
                     .subscribe(() => {
                         resolve(this.canActivate(route, state));
                     });
@@ -39,7 +39,7 @@ export class DeviceEnrolledGuard implements CanActivate {
         if (this.enrolmentService.isLoading()) {
             return new Promise((resolve) => {
                 this.enrolmentService.deviceInfoObservable()
-                    .first()
+                    .pipe(first())
                     .subscribe(() => {
                         resolve(this.canActivate(route, state));
                     });
