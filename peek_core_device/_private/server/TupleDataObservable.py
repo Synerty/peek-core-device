@@ -1,11 +1,14 @@
 from peek_core_device._private.PluginNames import deviceFilt
 from peek_core_device._private.PluginNames import deviceObservableName
+from peek_core_device._private.server.tuple_providers.ClientSettingsTupleProvider import \
+    ClientSettingsTupleProvider
 from peek_core_device._private.server.tuple_providers.DeviceInfoTupleProvider import \
     DeviceInfoTupleProvider
 from peek_core_device._private.server.tuple_providers.DeviceUpdateTupleProvider import \
     DeviceUpdateTupleProvider
 from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
 from peek_core_device._private.storage.DeviceUpdateTuple import DeviceUpdateTuple
+from peek_core_device._private.tuples.ClientSettingsTuple import ClientSettingsTuple
 from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
 
 
@@ -30,4 +33,8 @@ def makeTupleDataObservableHandler(ormSessionCreator):
 
     tupleObservable.addTupleProvider(DeviceInfoTuple.tupleName(),
                                      DeviceInfoTupleProvider(ormSessionCreator))
+
+    tupleObservable.addTupleProvider(ClientSettingsTuple.tupleName(),
+                                     ClientSettingsTupleProvider(ormSessionCreator))
+
     return tupleObservable

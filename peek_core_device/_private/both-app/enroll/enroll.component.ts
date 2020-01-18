@@ -1,8 +1,10 @@
 import {Component, OnInit} from "@angular/core";
 import {TitleService} from "@synerty/peek-util";
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
+import {first} from "rxjs/operators";
 
 import {
+    ClientSettingsTuple,
     DeviceNavService,
     DeviceTupleService,
     EnrolDeviceAction
@@ -11,7 +13,7 @@ import {
 import {DeviceEnrolmentService, DeviceInfoTuple} from "@peek/peek_core_device";
 import {DeviceTypeEnum} from "@peek/peek_core_device/_private/hardware-info/hardware-info.abstract";
 
-import {ComponentLifecycleEventEmitter} from "@synerty/vortexjs";
+import {ComponentLifecycleEventEmitter, TupleSelector} from "@synerty/vortexjs";
 
 
 @Component({
@@ -47,6 +49,7 @@ export class EnrollComponent extends ComponentLifecycleEventEmitter implements O
                 }
             });
 
+
     }
 
     ngOnInit() {
@@ -61,8 +64,40 @@ export class EnrollComponent extends ComponentLifecycleEventEmitter implements O
         this.data.deviceType = deviceInfo.deviceType;
 
         this.tupleService.hardwareInfo.uuid()
-            .then(uuid => this.data.deviceId = uuid);
+            .then(uuid => {
+                this.data.deviceId = uuid;
+                this.checkForEnrollEnabled();
+            });
 
+    }
+
+    private checkForEnrollEnabled(): void {
+        let ts = new TupleSelector(ClientSettingsTuple.tupleName, {});
+        this.tupleService.offlineObserver
+            .subscribeToTupleSelector(ts)
+            .pipe(first())
+            .takeUntil(this.onDestroyEvent)
+            .subscribe((settings: ClientSettingsTuple[]) => {
+                if (settings.length != 1)
+                    return;
+
+                let setting: ClientSettingsTuple = settings[0];
+
+                if (this.tupleService.hardwareInfo.isOffice()
+                    && !setting.officeEnrollmentEnabled) {
+                    this.autoEnroll();
+
+                } else if (this.tupleService.hardwareInfo.isField()
+                    && !setting.fieldEnrollmentEnabled) {
+                    this.autoEnroll();
+                }
+
+            });
+    }
+
+    private autoEnroll(): void {
+        this.data.description = this.data.deviceId;
+        this.enrollClicked();
     }
 
     enrollEnabled(): boolean {

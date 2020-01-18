@@ -1,4 +1,4 @@
-
+from peek_core_device._private.PluginNames import deviceTuplePrefix
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm.collections import attribute_mapped_collection
@@ -8,9 +8,7 @@ from sqlalchemy.sql.schema import Index
 from sqlalchemy.types import Integer, String, Boolean
 from vortex.Tuple import Tuple, addTupleType
 
-from peek_core_device._private.PluginNames import deviceTuplePrefix
 from .DeclarativeBase import DeclarativeBase
-
 
 """Mapping a polymorphic-valued vertical table as a dictionary.
 
@@ -257,7 +255,17 @@ globalProperties = {}
 def globalSetting(ormSession, key=None, value=None):
     return _getSetting(ormSession, "Global", globalProperties, key=key, value=value)
 
-AUTO_ENROLLMENT = PropertyKey('Device Auto Enrollment', False, propertyDict=globalProperties)
+
+AUTO_ENROLLMENT = PropertyKey('Device Auto Enrollment', False,
+                              propertyDict=globalProperties)
+
+# =============================================================================
+# CLIENT PROPERTIES
+# =============================================================================
 
 
-# PROPERTY2 = PropertyKey('Property2', 'value2', propertyDict=globalProperties)
+FIELD_ENROLLMENT_ENABLED = PropertyKey('Field Enrollment Enabled', True,
+                                       propertyDict=globalProperties)
+
+OFFICE_ENROLLMENT_ENABLED = PropertyKey('Office Enrollment Enabled', False,
+                                        propertyDict=globalProperties)
