@@ -1,10 +1,12 @@
-import {CommonModule} from "@angular/common";
-import {NgModule} from "@angular/core";
-import {Routes} from "@angular/router";
-// Import the default route component
-import {CoreDeviceCfgComponent} from "./core-device-cfg.component";
-import {ConnectComponent} from "./connect/connect.component";
-// Import the required classes from VortexJS
+import { CommonModule } from "@angular/common";
+import { NgModule } from "@angular/core";
+import { Routes } from "@angular/router";
+import { FormsModule } from "@angular/forms";
+import { HttpClientModule } from "@angular/common/http";
+import { NzIconModule } from "ng-zorro-antd/icon";
+import { RouterModule } from "@angular/router";
+import { CoreDeviceCfgComponent } from "./core-device-cfg.component";
+import { ConnectComponent } from "./connect/connect.component";
 import {
     TupleActionPushNameService,
     TupleActionPushOfflineService,
@@ -13,77 +15,74 @@ import {
     TupleDataObserverService,
     TupleDataOfflineObserverService,
     TupleOfflineStorageNameService,
-    TupleOfflineStorageService
+    TupleOfflineStorageService,
 } from "@synerty/vortexjs";
-// Import the names we need for the
 import {
     deviceFilt,
     deviceObservableName,
-    deviceTupleOfflineServiceName
+    deviceTupleOfflineServiceName,
 } from "@peek/peek_core_device/_private/PluginNames";
-
-// Import the names we need for the
-import {deviceActionProcessorName} from "@peek/peek_core_device/_private";
-import {PeekModuleFactory} from "@synerty/peek-util-web";
+import { deviceActionProcessorName } from "@peek/peek_core_device/_private";
 
 export function tupleActionPushNameServiceFactory() {
     return new TupleActionPushNameService(
-        deviceActionProcessorName, deviceFilt);
+        deviceActionProcessorName,
+        deviceFilt
+    );
 }
 
 export function tupleDataObservableNameServiceFactory() {
-    return new TupleDataObservableNameService(
-        deviceObservableName, deviceFilt);
+    return new TupleDataObservableNameService(deviceObservableName, deviceFilt);
 }
 
 export function tupleOfflineStorageNameServiceFactory() {
     return new TupleOfflineStorageNameService(deviceTupleOfflineServiceName);
 }
 
-
-// Define the child routes for this plugin
+// Define the child routes for this plugin.
 export const pluginRoutes: Routes = [
     // {
     //     path: 'showDiagram',
     //     component: CoreDeviceCfgComponent
     // },
     {
-        path: '',
-        pathMatch: 'full',
-        component: CoreDeviceCfgComponent
-    }
-
+        path: "",
+        pathMatch: "full",
+        component: CoreDeviceCfgComponent,
+    },
 ];
 
 // Define the root module for this plugin.
 // This module is loaded by the lazy loader, what ever this defines is what is started.
-// When it first loads, it will look up the routs and then select the component to load.
+// When it first loads, it will look up the routes and then select the component to load.
 @NgModule({
     imports: [
         CommonModule,
-        PeekModuleFactory.RouterModule,
-        PeekModuleFactory.RouterModule.forChild(pluginRoutes),
-        ...PeekModuleFactory.FormsModules,
+        RouterModule.forChild(pluginRoutes),
+        FormsModule,
+        NzIconModule,
+        HttpClientModule,
     ],
     exports: [],
     providers: [
-        TupleActionPushOfflineService, TupleActionPushService, {
+        TupleActionPushOfflineService,
+        TupleActionPushService,
+        {
             provide: TupleActionPushNameService,
-            useFactory: tupleActionPushNameServiceFactory
+            useFactory: tupleActionPushNameServiceFactory,
         },
-        TupleOfflineStorageService, {
+        TupleOfflineStorageService,
+        {
             provide: TupleOfflineStorageNameService,
-            useFactory: tupleOfflineStorageNameServiceFactory
+            useFactory: tupleOfflineStorageNameServiceFactory,
         },
-        TupleDataObserverService, TupleDataOfflineObserverService, {
+        TupleDataObserverService,
+        TupleDataOfflineObserverService,
+        {
             provide: TupleDataObservableNameService,
-            useFactory: tupleDataObservableNameServiceFactory
-        }
+            useFactory: tupleDataObservableNameServiceFactory,
+        },
     ],
-    declarations: [
-        CoreDeviceCfgComponent,
-        ConnectComponent
-    ]
+    declarations: [CoreDeviceCfgComponent, ConnectComponent],
 })
-export class CoreDeviceCfgModule {
-}
+export class CoreDeviceCfgModule {}

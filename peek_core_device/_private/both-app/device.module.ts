@@ -1,7 +1,7 @@
-import {CommonModule} from "@angular/common";
-import {NgModule} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { NgModule } from "@angular/core";
 // Import the default route component
-import {DeviceComponent} from "./device.component";
+import { DeviceComponent } from "./device.component";
 // Import the required classes from VortexJS
 import {
     TupleActionPushNameService,
@@ -11,31 +11,35 @@ import {
     TupleDataObserverService,
     TupleDataOfflineObserverService,
     TupleOfflineStorageNameService,
-    TupleOfflineStorageService
+    TupleOfflineStorageService,
 } from "@synerty/vortexjs";
 // Import the names we need for the
 import {
     deviceFilt,
     deviceObservableName,
-    deviceTupleOfflineServiceName
+    deviceTupleOfflineServiceName,
 } from "@peek/peek_core_device/_private/PluginNames";
-import {EnrollComponent} from "./enroll/enroll.component";
+import { EnrollComponent } from "./enroll/enroll.component";
 // Import the names we need for the
-import {deviceActionProcessorName} from "@peek/peek_core_device/_private";
-import {EnrollingComponent} from "./enrolling/enrolling.component";
-import {ConnectComponent} from "./connect/connect.component";
-import {ConnectingComponent} from "./connecting/connecting.component";
-import {PeekModuleFactory} from "@synerty/peek-util-web";
-import {pluginRoutes} from "./device.routes";
+import { deviceActionProcessorName } from "@peek/peek_core_device/_private";
+import { EnrollingComponent } from "./enrolling/enrolling.component";
+import { ConnectComponent } from "./connect/connect.component";
+import { ConnectingComponent } from "./connecting/connecting.component";
+import { pluginRoutes } from "./device.routes";
+import { FormsModule } from "@angular/forms";
+import { NzIconModule } from "ng-zorro-antd/icon";
+import { RouterModule } from "@angular/router";
+import { HttpClientModule } from "@angular/common/http";
 
 export function tupleActionPushNameServiceFactory() {
     return new TupleActionPushNameService(
-        deviceActionProcessorName, deviceFilt);
+        deviceActionProcessorName,
+        deviceFilt
+    );
 }
 
 export function tupleDataObservableNameServiceFactory() {
-    return new TupleDataObservableNameService(
-        deviceObservableName, deviceFilt);
+    return new TupleDataObservableNameService(deviceObservableName, deviceFilt);
 }
 
 export function tupleOfflineStorageNameServiceFactory() {
@@ -48,32 +52,37 @@ export function tupleOfflineStorageNameServiceFactory() {
 @NgModule({
     imports: [
         CommonModule,
-        PeekModuleFactory.RouterModule,
-        PeekModuleFactory.RouterModule.forChild(pluginRoutes),
-        ...PeekModuleFactory.FormsModules,
+        RouterModule.forChild(pluginRoutes),
+        FormsModule,
+        NzIconModule,
+        HttpClientModule,
     ],
     exports: [],
     providers: [
-        TupleActionPushOfflineService, TupleActionPushService, {
+        TupleActionPushOfflineService,
+        TupleActionPushService,
+        {
             provide: TupleActionPushNameService,
-            useFactory: tupleActionPushNameServiceFactory
+            useFactory: tupleActionPushNameServiceFactory,
         },
-        TupleOfflineStorageService, {
+        TupleOfflineStorageService,
+        {
             provide: TupleOfflineStorageNameService,
-            useFactory: tupleOfflineStorageNameServiceFactory
+            useFactory: tupleOfflineStorageNameServiceFactory,
         },
-        TupleDataObserverService, TupleDataOfflineObserverService, {
+        TupleDataObserverService,
+        TupleDataOfflineObserverService,
+        {
             provide: TupleDataObservableNameService,
-            useFactory: tupleDataObservableNameServiceFactory
-        }
+            useFactory: tupleDataObservableNameServiceFactory,
+        },
     ],
     declarations: [
         DeviceComponent,
         EnrollComponent,
         EnrollingComponent,
         ConnectComponent,
-        ConnectingComponent
-    ]
+        ConnectingComponent,
+    ],
 })
-export class DeviceModule {
-}
+export class DeviceModule {}
