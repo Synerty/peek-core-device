@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
+import { BalloonMsgService } from "@synerty/peek-plugin-base-js"
 import {
     addTupleType,
     extend,
@@ -50,7 +50,7 @@ export class DeviceServerService {
     private _isLoading = true;
 
     constructor(private nav: DeviceNavService,
-                private balloonMsg: Ng2BalloonMsgService,
+                private balloonMsg: BalloonMsgService,
                 private vortexService: VortexService,
                 private vortexStatusService: VortexStatusService,
                 private tupleService: DeviceTupleService) {

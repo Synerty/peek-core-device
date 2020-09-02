@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import {TupleSelector, VortexStatusService} from "@synerty/vortexjs";
-import {Ng2BalloonMsgService, UsrMsgLevel, UsrMsgType} from "@synerty/ng2-balloon-msg";
+import {BalloonMsgService, BalloonMsgLevel, BalloonMsgType} from "@synerty/peek-plugin-base-js";
 
 import {DeviceEnrolmentService} from "../device-enrolment.service";
 import {DeviceTupleService} from "./device-tuple.service";
@@ -21,7 +21,7 @@ export class DeviceUpdateService {
 
     private delegate: DeviceUpdateServiceDelegate;
 
-    constructor(private balloonMsg: Ng2BalloonMsgService,
+    constructor(private balloonMsg: BalloonMsgService,
                 private serverService: DeviceServerService,
                 private tupleService: DeviceTupleService,
                 private enrolmentService: DeviceEnrolmentService,
@@ -110,8 +110,8 @@ export class DeviceUpdateService {
 
                 this.balloonMsg.showMessage(
                     msg,
-                    UsrMsgLevel.Success,
-                    UsrMsgType.Confirm, {
+                    BalloonMsgLevel.Success,
+                    BalloonMsgType.Confirm, {
                         confirmText: "I will do that now!",
                         dialogTitle: "Update Applied"
                     }

@@ -1,5 +1,5 @@
 import {Component} from "@angular/core";
-import {Ng2BalloonMsgService, UsrMsgLevel, UsrMsgType} from "@synerty/ng2-balloon-msg";
+import {BalloonMsgService, BalloonMsgLevel, BalloonMsgType} from "@synerty/peek-plugin-base-js";
 import {
     ComponentLifecycleEventEmitter,
     TupleActionPushService,
@@ -20,7 +20,7 @@ export class DeviceUpdateComponent extends ComponentLifecycleEventEmitter {
 
     items: DeviceUpdateTuple[] = [];
 
-    constructor(private balloonMsg: Ng2BalloonMsgService,
+    constructor(private balloonMsg: BalloonMsgService,
                 private actionService: TupleActionPushService,
                 private tupleDataObserver: TupleDataObserverService) {
         super();
@@ -43,8 +43,8 @@ export class DeviceUpdateComponent extends ComponentLifecycleEventEmitter {
 
         this.balloonMsg.showMessage(
             "Are you sure you'd like to delete this update?",
-            UsrMsgLevel.Warning,
-            UsrMsgType.ConfirmCancel,
+            BalloonMsgLevel.Warning,
+            BalloonMsgType.ConfirmCancel,
             {confirmText: "Yes", cancelText: 'No'}
         )
             .then(() => this.sendAction(action));
@@ -61,8 +61,8 @@ export class DeviceUpdateComponent extends ComponentLifecycleEventEmitter {
 
         this.balloonMsg.showMessage(
             `Are you sure you'd like to ${verb} this update?`,
-            UsrMsgLevel.Warning,
-            UsrMsgType.ConfirmCancel,
+            BalloonMsgLevel.Warning,
+            BalloonMsgType.ConfirmCancel,
             {confirmText: "Yes", cancelText: 'No'}
         )
             .then(() => this.sendAction(action));

@@ -1,5 +1,5 @@
 import {Component, OnInit} from "@angular/core";
-import {TitleService} from "@synerty/peek-util";
+import { TitleService } from "@synerty/peek-plugin-base-js"
 import {Observable} from "rxjs/Observable";
 
 import {ComponentLifecycleEventEmitter} from "@synerty/vortexjs";

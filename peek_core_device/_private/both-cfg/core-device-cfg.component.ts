@@ -1,6 +1,6 @@
 import {Component, Input} from "@angular/core";
 import {ComponentLifecycleEventEmitter, TupleSelector} from "@synerty/vortexjs";
-import {TitleService} from "@synerty/peek-util";
+import { TitleService } from "@synerty/peek-plugin-base-js"
 
 
 @Component({

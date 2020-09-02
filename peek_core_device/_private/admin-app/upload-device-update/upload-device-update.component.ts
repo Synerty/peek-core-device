@@ -5,7 +5,7 @@ import {
     PayloadEnvelope,
     VortexService
 } from "@synerty/vortexjs";
-import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
+import { BalloonMsgService } from "@synerty/peek-plugin-base-js"
 import {FileUploader} from "ng2-file-upload";
 import {
     CreateDeviceUpdateAction,
@@ -33,7 +33,7 @@ export class UploadDeviceUpdateComponent extends ComponentLifecycleEventEmitter 
     hasBaseDropZoneOver: boolean = false;
 
     constructor(private vortexService: VortexService,
-                private balloonMsg: Ng2BalloonMsgService) {
+                private balloonMsg: BalloonMsgService) {
         super();
 
         // Subscribe to the angular check event

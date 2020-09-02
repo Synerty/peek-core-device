@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import {ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot} from "@angular/router";
-import {TitleService} from "@synerty/peek-util";
+import { TitleService } from "@synerty/peek-plugin-base-js"
 import {DeviceEnrolmentService} from "./device-enrolment.service";
 import {DeviceNavService} from "./_private/device-nav.service";
 import {DeviceServerService} from "./_private/device-server.service";

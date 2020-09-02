@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {TitleService} from "@synerty/peek-util";
+import { TitleService } from "@synerty/peek-plugin-base-js"
 import {Subject} from "rxjs/Subject";
 import {Observable} from "rxjs/Observable";
 import {TupleSelector, VortexStatusService} from "@synerty/vortexjs";

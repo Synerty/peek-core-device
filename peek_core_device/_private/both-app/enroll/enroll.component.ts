@@ -1,6 +1,6 @@
 import {Component, OnInit} from "@angular/core";
-import {TitleService} from "@synerty/peek-util";
-import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
+import { TitleService } from "@synerty/peek-plugin-base-js"
+import { BalloonMsgService } from "@synerty/peek-plugin-base-js"
 import {first} from "rxjs/operators";
 
 import {
@@ -27,7 +27,7 @@ export class EnrollComponent extends ComponentLifecycleEventEmitter implements O
 
     deviceType: DeviceTypeEnum;
 
-    constructor(private balloonMsg: Ng2BalloonMsgService,
+    constructor(private balloonMsg: BalloonMsgService,
                 private titleService: TitleService,
                 private tupleService: DeviceTupleService,
                 private nav: DeviceNavService,

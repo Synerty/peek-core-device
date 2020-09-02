@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import {DeviceUpdateTuple} from "./tuples/DeviceUpdateTuple";
-import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
+import { BalloonMsgService } from "@synerty/peek-plugin-base-js"
 import {DeviceServerService} from "./device-server.service";
 
 
@@ -8,7 +8,7 @@ import {DeviceServerService} from "./device-server.service";
 export class DeviceUpdateServiceDelegate {
 
     constructor(private serverService:DeviceServerService,
-                private balloonMsg: Ng2BalloonMsgService) {
+                private balloonMsg: BalloonMsgService) {
     }
 
     get updateInProgress():boolean {
