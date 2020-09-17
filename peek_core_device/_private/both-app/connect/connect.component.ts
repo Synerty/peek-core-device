@@ -7,6 +7,7 @@ import {
     ServerInfoTuple
 } from "@peek/peek_core_device/_private"
 import { DeviceTypeEnum } from "@peek/peek_core_device/_private/hardware-info/hardware-info.abstract"
+import { Capacitor } from "@capacitorjs"
 
 @Component({
     selector: "core-device-enroll",
@@ -19,6 +20,7 @@ export class ConnectComponent extends NgLifeCycleEvents implements OnInit {
     websocketPortStr: string = "8001"
     deviceType: DeviceTypeEnum
     isWeb: boolean
+    platform: string
     
     constructor(
         private balloonMsg: BalloonMsgService,
@@ -28,7 +30,7 @@ export class ConnectComponent extends NgLifeCycleEvents implements OnInit {
         private deviceServerService: DeviceServerService
     ) {
         super()
-        
+        this.platform = Capacitor.getPlatform()
         this.deviceType = this.tupleService.hardwareInfo.deviceType()
         this.isWeb = this.tupleService.hardwareInfo.isWeb()
         
