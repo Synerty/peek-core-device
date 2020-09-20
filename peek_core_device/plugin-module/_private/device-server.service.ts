@@ -6,6 +6,7 @@ import { DeviceTupleService } from "./device-tuple.service"
 import { DeviceNavService } from "./device-nav.service"
 import { Observable } from "rxjs/Observable"
 import { Subject } from "rxjs/Subject"
+import { Capacitor } from "@capacitor/core"
 
 @addTupleType
 export class ServerInfoTuple extends Tuple {
@@ -24,16 +25,12 @@ export class ServerInfoTuple extends Tuple {
 
 @Injectable()
 export class DeviceServerService {
-    
     private tupleSelector: TupleSelector = new TupleSelector(
         ServerInfoTuple.tupleName, {}
     )
-    
     private serverInfo: ServerInfoTuple = new ServerInfoTuple()
     private serverInfoSubject = new Subject<ServerInfoTuple>()
-    
     private readonly deviceOnlineFilt = extend({key: "device.online"}, deviceFilt)
-    
     private lastOnlineSub: any | null = null
     
     constructor(
@@ -44,7 +41,7 @@ export class DeviceServerService {
         private tupleService: DeviceTupleService
     ) {
         
-        this._isWeb = this.tupleService.hardwareInfo.isWeb()
+        this._isWeb = Capacitor.getPlatform() === "web"
         
         // Web doesn't need connection details,
         // The websocket now connects to the same port as the http server.
@@ -62,6 +59,12 @@ export class DeviceServerService {
     
     get isWeb(): boolean {
         return this._isWeb
+    }
+    
+    private _isLoading = true
+    
+    get isLoading(): boolean {
+        return this._isLoading
     }
     
     private _isLoading = true

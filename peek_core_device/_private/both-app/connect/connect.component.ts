@@ -7,7 +7,7 @@ import {
     ServerInfoTuple
 } from "@peek/peek_core_device/_private"
 import { DeviceTypeEnum } from "@peek/peek_core_device/_private/hardware-info/hardware-info.abstract"
-import { Capacitor } from "@capacitorjs"
+import { Capacitor } from "@capacitor/core"
 
 @Component({
     selector: "core-device-enroll",
