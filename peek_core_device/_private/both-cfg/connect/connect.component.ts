@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core"
 import { BalloonMsgService, NgLifeCycleEvents, TitleService } from "@synerty/peek-plugin-base-js"
-import { DeviceServerService, DeviceTupleService, ServerInfoTuple } from "@peek/peek_core_device/_private"
-import { DeviceTypeEnum } from "@peek/peek_core_device/_private/hardware-info/hardware-info.abstract"
+import { DeviceServerService, DeviceTupleService, ServerInfoTuple } from "@_peek/peek_core_device/_private"
+import { DeviceTypeEnum } from "@_peek/peek_core_device/_private/hardware-info/hardware-info.abstract"
 
 @Component({
     selector: "peek-plugin-diagram-cfg-connect",

@@ -21,8 +21,8 @@ import {
     deviceFilt,
     deviceObservableName,
     deviceTupleOfflineServiceName,
-} from "@peek/peek_core_device/_private/PluginNames";
-import { deviceActionProcessorName } from "@peek/peek_core_device/_private";
+} from "@_peek/peek_core_device/_private/PluginNames";
+import { deviceActionProcessorName } from "@_peek/peek_core_device/_private";
 
 export function tupleActionPushNameServiceFactory() {
     return new TupleActionPushNameService(

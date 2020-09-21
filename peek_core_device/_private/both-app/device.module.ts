@@ -18,10 +18,10 @@ import {
     deviceFilt,
     deviceObservableName,
     deviceTupleOfflineServiceName,
-} from "@peek/peek_core_device/_private/PluginNames";
+} from "@_peek/peek_core_device/_private/PluginNames";
 import { EnrollComponent } from "./enroll/enroll.component";
 // Import the names we need for the
-import { deviceActionProcessorName } from "@peek/peek_core_device/_private";
+import { deviceActionProcessorName } from "@_peek/peek_core_device/_private";
 import { EnrollingComponent } from "./enrolling/enrolling.component";
 import { ConnectComponent } from "./connect/connect.component";
 import { ConnectingComponent } from "./connecting/connecting.component";

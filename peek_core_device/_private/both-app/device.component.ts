@@ -1,5 +1,5 @@
 import {Component} from "@angular/core";
-import { DeviceNavService } from "@peek/peek_core_device/_private";
+import { DeviceNavService } from "@_peek/peek_core_device/_private";
 
 @Component({
     selector: 'core-device',
