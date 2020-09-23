@@ -67,12 +67,6 @@ export class DeviceServerService {
         return this._isLoading
     }
     
-    private _isLoading = true
-    
-    get isLoading(): boolean {
-        return this._isLoading
-    }
-    
     get connInfoObserver(): Observable<ServerInfoTuple> {
         return this.serverInfoSubject
     }
