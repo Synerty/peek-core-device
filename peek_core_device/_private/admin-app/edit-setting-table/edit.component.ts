@@ -2,7 +2,7 @@ import { Component } from "@angular/core"
 import { BalloonMsgService, NgLifeCycleEvents } from "@synerty/peek-plugin-base-js"
 import { extend, TupleLoader, VortexService } from "@synerty/vortexjs"
 //noinspection TypeScriptCheckImport
-import { deviceFilt, SettingPropertyTuple } from "@_peek/peek_core_device/_private"
+import { deviceFilt, SettingPropertyTuple } from "@peek/peek_core_device/_private"
 
 @Component({
     selector: "core-device-edit-setting",

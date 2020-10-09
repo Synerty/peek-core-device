@@ -1,8 +1,8 @@
 import { Component } from "@angular/core"
 import { BalloonMsgLevel, BalloonMsgService, BalloonMsgType, NgLifeCycleEvents } from "@synerty/peek-plugin-base-js"
 import { TupleActionPushService, TupleDataObserverService, TupleSelector } from "@synerty/vortexjs"
-import { DeviceInfoTuple } from "@_peek/peek_core_device"
-import { UpdateEnrollmentAction } from "@_peek/peek_core_device/_private"
+import { DeviceInfoTuple } from "@peek/peek_core_device"
+import { UpdateEnrollmentAction } from "@peek/peek_core_device/_private"
 
 @Component({
     selector: "core-device-device-info",

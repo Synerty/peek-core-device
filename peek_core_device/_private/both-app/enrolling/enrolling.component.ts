@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core"
 import { BalloonMsgService, NgLifeCycleEvents, TitleService } from "@synerty/peek-plugin-base-js"
-import { DeviceNavService, EnrolDeviceAction, HardwareInfo } from "@_peek/peek_core_device/_private"
-import { DeviceEnrolmentService } from "@_peek/peek_core_device"
+import { DeviceNavService, EnrolDeviceAction, HardwareInfo } from "@peek/peek_core_device/_private"
+import { DeviceEnrolmentService } from "@peek/peek_core_device"
 
 @Component({
     selector: "core-device-enrolling",

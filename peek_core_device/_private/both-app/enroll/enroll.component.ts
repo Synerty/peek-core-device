@@ -6,9 +6,9 @@ import {
     DeviceNavService,
     DeviceTupleService,
     EnrolDeviceAction
-} from "@_peek/peek_core_device/_private"
-import { DeviceEnrolmentService, DeviceInfoTuple } from "@_peek/peek_core_device"
-import { DeviceTypeEnum } from "@_peek/peek_core_device/_private/hardware-info/hardware-info.abstract"
+} from "@peek/peek_core_device/_private"
+import { DeviceEnrolmentService, DeviceInfoTuple } from "@peek/peek_core_device"
+import { DeviceTypeEnum } from "@peek/peek_core_device/_private/hardware-info/hardware-info.abstract"
 import { TupleSelector } from "@synerty/vortexjs"
 
 @Component({

@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
-import { LoadingComponent } from "@peek/peek_core_device/loading/loading.component";
+import { LoadingComponent } from "@_peek/peek_core_device/loading/loading.component";
 import { FormsModule } from "@angular/forms";
 import { NzIconModule } from "ng-zorro-antd/icon";
 import { HttpClientModule } from "@angular/common/http";

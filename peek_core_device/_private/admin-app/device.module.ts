@@ -23,7 +23,7 @@ import {
     deviceFilt,
     deviceObservableName,
     deviceTupleOfflineServiceName
-} from "@_peek/peek_core_device/_private";
+} from "@peek/peek_core_device/_private";
 import {UploadDeviceUpdateComponent} from "./upload-device-update/upload-device-update.component";
 
 
