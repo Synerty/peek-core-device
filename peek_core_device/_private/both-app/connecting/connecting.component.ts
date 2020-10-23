@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core"
-import { NgLifeCycleEvents, TitleService } from "@synerty/peek-plugin-base-js"
+import { NgLifeCycleEvents, HeaderService } from "@synerty/peek-plugin-base-js"
 import { DeviceNavService, DeviceServerService } from "@peek/peek_core_device/_private"
 
 @Component({
@@ -10,7 +10,7 @@ import { DeviceNavService, DeviceServerService } from "@peek/peek_core_device/_p
 export class ConnectingComponent extends NgLifeCycleEvents implements OnInit {
     
     constructor(
-        private titleService: TitleService,
+        private headerService: HeaderService,
         private nav: DeviceNavService,
         private deviceServerService: DeviceServerService
     ) {
@@ -33,8 +33,8 @@ export class ConnectingComponent extends NgLifeCycleEvents implements OnInit {
     }
     
     ngOnInit() {
-        this.titleService.setEnabled(false)
-        this.titleService.setTitle("")
+        this.headerService.setEnabled(false)
+        this.headerService.setTitle("")
     }
     
     reconnectClicked() {

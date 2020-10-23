@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core"
-import { BalloonMsgService, NgLifeCycleEvents, TitleService } from "@synerty/peek-plugin-base-js"
+import { BalloonMsgService, NgLifeCycleEvents, HeaderService } from "@synerty/peek-plugin-base-js"
 import { DeviceNavService, EnrolDeviceAction, HardwareInfo } from "@peek/peek_core_device/_private"
 import { DeviceEnrolmentService } from "@peek/peek_core_device"
 
@@ -14,7 +14,7 @@ export class EnrollingComponent extends NgLifeCycleEvents implements OnInit {
     
     constructor(
         private balloonMsg: BalloonMsgService,
-        private titleService: TitleService,
+        private headerService: HeaderService,
         private nav: DeviceNavService,
         private enrolmentService: DeviceEnrolmentService
     ) {
@@ -37,8 +37,8 @@ export class EnrollingComponent extends NgLifeCycleEvents implements OnInit {
     }
     
     ngOnInit() {
-        this.titleService.setEnabled(false)
-        this.titleService.setTitle("")
+        this.headerService.setEnabled(false)
+        this.headerService.setTitle("")
     }
     
 }

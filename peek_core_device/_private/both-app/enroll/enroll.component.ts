@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core"
-import { BalloonMsgService, NgLifeCycleEvents, TitleService } from "@synerty/peek-plugin-base-js"
+import { BalloonMsgService, NgLifeCycleEvents, HeaderService } from "@synerty/peek-plugin-base-js"
 import { first } from "rxjs/operators"
 import {
     ClientSettingsTuple,
@@ -22,7 +22,7 @@ export class EnrollComponent extends NgLifeCycleEvents implements OnInit {
     
     constructor(
         private balloonMsg: BalloonMsgService,
-        private titleService: TitleService,
+        private headerService: HeaderService,
         private tupleService: DeviceTupleService,
         private nav: DeviceNavService,
         private enrolmentService: DeviceEnrolmentService
@@ -47,8 +47,8 @@ export class EnrollComponent extends NgLifeCycleEvents implements OnInit {
     }
     
     ngOnInit() {
-        this.titleService.setEnabled(false)
-        this.titleService.setTitle("")
+        this.headerService.setEnabled(false)
+        this.headerService.setTitle("")
         
         let t = this.deviceType
         

@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core"
-import { BalloonMsgService, NgLifeCycleEvents, TitleService } from "@synerty/peek-plugin-base-js"
+import { BalloonMsgService, NgLifeCycleEvents, HeaderService } from "@synerty/peek-plugin-base-js"
 import {
     DeviceNavService,
     DeviceServerService,
@@ -24,7 +24,7 @@ export class ConnectComponent extends NgLifeCycleEvents implements OnInit {
     
     constructor(
         private balloonMsg: BalloonMsgService,
-        private titleService: TitleService,
+        private headerService: HeaderService,
         private tupleService: DeviceTupleService,
         private nav: DeviceNavService,
         private deviceServerService: DeviceServerService
@@ -56,8 +56,8 @@ export class ConnectComponent extends NgLifeCycleEvents implements OnInit {
     }
     
     ngOnInit() {
-        this.titleService.setEnabled(false)
-        this.titleService.setTitle("")
+        this.headerService.setEnabled(false)
+        this.headerService.setTitle("")
     }
     
     connectEnabled(): boolean {

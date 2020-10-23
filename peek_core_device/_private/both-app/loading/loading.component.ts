@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core"
-import { NgLifeCycleEvents, TitleService } from "@synerty/peek-plugin-base-js"
+import { NgLifeCycleEvents, HeaderService } from "@synerty/peek-plugin-base-js"
 
 @Component({
     selector: "core-device-loading",
@@ -8,12 +8,12 @@ import { NgLifeCycleEvents, TitleService } from "@synerty/peek-plugin-base-js"
 })
 export class LoadingComponent extends NgLifeCycleEvents implements OnInit {
     
-    constructor(private titleService: TitleService) {
+    constructor(private headerService: HeaderService) {
         super()
     }
     
     ngOnInit() {
-        this.titleService.setEnabled(false)
-        this.titleService.setTitle("")
+        this.headerService.setEnabled(false)
+        this.headerService.setTitle("")
     }
 }

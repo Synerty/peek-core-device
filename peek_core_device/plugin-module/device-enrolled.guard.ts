@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import {ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot} from "@angular/router";
-import { TitleService } from "@synerty/peek-plugin-base-js"
+import { HeaderService } from "@synerty/peek-plugin-base-js"
 import {DeviceEnrolmentService} from "./device-enrolment.service";
 import {DeviceNavService} from "./_private/device-nav.service";
 import {DeviceServerService} from "./_private/device-server.service";
@@ -10,7 +10,7 @@ import {first} from "rxjs/operators";
 export class DeviceEnrolledGuard implements CanActivate {
     constructor(private enrolmentService: DeviceEnrolmentService,
                 private nav: DeviceNavService,
-                private titleService: TitleService,
+                private headerService: HeaderService,
                 private serverService: DeviceServerService) {
     }
 
@@ -48,13 +48,13 @@ export class DeviceEnrolledGuard implements CanActivate {
 
 
         if (this.enrolmentService.isEnrolled()) {
-            this.titleService.setEnabled(true);
+            this.headerService.setEnabled(true);
             return true;
         }
 
         // This will take care of navigating to where to need to go to enroll
         if (this.enrolmentService.checkEnrolment()) {
-            this.titleService.setEnabled(true);
+            this.headerService.setEnabled(true);
             return true;
         }
 

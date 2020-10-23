@@ -1,5 +1,5 @@
 import { Component } from "@angular/core"
-import { NgLifeCycleEvents, TitleService } from "@synerty/peek-plugin-base-js"
+import { NgLifeCycleEvents, HeaderService } from "@synerty/peek-plugin-base-js"
 
 @Component({
     selector: "peek-core-device-cfg",
@@ -8,9 +8,9 @@ import { NgLifeCycleEvents, TitleService } from "@synerty/peek-plugin-base-js"
 })
 export class CoreDeviceCfgComponent extends NgLifeCycleEvents {
     
-    constructor(private titleService: TitleService) {
+    constructor(private headerService: HeaderService) {
         super()
         
-        this.titleService.setTitle("Core Device Config")
+        this.headerService.setTitle("Core Device Config")
     }
 }

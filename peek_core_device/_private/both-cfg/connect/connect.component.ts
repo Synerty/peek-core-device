@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core"
-import { BalloonMsgService, NgLifeCycleEvents, TitleService } from "@synerty/peek-plugin-base-js"
+import { BalloonMsgService, NgLifeCycleEvents, HeaderService } from "@synerty/peek-plugin-base-js"
 import { DeviceServerService, DeviceTupleService, ServerInfoTuple } from "@peek/peek_core_device/_private"
 import { DeviceTypeEnum } from "@peek/peek_core_device/_private/hardware-info/hardware-info.abstract"
 
@@ -17,7 +17,7 @@ export class ConnectComponent extends NgLifeCycleEvents implements OnInit {
     
     constructor(
         private balloonMsg: BalloonMsgService,
-        private titleService: TitleService,
+        private headerService: HeaderService,
         private tupleService: DeviceTupleService,
         private deviceServerService: DeviceServerService
     ) {

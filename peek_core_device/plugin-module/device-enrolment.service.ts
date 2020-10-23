@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core"
-import { TitleService } from "@synerty/peek-plugin-base-js"
+import { HeaderService } from "@synerty/peek-plugin-base-js"
 import { Subject } from "rxjs/Subject"
 import { Observable } from "rxjs/Observable"
 import { TupleSelector, VortexStatusService } from "@synerty/vortexjs"
@@ -21,7 +21,7 @@ export class DeviceEnrolmentService {
     
     constructor(
         private nav: DeviceNavService,
-        private titleService: TitleService,
+        private headerService: HeaderService,
         private vortexStatusService: VortexStatusService,
         private tupleService: DeviceTupleService,
         private serverService: DeviceServerService
