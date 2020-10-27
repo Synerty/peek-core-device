@@ -11,8 +11,7 @@ import { Capacitor } from "@capacitor/core"
 
 @Component({
     selector: "core-device-enroll",
-    templateUrl: "connect.component.web.html",
-    moduleId: module.id
+    templateUrl: "connect.component.web.html"
 })
 export class ConnectComponent extends NgLifeCycleEvents implements OnInit {
     server: ServerInfoTuple = new ServerInfoTuple()

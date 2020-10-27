@@ -4,8 +4,7 @@ import { DeviceNavService, DeviceServerService } from "@peek/peek_core_device/_p
 
 @Component({
     selector: "core-device-enrolling",
-    templateUrl: "connecting.component.web.html",
-    moduleId: module.id
+    templateUrl: "connecting.component.web.html"
 })
 export class ConnectingComponent extends NgLifeCycleEvents implements OnInit {
     

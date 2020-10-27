@@ -3,8 +3,7 @@ import { NgLifeCycleEvents, HeaderService } from "@synerty/peek-plugin-base-js"
 
 @Component({
     selector: "core-device-loading",
-    templateUrl: "loading.component.web.html",
-    moduleId: module.id
+    templateUrl: "loading.component.web.html"
 })
 export class LoadingComponent extends NgLifeCycleEvents implements OnInit {
     

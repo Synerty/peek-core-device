@@ -5,8 +5,7 @@ import { DeviceTypeEnum } from "@peek/peek_core_device/_private/hardware-info/ha
 
 @Component({
     selector: "peek-plugin-diagram-cfg-connect",
-    templateUrl: "connect.component.web.html",
-    moduleId: module.id
+    templateUrl: "connect.component.web.html"
 })
 export class ConnectComponent extends NgLifeCycleEvents implements OnInit {
     server: ServerInfoTuple = new ServerInfoTuple()

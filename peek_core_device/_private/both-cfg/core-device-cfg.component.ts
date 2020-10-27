@@ -3,8 +3,7 @@ import { NgLifeCycleEvents, HeaderService } from "@synerty/peek-plugin-base-js"
 
 @Component({
     selector: "peek-core-device-cfg",
-    templateUrl: "core-device-cfg.component.web.html",
-    moduleId: module.id
+    templateUrl: "core-device-cfg.component.web.html"
 })
 export class CoreDeviceCfgComponent extends NgLifeCycleEvents {
     

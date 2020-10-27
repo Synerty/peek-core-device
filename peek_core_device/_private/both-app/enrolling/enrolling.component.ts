@@ -5,8 +5,7 @@ import { DeviceEnrolmentService } from "@peek/peek_core_device"
 
 @Component({
     selector: "core-device-enrolling",
-    templateUrl: "enrolling.component.web.html",
-    moduleId: module.id
+    templateUrl: "enrolling.component.web.html"
 })
 export class EnrollingComponent extends NgLifeCycleEvents implements OnInit {
     data: EnrolDeviceAction = new EnrolDeviceAction()

@@ -13,8 +13,7 @@ import { TupleSelector } from "@synerty/vortexjs"
 
 @Component({
     selector: "core-device-enroll",
-    templateUrl: "enroll.component.web.html",
-    moduleId: module.id
+    templateUrl: "enroll.component.web.html"
 })
 export class EnrollComponent extends NgLifeCycleEvents implements OnInit {
     data: EnrolDeviceAction = new EnrolDeviceAction()

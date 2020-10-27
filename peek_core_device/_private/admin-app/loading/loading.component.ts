@@ -7,8 +7,7 @@ angular module that depends on it.
 
 @Component({
     selector: 'core-device-loading',
-    template: '<p>nothing</p>',
-    moduleId: module.id
+    template: '<p>nothing</p>'
 })
 export class LoadingComponent {
 
