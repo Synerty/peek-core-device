@@ -5,7 +5,7 @@ import { deviceFilt, deviceTuplePrefix } from "./PluginNames"
 import { DeviceTupleService } from "./device-tuple.service"
 import { DeviceNavService } from "./device-nav.service"
 import { Observable } from "rxjs/Observable"
-import { Subject } from "rxjs/Subject"
+import { Subject } from "rxjs"
 import { Capacitor } from "@capacitor/core"
 
 @addTupleType
