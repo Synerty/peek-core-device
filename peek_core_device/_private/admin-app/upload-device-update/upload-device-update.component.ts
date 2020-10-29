@@ -15,8 +15,8 @@ export class UploadDeviceUpdateComponent extends NgLifeCycleEvents implements On
     uploader: FileUploader = null
     hasBaseDropZoneOver: boolean = false
     private readonly filt = {
-        plugin: "peek_server",
-        key: "peek_server.plugin.version.info"
+        plugin: "peek_logic_service",
+        key: "peek_logic_service.plugin.version.info"
     }
     
     constructor(
