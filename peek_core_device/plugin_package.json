@@ -12,9 +12,8 @@
         "server",
         "storage",
         "admin",
-        "client",
-        "mobile",
-        "desktop",
+        "field",
+        "office",
         "doc-dev",
         "doc-admin",
         "doc-user"
@@ -43,9 +42,7 @@
         "appModule": "device.module#DeviceModule",
         "moduleDir": "plugin-module"
     },
-    "client": {
-    },
-    "mobile": {
+    "field": {
         "showHomeLink": false,
         "appDir": "_private/both-app",
         "moduleDir": "plugin-module",
@@ -95,7 +92,7 @@
             }
         ]
     },
-    "desktop": {
+    "office": {
         "showHomeLink": false,
         "appDir": "_private/both-app",
         "moduleDir": "plugin-module",
