@@ -186,7 +186,6 @@ export class DeviceServerService {
                 }
                 
                 this.serverInfoSubject.next(this.serverInfo)
-                
             })
     }
     
