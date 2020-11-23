@@ -56,10 +56,10 @@ class ClientEntryHook(PluginClientEntryHookABC):
         )
         # Matches resource path on server
         # noinspection PyTypeChecker
-        self.platform.addDesktopResource(b'device_update', proxyResource)
+        self.platform.addOfficeResource(b'device_update', proxyResource)
 
         # noinspection PyTypeChecker
-        self.platform.addMobileResource(b'device_update', proxyResource)
+        self.platform.addFieldResource(b'device_update', proxyResource)
 
         # ----------------
         # Action Processor Proxy

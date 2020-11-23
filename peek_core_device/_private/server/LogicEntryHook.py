@@ -15,7 +15,7 @@ from peek_core_device._private.storage import DeclarativeBase
 from peek_core_device._private.storage.DeclarativeBase import loadStorageTuples
 from peek_core_device._private.tuples import loadPrivateTuples
 from peek_core_device.tuples import loadPublicTuples
-from peek_plugin_base.server.PluginServerEntryHookABC import PluginServerEntryHookABC
+from peek_plugin_base.server.PluginLogicEntryHookABC import PluginLogicEntryHookABC
 from peek_plugin_base.server.PluginServerStorageEntryHookABC import \
     PluginServerStorageEntryHookABC
 from .DeviceApi import DeviceApi
@@ -27,11 +27,11 @@ from .controller.MainController import MainController
 logger = logging.getLogger(__name__)
 
 
-class ServerEntryHook(PluginServerEntryHookABC, PluginServerStorageEntryHookABC):
+class LogicEntryHook(PluginLogicEntryHookABC, PluginServerStorageEntryHookABC):
     def __init__(self, *args, **kwargs):
         """" Constructor """
         # Call the base classes constructor
-        PluginServerEntryHookABC.__init__(self, *args, **kwargs)
+        PluginLogicEntryHookABC.__init__(self, *args, **kwargs)
 
         #: Loaded Objects, This is a list of all objects created when we start
         self._loadedObjects = []

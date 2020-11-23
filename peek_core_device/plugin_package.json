@@ -9,7 +9,7 @@
         "website": "www.synerty.com"
     },
     "requiresServices": [
-        "server",
+        "logic",
         "storage",
         "admin",
         "field",
@@ -31,7 +31,7 @@
         "docDir": "doc-user",
         "docRst": "index.rst"
     },
-    "server": {
+    "logic": {
     },
     "storage": {
         "alembicDir": "_private/alembic"
