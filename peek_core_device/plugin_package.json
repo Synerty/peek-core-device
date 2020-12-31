@@ -14,21 +14,21 @@
         "admin",
         "field",
         "office",
-        "doc-dev",
-        "doc-admin",
-        "doc-user"
+        "admin-doc",
+        "field-doc",
+        "office-doc"
     ],
-    "doc-dev": {
-        "docDir": "doc-dev",
+    "admin-doc": {
+        "docDir": "admin-doc",
         "docRst": "index.rst",
         "hasApi": true
     },
-    "doc-admin": {
-        "docDir": "doc-admin",
+    "office-doc": {
+        "docDir": "both-doc",
         "docRst": "index.rst"
     },
-    "doc-user": {
-        "docDir": "doc-user",
+    "field-doc": {
+        "docDir": "both-doc",
         "docRst": "index.rst"
     },
     "logic": {
