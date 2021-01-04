@@ -27,16 +27,23 @@
                     {{item.updateVersion}}
                 </td>
                 <td>
-                    <button class="btn"
-                            [class.btn-success]="item.isEnabled"
-                            [class.btn-warning]="!item.isEnabled"
-                            (click)='toggleUpdateEnabledClicked(item)'>
+                    <button
+                        (click)="toggleUpdateEnabledClicked(item)"
+                        [class.btn-success]="item.isEnabled"
+                        [class.btn-warning]="!item.isEnabled"
+                        class="btn"
+                    >
                         {{item.isEnabled ? "Enabled" : "Disabled"}}
                     </button>
                 </td>
                 <td>
-                    <div class="btn btn-default" (click)='deleteUpdateClicked(item)'>
-                        <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                    <div
+                        (click)="deleteUpdateClicked(item)"
+                        class="btn btn-default"
+                    >
+                        <span
+                            aria-hidden="true" class="glyphicon glyphicon-minus"
+                        ></span>
                     </div>
                 </td>
             </tr>

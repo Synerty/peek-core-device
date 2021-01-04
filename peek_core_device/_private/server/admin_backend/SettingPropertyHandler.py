@@ -21,22 +21,26 @@ class __CrudHandler(OrmCrudHandler):
     def createDeclarative(self, session, payloadFilt):
         return [p for p in globalSetting(session).propertyObjects]
 
+
 class __ExtUpdateObservable(OrmCrudHandlerExtension):
-    """ Update Observable ORM Crud Extension
+    """Update Observable ORM Crud Extension
 
     This extension is called after events that will alter data,
     it then notifies the observer.
 
     """
+
     def __init__(self, tupleDataObserver: TupleDataObservableHandler):
         self._tupleDataObserver = tupleDataObserver
 
     def _tellObserver(self, tuple_, tuples, session, payloadFilt):
-        self._tupleDataObserver \
-            .notifyOfTupleUpdate(TupleSelector(SettingProperty.tupleName(), {}))
+        self._tupleDataObserver.notifyOfTupleUpdate(
+            TupleSelector(SettingProperty.tupleName(), {})
+        )
 
-        self._tupleDataObserver \
-            .notifyOfTupleUpdate(TupleSelector(ClientSettingsTuple.tupleName(), {}))
+        self._tupleDataObserver.notifyOfTupleUpdate(
+            TupleSelector(ClientSettingsTuple.tupleName(), {})
+        )
 
         return True
 
@@ -46,8 +50,9 @@ class __ExtUpdateObservable(OrmCrudHandlerExtension):
 
 # This method creates an instance of the handler class.
 def makeSettingPropertyHandler(tupleObservable, dbSessionCreator):
-    handler = __CrudHandler(dbSessionCreator, SettingProperty,
-                            filtKey, retreiveAll=True)
+    handler = __CrudHandler(
+        dbSessionCreator, SettingProperty, filtKey, retreiveAll=True
+    )
 
     handler.addExtension(SettingProperty, __ExtUpdateObservable(tupleObservable))
     logger.debug("Started")

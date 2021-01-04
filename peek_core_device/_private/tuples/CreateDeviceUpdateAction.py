@@ -7,12 +7,13 @@ from vortex.TupleAction import TupleActionABC
 
 @addTupleType
 class CreateDeviceUpdateAction(TupleActionABC):
-    """ Create Update Action
+    """Create Update Action
 
     Create a new device update entry, this will be accompanied by an upload.
 
     """
-    __tupleType__ = deviceTuplePrefix + 'CreateDeviceUpdateAction'
+
+    __tupleType__ = deviceTuplePrefix + "CreateDeviceUpdateAction"
 
     #:  Description of date1
-    newUpdate:DeviceUpdateTuple = TupleField()
+    newUpdate: DeviceUpdateTuple = TupleField()

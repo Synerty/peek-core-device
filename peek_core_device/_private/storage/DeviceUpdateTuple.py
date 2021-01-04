@@ -1,4 +1,3 @@
-
 import logging
 
 from sqlalchemy import Column, Boolean
@@ -16,13 +15,14 @@ logger = logging.getLogger(__name__)
 
 @addTupleType
 class DeviceUpdateTuple(Tuple, DeclarativeBase):
-    """ DeviceUpdateTuple
+    """DeviceUpdateTuple
 
     This table stores information about the peek device updates.
 
     """
-    __tablename__ = 'DeviceUpdate'
-    __tupleType__ = deviceTuplePrefix + 'DeviceUpdateTuple'
+
+    __tablename__ = "DeviceUpdate"
+    __tupleType__ = deviceTuplePrefix + "DeviceUpdateTuple"
 
     id = Column(Integer, primary_key=True)
     deviceType = Column(String(20), nullable=False)
@@ -36,6 +36,11 @@ class DeviceUpdateTuple(Tuple, DeclarativeBase):
     isEnabled = Column(Boolean, nullable=False, server_default="0")
 
     __table_args__ = (
-        Index("idx_DeviceUpdate_Version",
-              deviceType, appVersion, updateVersion, unique=True),
+        Index(
+            "idx_DeviceUpdate_Version",
+            deviceType,
+            appVersion,
+            updateVersion,
+            unique=True,
+        ),
     )

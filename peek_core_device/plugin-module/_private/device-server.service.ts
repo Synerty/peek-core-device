@@ -1,6 +1,13 @@
 import { Injectable } from "@angular/core"
 import { BalloonMsgService } from "@synerty/peek-plugin-base-js"
-import { addTupleType, extend, Tuple, TupleSelector, VortexService, VortexStatusService } from "@synerty/vortexjs"
+import {
+    addTupleType,
+    extend,
+    Tuple,
+    TupleSelector,
+    VortexService,
+    VortexStatusService
+} from "@synerty/vortexjs"
 import { deviceFilt, deviceTuplePrefix } from "./PluginNames"
 import { DeviceTupleService } from "./device-tuple.service"
 import { DeviceNavService } from "./device-nav.service"

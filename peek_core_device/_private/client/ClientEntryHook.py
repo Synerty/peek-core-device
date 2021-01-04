@@ -24,7 +24,7 @@ class ClientEntryHook(PluginClientEntryHookABC):
         self._loadedObjects = []
 
     def load(self) -> None:
-        """ Load
+        """Load
 
         This will be called when the plugin is loaded, just after the db is migrated.
         Place any custom initialiastion steps here.
@@ -39,7 +39,7 @@ class ClientEntryHook(PluginClientEntryHookABC):
         logger.debug("Loaded")
 
     def start(self):
-        """ Load
+        """Load
 
         This will be called when the plugin is loaded, just after the db is migrated.
         Place any custom initialiastion steps here.
@@ -51,15 +51,14 @@ class ClientEntryHook(PluginClientEntryHookABC):
         # Support file downloads for device updates
         # noinspection PyTypeChecker
         proxyResource = HttpResourceProxy(
-            self.platform.peekServerHost,
-            self.platform.peekServerHttpPort
+            self.platform.peekServerHost, self.platform.peekServerHttpPort
         )
         # Matches resource path on server
         # noinspection PyTypeChecker
-        self.platform.addOfficeResource(b'device_update', proxyResource)
+        self.platform.addOfficeResource(b"device_update", proxyResource)
 
         # noinspection PyTypeChecker
-        self.platform.addFieldResource(b'device_update', proxyResource)
+        self.platform.addFieldResource(b"device_update", proxyResource)
 
         # ----------------
         # Action Processor Proxy
@@ -85,7 +84,7 @@ class ClientEntryHook(PluginClientEntryHookABC):
 
     @inlineCallbacks
     def stop(self):
-        """ Stop
+        """Stop
 
         This method is called by the platform to tell the peek app to shutdown and stop
         everything it's doing

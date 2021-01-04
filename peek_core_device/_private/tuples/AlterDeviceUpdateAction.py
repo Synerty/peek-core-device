@@ -8,12 +8,13 @@ from vortex.TupleAction import TupleActionABC
 # I'm using the word Alter here, because UpdateUpdate is confusing.
 @addTupleType
 class AlterDeviceUpdateAction(TupleActionABC):
-    """ Alter Device Update Tuple
+    """Alter Device Update Tuple
 
     This action tuple applies changes to the Update from the admin UI.
 
     """
-    __tupleType__ = deviceTuplePrefix + 'AlterDeviceUpdateAction'
+
+    __tupleType__ = deviceTuplePrefix + "AlterDeviceUpdateAction"
 
     #:  the ID of the DeviceUpdateTuple
     updateId: int = TupleField()

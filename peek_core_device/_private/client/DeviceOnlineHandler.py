@@ -5,8 +5,9 @@ from twisted.internet.task import LoopingCall
 
 from peek_core_device._private.PluginNames import deviceFilt, deviceActionProcessorName
 from peek_core_device._private.PluginNames import deviceObservableName
-from peek_core_device._private.tuples.UpdateDeviceOnlineAction import \
-    UpdateDeviceOnlineAction
+from peek_core_device._private.tuples.UpdateDeviceOnlineAction import (
+    UpdateDeviceOnlineAction,
+)
 from peek_plugin_base.PeekVortexUtil import peekServerName
 from vortex.DeferUtil import vortexLogFailure
 from vortex.Payload import Payload
@@ -14,15 +15,19 @@ from vortex.PayloadEndpoint import PayloadEndpoint
 from vortex.PayloadEnvelope import PayloadEnvelope
 from vortex.VortexFactory import VortexFactory
 from vortex.handler.TupleDataActionClient import TupleDataActionClient
-from vortex.handler.TupleDataObservableProxyHandler import TupleDataObservableProxyHandler
+from vortex.handler.TupleDataObservableProxyHandler import (
+    TupleDataObservableProxyHandler,
+)
 
 logger = logging.getLogger(__name__)
 
 
 def makeDeviceTupleDataObservableProxy():
-    return TupleDataObservableProxyHandler(observableName=deviceObservableName,
-                                           proxyToVortexName=peekServerName,
-                                           additionalFilt=deviceFilt)
+    return TupleDataObservableProxyHandler(
+        observableName=deviceObservableName,
+        proxyToVortexName=peekServerName,
+        additionalFilt=deviceFilt,
+    )
 
 
 deviceOnlineFilt = dict(key="device.online")
@@ -31,6 +36,7 @@ deviceOnlineFilt.update(deviceFilt)
 
 # The sender is located at:
 # peek_core_device/plugin-module/_private/device-server.service.ts
+
 
 class DeviceOnlineHandler:
     CHECK_TIME = 5.0
@@ -45,7 +51,8 @@ class DeviceOnlineHandler:
         self._actionClient = TupleDataActionClient(
             tupleActionProcessorName=deviceActionProcessorName,
             destVortexName=peekServerName,
-            additionalFilt=deviceFilt)
+            additionalFilt=deviceFilt,
+        )
 
     def shutdown(self):
         self._ep.shutdown()

@@ -11,13 +11,15 @@ from vortex.handler.TupleDataObservableHandler import TuplesProviderABC
 
 logger = logging.getLogger(__name__)
 
+
 class DeviceInfoTupleProvider(TuplesProviderABC):
     def __init__(self, ormSessionCreator):
         self._ormSessionCreator = ormSessionCreator
 
     @deferToThreadWrapWithLogger(logger)
-    def makeVortexMsg(self, filt: dict,
-                      tupleSelector: TupleSelector) -> Union[Deferred, bytes]:
+    def makeVortexMsg(
+        self, filt: dict, tupleSelector: TupleSelector
+    ) -> Union[Deferred, bytes]:
 
         deviceId = tupleSelector.selector.get("deviceId")
 

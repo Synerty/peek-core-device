@@ -16,8 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 class DeviceApi(DeviceApiABC):
-    def __init__(self, mainController: MainController,
-                 ormSessionCreator):
+    def __init__(self, mainController: MainController, ormSessionCreator):
         self._mainController = mainController
         self._ormSessionCreator = ormSessionCreator
 
@@ -30,9 +29,11 @@ class DeviceApi(DeviceApiABC):
     def deviceDetails(self, deviceTokens: List[str]) -> Deferred:
         ormSession = self._ormSessionCreator()
         try:
-            all = ormSession.query(DeviceInfoTuple) \
-                .filter(DeviceInfoTuple.deviceToken.in_(deviceTokens)) \
+            all = (
+                ormSession.query(DeviceInfoTuple)
+                .filter(DeviceInfoTuple.deviceToken.in_(deviceTokens))
                 .all()
+            )
 
             tuples = [
                 DeviceDetailTuple(
@@ -59,9 +60,11 @@ class DeviceApi(DeviceApiABC):
 
         ormSession = self._ormSessionCreator()
         try:
-            all = ormSession.query(DeviceInfoTuple) \
-                .filter(DeviceInfoTuple.deviceToken == deviceToken) \
+            all = (
+                ormSession.query(DeviceInfoTuple)
+                .filter(DeviceInfoTuple.deviceToken == deviceToken)
                 .all()
+            )
 
             if not all:
                 return None
@@ -77,8 +80,6 @@ class DeviceApi(DeviceApiABC):
     def notifyOfOnlineStatus(self, deviceId: str, deviceToken: str, status: bool):
         self._deviceOnlineSubject.on_next(
             DeviceOnlineDetailTuple(
-                deviceToken=deviceToken,
-                deviceId=deviceId,
-                onlineStatus=status
+                deviceToken=deviceToken, deviceId=deviceId, onlineStatus=status
             )
         )

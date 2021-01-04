@@ -13,13 +13,14 @@ logger = logging.getLogger(__name__)
 
 @addTupleType
 class DeviceInfoTuple(Tuple, DeclarativeBase):
-    """ DeviceInfoTuple
+    """DeviceInfoTuple
 
     This table stores information about devices.
 
     """
-    __tablename__ = 'DeviceInfo'
-    __tupleType__ = deviceTuplePrefix + 'DeviceInfoTuple'
+
+    __tablename__ = "DeviceInfo"
+    __tupleType__ = deviceTuplePrefix + "DeviceInfoTuple"
 
     TYPE_MOBILE_IOS = "mobile-ios"
     TYPE_MOBILE_ANDROUD = "mobile-android"
@@ -38,5 +39,5 @@ class DeviceInfoTuple(Tuple, DeclarativeBase):
     lastOnline = Column(DateTime(True))
     lastUpdateCheck = Column(DateTime(True))
     createdDate = Column(DateTime(True), nullable=False)
-    isOnline = Column(Boolean, nullable=False, server_default='0')
-    isEnrolled = Column(Boolean, nullable=False, server_default='0')
+    isOnline = Column(Boolean, nullable=False, server_default="0")
+    isEnrolled = Column(Boolean, nullable=False, server_default="0")

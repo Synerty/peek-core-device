@@ -1,4 +1,4 @@
-import {Injectable, NgZone} from "@angular/core";
+import { Injectable, NgZone } from "@angular/core"
 import {
     TupleActionPushNameService,
     TupleActionPushOfflineService,
@@ -12,16 +12,15 @@ import {
     TupleStorageFactoryService,
     VortexService,
     VortexStatusService
-} from "@synerty/vortexjs";
+} from "@synerty/vortexjs"
 
 import {
     deviceActionProcessorName,
     deviceFilt,
     deviceObservableName,
     deviceTupleOfflineServiceName
-} from "./PluginNames";
-import {HardwareInfo} from "./hardware-info/hardware-info.mweb";
-
+} from "./PluginNames"
+import { HardwareInfo } from "./hardware-info/hardware-info.mweb"
 
 /** Device Tuple Service
  *
@@ -34,56 +33,57 @@ import {HardwareInfo} from "./hardware-info/hardware-info.mweb";
  */
 @Injectable()
 export class DeviceTupleService {
-    offlineStorage: TupleOfflineStorageService;
-    offlineObserver: TupleDataOfflineObserverService;
-    observer: TupleDataObserverService;
-
-    tupleAction: TupleActionPushService;
-    tupleOfflineAction: TupleActionPushOfflineService;
-
-    hardwareInfo: HardwareInfo;
-
-    constructor(storageFactory: TupleStorageFactoryService,
-                actionSingletonService: TupleActionPushOfflineSingletonService,
-                vortexService: VortexService,
-                vortexStatusService: VortexStatusService) {
-
+    offlineStorage: TupleOfflineStorageService
+    offlineObserver: TupleDataOfflineObserverService
+    observer: TupleDataObserverService
+    
+    tupleAction: TupleActionPushService
+    tupleOfflineAction: TupleActionPushOfflineService
+    
+    hardwareInfo: HardwareInfo
+    
+    constructor(
+        storageFactory: TupleStorageFactoryService,
+        actionSingletonService: TupleActionPushOfflineSingletonService,
+        vortexService: VortexService,
+        vortexStatusService: VortexStatusService
+    ) {
+        
         // Create the offline storage
         this.offlineStorage = new TupleOfflineStorageService(
             storageFactory,
             new TupleOfflineStorageNameService(deviceTupleOfflineServiceName)
-        );
-
+        )
+        
         // Create the offline observer
-        let observerName = new TupleDataObservableNameService(deviceObservableName, deviceFilt);
+        let observerName = new TupleDataObservableNameService(deviceObservableName, deviceFilt)
         this.offlineObserver = new TupleDataOfflineObserverService(
             vortexService,
             vortexStatusService,
             observerName,
             this.offlineStorage
-        );
-
+        )
+        
         // Create the observer
-        this.observer = new TupleDataObserverService(this.offlineObserver, observerName);
-
+        this.observer = new TupleDataObserverService(this.offlineObserver, observerName)
+        
         // Create the observer
         this.tupleAction = new TupleActionPushService(
             new TupleActionPushNameService(deviceActionProcessorName, deviceFilt),
             vortexService,
             vortexStatusService
-        );
-
+        )
+        
         // Create the observer
         this.tupleOfflineAction = new TupleActionPushOfflineService(
             new TupleActionPushNameService(deviceActionProcessorName, deviceFilt),
             vortexService,
             vortexStatusService,
             actionSingletonService
-        );
-
-        this.hardwareInfo = new HardwareInfo(this.offlineStorage);
-
+        )
+        
+        this.hardwareInfo = new HardwareInfo(this.offlineStorage)
+        
     }
-
-
+    
 }

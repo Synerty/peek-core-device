@@ -1,8 +1,14 @@
 import { Component, OnInit } from "@angular/core"
 import { Payload, PayloadEnvelope, VortexService } from "@synerty/vortexjs"
-import { BalloonMsgService, NgLifeCycleEvents } from "@synerty/peek-plugin-base-js"
+import {
+    BalloonMsgService,
+    NgLifeCycleEvents
+} from "@synerty/peek-plugin-base-js"
 import { FileUploader } from "ng2-file-upload"
-import { CreateDeviceUpdateAction, DeviceUpdateTuple } from "@peek/peek_core_device/_private"
+import {
+    CreateDeviceUpdateAction,
+    DeviceUpdateTuple
+} from "@peek/peek_core_device/_private"
 
 @Component({
     selector: "core-device-upload-device-update",

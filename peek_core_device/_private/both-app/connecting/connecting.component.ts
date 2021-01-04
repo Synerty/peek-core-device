@@ -1,6 +1,9 @@
 import { Component, OnInit } from "@angular/core"
 import { NgLifeCycleEvents, HeaderService } from "@synerty/peek-plugin-base-js"
-import { DeviceNavService, DeviceServerService } from "@peek/peek_core_device/_private"
+import {
+    DeviceNavService,
+    DeviceServerService
+} from "@peek/peek_core_device/_private"
 
 @Component({
     selector: "core-device-enrolling",

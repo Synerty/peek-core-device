@@ -1,24 +1,22 @@
-import {DeviceTypeEnum, HardwareInfoI} from "./hardware-info.abstract";
-import {webUuid} from "./hardware-info.web";
-import {TupleOfflineStorageService} from "@synerty/vortexjs";
-
+import { DeviceTypeEnum, HardwareInfoI } from "./hardware-info.abstract"
+import { webUuid } from "./hardware-info.web"
+import { TupleOfflineStorageService } from "@synerty/vortexjs"
 
 export class HardwareInfo extends HardwareInfoI {
     constructor(private tupleStorage: TupleOfflineStorageService) {
-        super();
-
+        super()
+        
     }
-
+    
     uuid(): Promise<string> {
-        return webUuid(this.tupleStorage);
+        return webUuid(this.tupleStorage)
     }
-
+    
     description(): string {
-        return navigator.userAgent;
+        return navigator.userAgent
     }
-
-
+    
     deviceType(): DeviceTypeEnum {
-        return DeviceTypeEnum.MOBILE_WEB;
+        return DeviceTypeEnum.MOBILE_WEB
     }
 }

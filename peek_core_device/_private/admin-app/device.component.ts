@@ -1,12 +1,12 @@
-import {Component, OnInit} from "@angular/core";
+import { Component, OnInit } from "@angular/core"
 
 @Component({
-    selector: 'device-admin',
-    templateUrl: 'device.component.html'
+    selector: "device-admin",
+    templateUrl: "device.component.html"
 })
-export class DeviceComponent  implements OnInit {
-
+export class DeviceComponent implements OnInit {
+    
     ngOnInit() {
-
+    
     }
 }

@@ -14,13 +14,15 @@ from vortex.handler.TupleDataObservableHandler import TuplesProviderABC
 
 logger = logging.getLogger(__name__)
 
+
 class DeviceUpdateTupleProvider(TuplesProviderABC):
     def __init__(self, ormSessionCreator):
         self._ormSessionCreator = ormSessionCreator
 
     @deferToThreadWrapWithLogger(logger)
-    def makeVortexMsg(self, filt: dict,
-                      tupleSelector: TupleSelector) -> Union[Deferred, bytes]:
+    def makeVortexMsg(
+        self, filt: dict, tupleSelector: TupleSelector
+    ) -> Union[Deferred, bytes]:
         # Potential filters can be placed here.
         deviceId = tupleSelector.selector.get("deviceId")
 
@@ -31,8 +33,8 @@ class DeviceUpdateTupleProvider(TuplesProviderABC):
             if deviceId is not None:
                 deviceInfo = (
                     ormSession.query(DeviceInfoTuple)
-                        .filter(DeviceInfoTuple.deviceId == deviceId)
-                        .one()
+                    .filter(DeviceInfoTuple.deviceId == deviceId)
+                    .one()
                 )
 
                 deviceInfo.lastUpdateCheck = datetime.now(pytz.utc)
@@ -44,10 +46,10 @@ class DeviceUpdateTupleProvider(TuplesProviderABC):
             if deviceInfo:
                 updates = (
                     ormSession.query(DeviceUpdateTuple)
-                        .filter(DeviceUpdateTuple.deviceType == deviceInfo.deviceType)
-                        .filter(DeviceUpdateTuple.isEnabled == True)
-                        .order_by(DeviceUpdateTuple.buildDate)
-                        .all()
+                    .filter(DeviceUpdateTuple.deviceType == deviceInfo.deviceType)
+                    .filter(DeviceUpdateTuple.isEnabled == True)
+                    .order_by(DeviceUpdateTuple.buildDate)
+                    .all()
                 )
 
                 if updates:
@@ -59,8 +61,8 @@ class DeviceUpdateTupleProvider(TuplesProviderABC):
             else:
                 tuples = (
                     ormSession.query(DeviceUpdateTuple)
-                        .order_by(DeviceUpdateTuple.buildDate)
-                        .all()
+                    .order_by(DeviceUpdateTuple.buildDate)
+                    .all()
                 )
 
             # Create the vortex message

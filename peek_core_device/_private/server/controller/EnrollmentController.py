@@ -7,12 +7,15 @@ import pytz
 from sqlalchemy.exc import IntegrityError
 from twisted.internet.defer import Deferred
 
-from peek_core_device._private.server.controller.NotifierController import \
-    NotifierController
+from peek_core_device._private.server.controller.NotifierController import (
+    NotifierController,
+)
 from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
 from peek_core_device._private.storage.Setting import globalSetting, AUTO_ENROLLMENT
 from peek_core_device._private.tuples.EnrolDeviceAction import EnrolDeviceAction
-from peek_core_device._private.tuples.UpdateEnrollmentAction import UpdateEnrollmentAction
+from peek_core_device._private.tuples.UpdateEnrollmentAction import (
+    UpdateEnrollmentAction,
+)
 from vortex.DeferUtil import deferToThreadWrapWithLogger
 from vortex.Tuple import Tuple
 from vortex.TupleAction import TupleActionABC
@@ -39,7 +42,7 @@ class EnrollmentController:
 
     @deferToThreadWrapWithLogger(logger)
     def _processDeviceEnrolment(self, action: EnrolDeviceAction) -> List[Tuple]:
-        """ Process Device Enrolment
+        """Process Device Enrolment
 
         :rtype: Deferred
         """
@@ -48,8 +51,8 @@ class EnrollmentController:
             # There should only be one item that exists if it exists.
             existing = (
                 ormSession.query(DeviceInfoTuple)
-                    .filter(DeviceInfoTuple.deviceId == action.deviceId)
-                    .all()
+                .filter(DeviceInfoTuple.deviceId == action.deviceId)
+                .all()
             )
 
             if existing:
@@ -61,7 +64,7 @@ class EnrollmentController:
             deviceInfo.deviceType = action.deviceType
             deviceInfo.deviceToken = str(uuid4())
             deviceInfo.createdDate = datetime.now(pytz.utc)
-            deviceInfo.appVersion = '0.0.0'
+            deviceInfo.appVersion = "0.0.0"
             deviceInfo.isEnrolled = globalSetting(ormSession, AUTO_ENROLLMENT)
 
             # TODO, Move these to their own tuple
@@ -91,8 +94,10 @@ class EnrollmentController:
             ormSession.close()
 
     @deferToThreadWrapWithLogger(logger)
-    def _processAdminUpdateEnrolment(self, action: UpdateEnrollmentAction) -> List[Tuple]:
-        """ Process Admin Update
+    def _processAdminUpdateEnrolment(
+        self, action: UpdateEnrollmentAction
+    ) -> List[Tuple]:
+        """Process Admin Update
 
         :rtype: Deferred
         """
@@ -100,8 +105,8 @@ class EnrollmentController:
         try:
             deviceInfo = (
                 session.query(DeviceInfoTuple)
-                    .filter(DeviceInfoTuple.id == action.deviceInfoId)
-                    .one()
+                .filter(DeviceInfoTuple.id == action.deviceInfoId)
+                .one()
             )
 
             deviceId = deviceInfo.deviceId

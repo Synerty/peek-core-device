@@ -1,12 +1,12 @@
-import { CommonModule } from "@angular/common";
-import { NgModule } from "@angular/core";
-import { Routes } from "@angular/router";
-import { FormsModule } from "@angular/forms";
-import { HttpClientModule } from "@angular/common/http";
-import { NzIconModule } from "ng-zorro-antd/icon";
-import { RouterModule } from "@angular/router";
-import { CoreDeviceCfgComponent } from "./core-device-cfg.component";
-import { ConnectComponent } from "./connect/connect.component";
+import { CommonModule } from "@angular/common"
+import { NgModule } from "@angular/core"
+import { Routes } from "@angular/router"
+import { FormsModule } from "@angular/forms"
+import { HttpClientModule } from "@angular/common/http"
+import { NzIconModule } from "ng-zorro-antd/icon"
+import { RouterModule } from "@angular/router"
+import { CoreDeviceCfgComponent } from "./core-device-cfg.component"
+import { ConnectComponent } from "./connect/connect.component"
 import {
     TupleActionPushNameService,
     TupleActionPushOfflineService,
@@ -16,27 +16,27 @@ import {
     TupleDataOfflineObserverService,
     TupleOfflineStorageNameService,
     TupleOfflineStorageService,
-} from "@synerty/vortexjs";
+} from "@synerty/vortexjs"
 import {
     deviceFilt,
     deviceObservableName,
     deviceTupleOfflineServiceName,
-} from "@peek/peek_core_device/_private/PluginNames";
-import { deviceActionProcessorName } from "@peek/peek_core_device/_private";
+} from "@peek/peek_core_device/_private/PluginNames"
+import { deviceActionProcessorName } from "@peek/peek_core_device/_private"
 
 export function tupleActionPushNameServiceFactory() {
     return new TupleActionPushNameService(
         deviceActionProcessorName,
         deviceFilt
-    );
+    )
 }
 
 export function tupleDataObservableNameServiceFactory() {
-    return new TupleDataObservableNameService(deviceObservableName, deviceFilt);
+    return new TupleDataObservableNameService(deviceObservableName, deviceFilt)
 }
 
 export function tupleOfflineStorageNameServiceFactory() {
-    return new TupleOfflineStorageNameService(deviceTupleOfflineServiceName);
+    return new TupleOfflineStorageNameService(deviceTupleOfflineServiceName)
 }
 
 // Define the child routes for this plugin.
@@ -50,7 +50,7 @@ export const pluginRoutes: Routes = [
         pathMatch: "full",
         component: CoreDeviceCfgComponent,
     },
-];
+]
 
 // Define the root module for this plugin.
 // This module is loaded by the lazy loader, what ever this defines is what is started.
@@ -85,4 +85,5 @@ export const pluginRoutes: Routes = [
     ],
     declarations: [CoreDeviceCfgComponent, ConnectComponent],
 })
-export class CoreDeviceCfgModule {}
+export class CoreDeviceCfgModule {
+}

@@ -5,14 +5,15 @@ from vortex.TupleAction import TupleActionABC
 
 @addTupleType
 class UpdateEnrollmentAction(TupleActionABC):
-    """ Authorise Enrolment Action
+    """Authorise Enrolment Action
 
     This action authorises a device to enroll in this peek environment.
 
     """
-    __tupleType__ = deviceTuplePrefix + 'UpdateEnrollmentAction'
+
+    __tupleType__ = deviceTuplePrefix + "UpdateEnrollmentAction"
 
     #:  The device info id to authorise
     deviceInfoId: int = TupleField()
-    unenroll:bool = TupleField(False)
-    remove:bool = TupleField(False)
+    unenroll: bool = TupleField(False)
+    remove: bool = TupleField(False)

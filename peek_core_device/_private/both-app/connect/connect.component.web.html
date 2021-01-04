@@ -8,17 +8,17 @@
             </div>
         </div>
         
-        <div class="row" *ngIf="platform !== 'web'">
+        <div *ngIf="platform !== 'web'" class="row">
             <div class="col-lg-1">
                 <div class="details-section-title">
                     IP Address
                 </div>
                 <div class="details-section-value">
                     <input
-                        type="text"
                         [(ngModel)]="server.host"
-                        class="form-control editable"
                         autocomplete="off"
+                        class="form-control editable"
+                        type="text"
                     >
                 </div>
             </div>
@@ -33,8 +33,8 @@
                 </div>
                 <div class="details-section-value">
                     <input
-                        type="text" [(ngModel)]="httpPortStr"
-                        class="form-control editable"
+                        [(ngModel)]="httpPortStr" class="form-control editable"
+                        type="text"
                     >
                 </div>
             </div>
@@ -46,8 +46,9 @@
                 </div>
                 <div class="details-section-value">
                     <input
-                        type="text" [(ngModel)]="websocketPortStr"
+                        [(ngModel)]="websocketPortStr"
                         class="form-control editable"
+                        type="text"
                     >
                 </div>
             </div>
@@ -59,8 +60,9 @@
                 </div>
                 <div class="details-section-value">
                     <input
-                        type="checkbox" [(ngModel)]="server.useSsl"
+                        [(ngModel)]="server.useSsl"
                         class="form-control editable"
+                        type="checkbox"
                     >
                 </div>
             </div>
@@ -70,7 +72,7 @@
         <hr>
         <div class="row">
             <div class="col-xs-12">
-                <Button class="btn btn-block" (click)="connectClicked()">
+                <Button (click)="connectClicked()" class="btn btn-block">
                     Connect
                 </Button>
             </div>

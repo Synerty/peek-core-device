@@ -6,7 +6,7 @@ from twisted.internet.defer import Deferred
 
 
 class DeviceApiABC(metaclass=ABCMeta):
-    """ Device API
+    """Device API
 
     This is the public API for the part of the plugin that runs on the server service.
 
@@ -14,7 +14,7 @@ class DeviceApiABC(metaclass=ABCMeta):
 
     @abstractmethod
     def deviceDetails(self, deviceTokens: List[str]) -> Deferred:
-        """ Device Details
+        """Device Details
 
         Retrieve the details for the devices with the device tokens provided.
 
@@ -25,7 +25,7 @@ class DeviceApiABC(metaclass=ABCMeta):
 
     @abstractmethod
     def deviceDescription(self, deviceToken: str) -> Deferred:
-        """ Device Description
+        """Device Description
 
         Retrieve the devices description
 
@@ -36,7 +36,7 @@ class DeviceApiABC(metaclass=ABCMeta):
 
     @abstractmethod
     def deviceDescriptionBlocking(self, deviceToken: str) -> Optional[str]:
-        """ Device Description
+        """Device Description
 
         Retrieve the devices description, this must be called from a thread.
 
@@ -47,7 +47,7 @@ class DeviceApiABC(metaclass=ABCMeta):
 
     @abstractmethod
     def deviceOnlineStatus(self) -> Observable:
-        """ Device Online Stauts
+        """Device Online Stauts
 
         Subscribe to device online status
 

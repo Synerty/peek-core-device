@@ -8,14 +8,17 @@ import pytz
 import shutil
 from twisted.internet.defer import Deferred, inlineCallbacks, returnValue
 
-from peek_core_device._private.server.controller.NotifierController import \
-    NotifierController
+from peek_core_device._private.server.controller.NotifierController import (
+    NotifierController,
+)
 from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
 from peek_core_device._private.storage.DeviceUpdateTuple import DeviceUpdateTuple
-from peek_core_device._private.tuples.AlterDeviceUpdateAction import \
-    AlterDeviceUpdateAction
-from peek_core_device._private.tuples.CreateDeviceUpdateAction import \
-    CreateDeviceUpdateAction
+from peek_core_device._private.tuples.AlterDeviceUpdateAction import (
+    AlterDeviceUpdateAction,
+)
+from peek_core_device._private.tuples.CreateDeviceUpdateAction import (
+    CreateDeviceUpdateAction,
+)
 from peek_core_device._private.tuples.UpdateAppliedAction import UpdateAppliedAction
 from txhttputil.site.SpooledNamedTemporaryFile import SpooledNamedTemporaryFile
 from vortex.DeferUtil import deferToThreadWrapWithLogger
@@ -27,9 +30,12 @@ logger = logging.getLogger(__name__)
 
 
 class UpdateController:
-    def __init__(self, dbSessionCreator,
-                 notifierController: NotifierController,
-                 deviceUpdateFilePath: Path):
+    def __init__(
+        self,
+        dbSessionCreator,
+        notifierController: NotifierController,
+        deviceUpdateFilePath: Path,
+    ):
         self._dbSessionCreator = dbSessionCreator
         self._notifierController = notifierController
         self._deviceUpdateFilePath = deviceUpdateFilePath
@@ -47,7 +53,7 @@ class UpdateController:
 
     @deferToThreadWrapWithLogger(logger)
     def _processAdminAlter(self, action: AlterDeviceUpdateAction) -> List[Tuple]:
-        """ Process Admin Update
+        """Process Admin Update
 
         :rtype: Deferred
         """
@@ -55,8 +61,8 @@ class UpdateController:
         try:
             deviceUpdate = (
                 session.query(DeviceUpdateTuple)
-                    .filter(DeviceUpdateTuple.id == action.updateId)
-                    .one()
+                .filter(DeviceUpdateTuple.id == action.updateId)
+                .one()
             )
 
             deviceType = deviceUpdate.deviceType
@@ -77,9 +83,10 @@ class UpdateController:
             session.close()
 
     @inlineCallbacks
-    def processCreateUpdateUpload(self, namedTempFile: SpooledNamedTemporaryFile,
-                                  action: CreateDeviceUpdateAction):
-        """ Process Create Update Upload
+    def processCreateUpdateUpload(
+        self, namedTempFile: SpooledNamedTemporaryFile, action: CreateDeviceUpdateAction
+    ):
+        """Process Create Update Upload
 
         Unlike the other action processes in the controllers, this method is called by
         a http resource upload.
@@ -89,10 +96,12 @@ class UpdateController:
             raise Exception("Uploaded archive is not a zip file")
 
         # Create the file name
-        filePath = '%s/%s.zip' % (
-            action.newUpdate.deviceType, action.newUpdate.updateVersion)
+        filePath = "%s/%s.zip" % (
+            action.newUpdate.deviceType,
+            action.newUpdate.updateVersion,
+        )
         action.newUpdate.filePath = filePath
-        action.newUpdate.urlPath = filePath.replace(r'\\', r'/')
+        action.newUpdate.urlPath = filePath.replace(r"\\", r"/")
         action.newUpdate.fileSize = Path(namedTempFile.name).stat().st_size
 
         # Create the database object, If that fails from some integrity problem
@@ -109,12 +118,14 @@ class UpdateController:
             deviceType=deviceUpdateTuple.deviceType
         )
 
-        returnValue("%s:%s Created Successfully"
-                    % (deviceUpdateTuple.deviceType, deviceUpdateTuple.updateVersion))
+        returnValue(
+            "%s:%s Created Successfully"
+            % (deviceUpdateTuple.deviceType, deviceUpdateTuple.updateVersion)
+        )
 
     @deferToThreadWrapWithLogger(logger)
     def _createUpdateOrmObj(self, newUpdate: DeviceUpdateTuple) -> DeviceUpdateTuple:
-        """ Process Device Enrolment
+        """Process Device Enrolment
 
         :rtype: Deferred
         """
@@ -132,11 +143,9 @@ class UpdateController:
         finally:
             ormSession.close()
 
-
-
     @deferToThreadWrapWithLogger(logger)
     def _processDeviceUpdated(self, action: UpdateAppliedAction) -> List[Tuple]:
-        """ Process Device Updated
+        """Process Device Updated
 
         This action is sent when the device has applied an update, or attempted to.
 
@@ -146,8 +155,8 @@ class UpdateController:
         try:
             deviceInfo = (
                 session.query(DeviceInfoTuple)
-                    .filter(DeviceInfoTuple.deviceId == action.deviceId)
-                    .one()
+                .filter(DeviceInfoTuple.deviceId == action.deviceId)
+                .one()
             )
 
             deviceId = deviceInfo.deviceId

@@ -15,10 +15,12 @@ import logging
 
 from twisted.web.server import NOT_DONE_YET
 
-from peek_core_device._private.server.controller.UpdateController import \
-    UpdateController
-from peek_core_device._private.tuples.CreateDeviceUpdateAction import \
-    CreateDeviceUpdateAction
+from peek_core_device._private.server.controller.UpdateController import (
+    UpdateController,
+)
+from peek_core_device._private.tuples.CreateDeviceUpdateAction import (
+    CreateDeviceUpdateAction,
+)
 from txhttputil.site.BasicResource import BasicResource
 from vortex.Payload import Payload
 
@@ -40,15 +42,15 @@ class DeviceUpdateUploadResource(BasicResource):
         raise Exception("Updates must be done via the UI")
 
     def render_POST(self, request):
-        request.responseHeaders.setRawHeaders('content-type', ['text/plain'])
+        request.responseHeaders.setRawHeaders("content-type", ["text/plain"])
         logger.info("Received device update upload request")
 
-        action: CreateDeviceUpdateAction = Payload().fromVortexMsg(
-            request.args[b'payload'][0]
-        ).tuples[0]
+        action: CreateDeviceUpdateAction = (
+            Payload().fromVortexMsg(request.args[b"payload"][0]).tuples[0]
+        )
 
         def good(data):
-            request.write(json.dumps({'message': str(data)}).encode())
+            request.write(json.dumps({"message": str(data)}).encode())
             request.finish()
             logger.info("Finished creating device update %s" % data)
 
@@ -56,16 +58,20 @@ class DeviceUpdateUploadResource(BasicResource):
             e = failure.value
             logger.exception(e)
 
-            request.write(json.dumps(
-                {'error': str(failure.value),
-                 'stdout': e.stdout if hasattr(e, 'stdout') else None,
-                 'stderr': e.stderr if hasattr(e, 'stderr') else None}).encode())
+            request.write(
+                json.dumps(
+                    {
+                        "error": str(failure.value),
+                        "stdout": e.stdout if hasattr(e, "stdout") else None,
+                        "stderr": e.stderr if hasattr(e, "stderr") else None,
+                    }
+                ).encode()
+            )
 
             request.finish()
 
         d = self._controller.processCreateUpdateUpload(
-            request.content.namedTemporaryFile,
-            action
+            request.content.namedTemporaryFile, action
         )
         d.addCallbacks(good, bad)
 

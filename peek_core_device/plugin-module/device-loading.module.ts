@@ -1,9 +1,9 @@
-import { CommonModule } from "@angular/common";
-import { NgModule } from "@angular/core";
-import { LoadingComponent } from "@_peek/peek_core_device/loading/loading.component";
-import { FormsModule } from "@angular/forms";
-import { NzIconModule } from "ng-zorro-antd/icon";
-import { HttpClientModule } from "@angular/common/http";
+import { CommonModule } from "@angular/common"
+import { NgModule } from "@angular/core"
+import { LoadingComponent } from "@_peek/peek_core_device/loading/loading.component"
+import { FormsModule } from "@angular/forms"
+import { NzIconModule } from "ng-zorro-antd/icon"
+import { HttpClientModule } from "@angular/common/http"
 
 // Define the root module for this plugin.
 // This module is loaded by the lazy loader, what ever this defines is what is started.
@@ -14,4 +14,5 @@ import { HttpClientModule } from "@angular/common/http";
     providers: [],
     declarations: [LoadingComponent],
 })
-export class DeviceLoadingModule {}
+export class DeviceLoadingModule {
+}

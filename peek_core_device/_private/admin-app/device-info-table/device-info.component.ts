@@ -1,6 +1,15 @@
 import { Component } from "@angular/core"
-import { BalloonMsgLevel, BalloonMsgService, BalloonMsgType, NgLifeCycleEvents } from "@synerty/peek-plugin-base-js"
-import { TupleActionPushService, TupleDataObserverService, TupleSelector } from "@synerty/vortexjs"
+import {
+    BalloonMsgLevel,
+    BalloonMsgService,
+    BalloonMsgType,
+    NgLifeCycleEvents
+} from "@synerty/peek-plugin-base-js"
+import {
+    TupleActionPushService,
+    TupleDataObserverService,
+    TupleSelector
+} from "@synerty/vortexjs"
 import { DeviceInfoTuple } from "@peek/peek_core_device"
 import { UpdateEnrollmentAction } from "@peek/peek_core_device/_private"
 

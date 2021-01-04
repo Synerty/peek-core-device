@@ -8,7 +8,7 @@ from peek_core_device._private.PluginNames import deviceTuplePrefix
 class EnrolDeviceAction(TupleActionABC):
     __tupleType__ = deviceTuplePrefix + "EnrolDeviceAction"
 
-    description:str = TupleField()
+    description: str = TupleField()
     deviceId: str = TupleField()
     deviceType: str = TupleField()
     appVersion: str = TupleField()

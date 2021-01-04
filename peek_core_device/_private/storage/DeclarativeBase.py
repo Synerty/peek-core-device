@@ -7,8 +7,7 @@ DeclarativeBase = declarative_base(metadata=metadata)
 
 
 def loadStorageTuples():
-
-    """ Load Storage Tables
+    """Load Storage Tables
 
     This method should be called from the "load()" method of the agent, server, worker
     and client entry hook classes.
@@ -18,10 +17,13 @@ def loadStorageTuples():
 
     """
     from . import DeviceInfoTuple
+
     DeviceInfoTuple.__unused = False
 
     from . import DeviceUpdateTuple
+
     DeviceUpdateTuple.__unused = False
 
     from . import Setting
+
     Setting.__unused = False

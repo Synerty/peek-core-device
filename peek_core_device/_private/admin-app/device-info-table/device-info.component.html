@@ -19,20 +19,28 @@
                     <p *ngIf="item.isOnline">Online Now</p>
                     <p *ngIf="!item.isOnline && item.lastOnline">
                         {{item.lastOnline | date:'HH:mm dd-MMM-yyyy'}}</p>
-                    <p *ngIf="!item.isOnline && !item.lastOnline">Never Connected</p>
-
+                    <p *ngIf="!item.isOnline && !item.lastOnline">Never
+                                                                  Connected</p>
+                
                 </td>
                 <td>
-                    <button class="btn"
-                            [class.btn-success]="item.isEnrolled"
-                            [class.btn-warning]="!item.isEnrolled"
-                            (click)='toggleEnrollClicked(item)'>
+                    <button
+                        (click)="toggleEnrollClicked(item)"
+                        [class.btn-success]="item.isEnrolled"
+                        [class.btn-warning]="!item.isEnrolled"
+                        class="btn"
+                    >
                         {{item.isEnrolled ? "Enrolled" : "Not Enrolled"}}
                     </button>
                 </td>
                 <td>
-                    <div class="btn btn-default" (click)='deleteDeviceClicked(item)'>
-                        <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                    <div
+                        (click)="deleteDeviceClicked(item)"
+                        class="btn btn-default"
+                    >
+                        <span
+                            aria-hidden="true" class="glyphicon glyphicon-minus"
+                        ></span>
                     </div>
                 </td>
             </tr>

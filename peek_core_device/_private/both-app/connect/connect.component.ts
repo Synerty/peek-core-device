@@ -1,5 +1,9 @@
 import { Component, OnInit } from "@angular/core"
-import { BalloonMsgService, NgLifeCycleEvents, HeaderService } from "@synerty/peek-plugin-base-js"
+import {
+    BalloonMsgService,
+    NgLifeCycleEvents,
+    HeaderService
+} from "@synerty/peek-plugin-base-js"
 import {
     DeviceNavService,
     DeviceServerService,

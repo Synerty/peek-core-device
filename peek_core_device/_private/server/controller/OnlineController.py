@@ -4,11 +4,13 @@ from typing import List
 from sqlalchemy.orm.exc import NoResultFound
 from twisted.internet.defer import Deferred
 
-from peek_core_device._private.server.controller.NotifierController import \
-    NotifierController
+from peek_core_device._private.server.controller.NotifierController import (
+    NotifierController,
+)
 from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
-from peek_core_device._private.tuples.UpdateDeviceOnlineAction import \
-    UpdateDeviceOnlineAction
+from peek_core_device._private.tuples.UpdateDeviceOnlineAction import (
+    UpdateDeviceOnlineAction,
+)
 from vortex.DeferUtil import deferToThreadWrapWithLogger
 from vortex.Tuple import Tuple
 from vortex.TupleAction import TupleActionABC
@@ -33,7 +35,7 @@ class OnlineController:
 
     @deferToThreadWrapWithLogger(logger)
     def _processUpdateOnline(self, action: UpdateDeviceOnlineAction) -> List[Tuple]:
-        """ Process Online Status Update
+        """Process Online Status Update
 
         :rtype: Deferred
         """
@@ -41,8 +43,8 @@ class OnlineController:
         try:
             deviceInfo = (
                 session.query(DeviceInfoTuple)
-                    .filter(DeviceInfoTuple.deviceId == action.deviceId)
-                    .one()
+                .filter(DeviceInfoTuple.deviceId == action.deviceId)
+                .one()
             )
 
             deviceId = deviceInfo.deviceId
@@ -54,9 +56,7 @@ class OnlineController:
 
             self._notifierController.notifyDeviceInfo(deviceId=deviceId)
             self._notifierController.notifyDeviceOnline(
-                deviceInfo.deviceId,
-                deviceInfo.deviceToken,
-                deviceInfo.isOnline
+                deviceInfo.deviceId, deviceInfo.deviceToken, deviceInfo.isOnline
             )
 
             return []
@@ -68,9 +68,7 @@ class OnlineController:
             session.close()
 
     def _setAllDevicesOfflineBlocking(self):
-        """ Set All Devices to Offline
-
-        """
+        """Set All Devices to Offline"""
         session = self._dbSessionCreator()
         try:
             session.execute(DeviceInfoTuple.__table__.update().values(isOnline=False))
