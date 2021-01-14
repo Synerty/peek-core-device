@@ -16,7 +16,7 @@ export {
     CreateDeviceUpdateAction
 } from "./tuples/admin/CreateDeviceUpdateAction"
 
-export { HardwareInfo } from "./hardware-info/hardware-info.mweb"
+export { HardwareInfo } from "./hardware-info/hardware-info.web"
 export { DeviceTypeEnum } from "./hardware-info/hardware-info.abstract"
 
 export { DeviceNavService } from "./device-nav.service"
