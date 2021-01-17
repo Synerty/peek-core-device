@@ -2,8 +2,8 @@ import { Component, OnInit } from "@angular/core"
 import { Payload, PayloadEnvelope, VortexService } from "@synerty/vortexjs"
 import {
     BalloonMsgService,
-    NgLifeCycleEvents
-} from "@synerty/peek-plugin-base-js"
+     } from "@synerty/peek-plugin-base-js"
+import { NgLifeCycleEvents } from "@synerty/vortexjs"
 import { FileUploader } from "ng2-file-upload"
 import {
     CreateDeviceUpdateAction,

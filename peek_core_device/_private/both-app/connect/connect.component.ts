@@ -1,9 +1,9 @@
 import { Component, OnInit } from "@angular/core"
 import {
     BalloonMsgService,
-    NgLifeCycleEvents,
     HeaderService
 } from "@synerty/peek-plugin-base-js"
+import { NgLifeCycleEvents } from "@synerty/vortexjs"
 import {
     DeviceNavService,
     DeviceServerService,

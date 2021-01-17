@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core"
-import { NgLifeCycleEvents, HeaderService } from "@synerty/peek-plugin-base-js"
+import { HeaderService } from "@synerty/peek-plugin-base-js"
+import { NgLifeCycleEvents } from "@synerty/vortexjs"
 
 @Component({
     selector: "core-device-loading",
