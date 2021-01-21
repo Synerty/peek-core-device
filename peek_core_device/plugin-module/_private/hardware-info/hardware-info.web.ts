@@ -7,6 +7,7 @@ import {
 
 import { deviceTuplePrefix } from "../PluginNames"
 import { Md5 } from "ts-md5/dist/md5"
+import { DeviceTypeEnum, HardwareInfoI } from "./hardware-info.abstract"
 
 @addTupleType
 class DeviceUuidTuple extends Tuple {
@@ -43,4 +44,23 @@ export function webUuid(tupleStorage: TupleOfflineStorageService): Promise<strin
                 .saveTuples(tupleSelector, [newTuple])
                 .then(() => uuid)
         })
+}
+
+export class HardwareInfo extends HardwareInfoI {
+    constructor(private tupleStorage: TupleOfflineStorageService) {
+        super()
+        
+    }
+    
+    uuid(): Promise<string> {
+        return webUuid(this.tupleStorage)
+    }
+    
+    description(): string {
+        return navigator.userAgent
+    }
+    
+    deviceType(): DeviceTypeEnum {
+        return DeviceTypeEnum.MOBILE_WEB
+    }
 }
