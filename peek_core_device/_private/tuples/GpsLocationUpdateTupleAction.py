@@ -1,6 +1,6 @@
 from typing import Optional
-from typing import Tuple
 
+from vortex.Tuple import Tuple
 from vortex.Tuple import TupleField
 from vortex.Tuple import addTupleType
 from vortex.TupleAction import TupleActionABC
@@ -14,9 +14,9 @@ class GpsLocationUpdateTypeEnum(Tuple):
     ACCURACY_COARSE = 1
     ACCURACY_FINE = 2
 
-    value = TupleField(typingType=str)
+    value = TupleField(typingType=int)
 
-    def __init__(self, value: Optional[str] = None):
+    def __init__(self, value: Optional[int] = None):
         Tuple.__init__(self)
         self.value = value
 
