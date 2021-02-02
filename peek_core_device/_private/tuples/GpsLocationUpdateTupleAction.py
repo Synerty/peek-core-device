@@ -11,8 +11,8 @@ from peek_core_device._private.PluginNames import deviceTuplePrefix
 @addTupleType
 class GpsLocationUpdateTypeEnum(Tuple):
     __tupleType__ = deviceTuplePrefix + "GpsLocationUpdateTypeEnum"
-    COARSE = "COARSE"
-    FINE = "FINE"
+    ACCURACY_COARSE = 1
+    ACCURACY_FINE = 2
 
     value = TupleField(typingType=str)
 

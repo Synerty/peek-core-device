@@ -2,8 +2,8 @@ import { addTupleType, Tuple } from "@synerty/vortexjs"
 import { deviceTuplePrefix } from "./_private/PluginNames"
 
 export enum GpsLocationUpdateTypeEnum {
-    COARSE = "COARSE",
-    FINE = "FINE"
+    ACCURACY_COARSE = 1,
+    ACCURACY_FINE = 2
 }
 
 @addTupleType
