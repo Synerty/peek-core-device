@@ -4,6 +4,7 @@ from pathlib import Path
 from twisted.internet import defer
 from twisted.internet.defer import Deferred, inlineCallbacks
 
+from peek_core_device._private.server.controller.GpsController import GpsController
 from peek_core_device._private.server.controller.NotifierController import (
     NotifierController,
 )
@@ -43,6 +44,8 @@ class MainController(TupleActionProcessorDelegateABC):
             dbSessionCreator, notifierController, deviceUpdateFilePath
         )
 
+        self._gpsController = GpsController()
+
     @property
     def deviceUpdateController(self):
         return self._updateController
@@ -63,6 +66,10 @@ class MainController(TupleActionProcessorDelegateABC):
             defer.returnValue(result)
 
         result = yield self._updateController.processTupleAction(tupleAction)
+        if result is not None:
+            defer.returnValue(result)
+
+        result = yield self._gpsController.processTupleAction(tupleAction)
         if result is not None:
             defer.returnValue(result)
 
