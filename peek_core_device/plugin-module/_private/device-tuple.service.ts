@@ -83,7 +83,6 @@ export class DeviceTupleService {
         )
         
         this.hardwareInfo = new HardwareInfo(this.offlineStorage)
-        
     }
     
 }

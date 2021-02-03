@@ -89,6 +89,16 @@
                 "file": "device-status.service",
                 "class": "DeviceStatusService",
                 "persistent": true
+            },
+            {
+                "file": "_private/gps/gps-location.abstract.service",
+                "class": "DeviceGpsLocationServiceI",
+                "persistent": false
+            },
+            {
+                "file": "_private/gps/gps-location.service",
+                "class": "DeviceGpsLocationService",
+                "persistent": true
             }
         ]
     },
@@ -138,6 +148,17 @@
             {
                 "file": "device-status.service",
                 "class": "DeviceStatusService",
+                "persistent": true
+            },
+            {
+                "file": "_private/gps/gps-location.abstract.service",
+                "class": "DeviceGpsLocationServiceI",
+                "persistent": false
+
+            },
+            {
+                "file": "_private/gps/gps-location.service",
+                "class": "DeviceGpsLocationService",
                 "persistent": true
             }
         ]
