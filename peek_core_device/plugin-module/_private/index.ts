@@ -22,4 +22,3 @@ export { DeviceTypeEnum } from "./hardware-info/hardware-info.abstract"
 export { DeviceNavService } from "./device-nav.service"
 export { DeviceServerService, ServerInfoTuple } from "./device-server.service"
 export { DeviceTupleService } from "./device-tuple.service"
-

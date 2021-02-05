@@ -14,6 +14,9 @@ import { DeviceNavService } from "./device-nav.service"
 import { Observable } from "rxjs"
 import { Subject } from "rxjs"
 import { Capacitor } from "@capacitor/core"
+import { GpsLocationTuple } from "../GpsLocationTuple"
+import { GpsLocationUpdateTupleAction } from "./gps/GpsLocationUpdateTupleAction"
+import { PrivateDeviceGpsLocationService } from "./gps/private-gps-location.service"
 
 @addTupleType
 export class ServerInfoTuple extends Tuple {

@@ -91,14 +91,14 @@
                 "persistent": true
             },
             {
-                "file": "_private/gps/gps-location.abstract.service",
-                "class": "DeviceGpsLocationServiceI",
-                "persistent": false
+                "file": "_private/gps/private-gps-location.service",
+                "class": "PrivateDeviceGpsLocationService",
+                "persistent": true
             },
             {
-                "file": "_private/gps/gps-location.service",
+                "file": "gps-location.service",
                 "class": "DeviceGpsLocationService",
-                "persistent": true
+                "useExistingClass": "PrivateDeviceGpsLocationService"
             }
         ]
     },
@@ -151,15 +151,14 @@
                 "persistent": true
             },
             {
-                "file": "_private/gps/gps-location.abstract.service",
-                "class": "DeviceGpsLocationServiceI",
-                "persistent": false
-
+                "file": "_private/gps/private-gps-location.service",
+                "class": "PrivateDeviceGpsLocationService",
+                "persistent": true
             },
             {
-                "file": "_private/gps/gps-location.service",
+                "file": "gps-location.service",
                 "class": "DeviceGpsLocationService",
-                "persistent": true
+                "useExistingClass": "PrivateDeviceGpsLocationService"
             }
         ]
     }

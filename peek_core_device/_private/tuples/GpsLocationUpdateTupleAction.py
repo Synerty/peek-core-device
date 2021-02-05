@@ -9,22 +9,11 @@ from peek_core_device._private.PluginNames import deviceTuplePrefix
 
 
 @addTupleType
-class GpsLocationUpdateTypeEnum(Tuple):
-    __tupleType__ = deviceTuplePrefix + "GpsLocationUpdateTypeEnum"
+class GpsLocationUpdateTupleAction(TupleActionABC):
+    __tupleType__ = deviceTuplePrefix + "GpsLocationUpdateTupleAction"
     ACCURACY_COARSE = 1
     ACCURACY_FINE = 2
 
-    value = TupleField(typingType=int)
-
-    def __init__(self, value: Optional[int] = None):
-        Tuple.__init__(self)
-        self.value = value
-
-
-@addTupleType
-class GpsLocationUpdateTupleAction(TupleActionABC):
-    __tupleType__ = deviceTuplePrefix + "GpsLocationUpdateTupleAction"
-
     latitude: float = TupleField()
     longitude: float = TupleField()
-    updateType: GpsLocationUpdateTypeEnum = TupleField()
+    updateType: int = TupleField()
