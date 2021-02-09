@@ -1,8 +1,8 @@
-import { addTupleType, Tuple } from "@synerty/vortexjs"
+import { addTupleType, TupleActionABC } from "@synerty/vortexjs"
 import { deviceTuplePrefix } from "../PluginNames"
 
 @addTupleType
-export class GpsLocationUpdateTupleAction extends Tuple {
+export class GpsLocationUpdateTupleAction extends TupleActionABC {
     public static readonly tupleName = deviceTuplePrefix + "GpsLocationUpdateTupleAction"
     public static readonly ACCURACY_COARSE = 1
     public static readonly ACCURACY_FINE = 2

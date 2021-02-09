@@ -27,4 +27,5 @@ class GpsController(TupleActionProcessorDelegateABC):
     def _processGpsLocationUpdateTupleAction(
         self, action: GpsLocationUpdateTupleAction
     ):
+        yield None
         logger.debug(action)

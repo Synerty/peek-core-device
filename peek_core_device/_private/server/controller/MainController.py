@@ -59,18 +59,21 @@ class MainController(TupleActionProcessorDelegateABC):
     def processTupleAction(self, tupleAction: TupleActionABC) -> Deferred:
         result = yield self._enrollmentController.processTupleAction(tupleAction)
         if result is not None:
-            defer.returnValue(result)
+            return result
 
         result = yield self._onlineController.processTupleAction(tupleAction)
         if result is not None:
-            defer.returnValue(result)
+            return result
 
         result = yield self._updateController.processTupleAction(tupleAction)
         if result is not None:
-            defer.returnValue(result)
+            return result
 
         result = yield self._gpsController.processTupleAction(tupleAction)
         if result is not None:
-            defer.returnValue(result)
+            return result
+        # TODO: drop 'else' statement when GpsController is done
+        else:
+            return []
 
         raise NotImplementedError(tupleAction.tupleName())

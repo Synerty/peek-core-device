@@ -7,6 +7,8 @@ import { DeviceGpsLocationService, GpsLocationTuple } from "@peek/peek_core_devi
 import { Plugins } from "@capacitor/core"
 import { DeviceTupleService } from "../device-tuple.service"
 
+import { GpsLocationUpdateTupleAction } from "./GpsLocationUpdateTupleAction"
+
 const {Geolocation} = Plugins
 
 @Injectable()
@@ -20,24 +22,22 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
     ) {
         super()
         this.gpsWatchId = Geolocation.watchPosition({}, (position, err) => {
-            this.watchLocationUpdate(position, err)
+            // console.table(this.location)
+            this.updateLocation(position, err)
         })
-        console.log("feeeeee")
-
     }
-    
-    // obserable tuple
-    // behavior subject
-    location(): Observable<GpsLocationTuple|null> {
+
+    get location(): Observable<GpsLocationTuple|null> {
         return this.behaviorSubject
-        
         }
-    private watchLocationUpdate(coordinates, err) {
-        const gpsLocationTuple = new GpsLocationTuple()
-        gpsLocationTuple.latitude = coordinates.coords.latitude
-        gpsLocationTuple.longitude = coordinates.coords.longitude
-        this.behaviorSubject.next(gpsLocationTuple)
         
-        // this.tupleService.tupleAction.pushAction()
+    private updateLocation(coordinates, err) {
+        const gpsLocationTupleAction = new GpsLocationUpdateTupleAction()
+        gpsLocationTupleAction.latitude = coordinates.coords.latitude
+        gpsLocationTupleAction.longitude = coordinates.coords.longitude
+        gpsLocationTupleAction.updateType = GpsLocationUpdateTupleAction.ACCURACY_FINE
+        this.behaviorSubject.next(gpsLocationTupleAction)
+        
+        this.tupleService.tupleAction.pushAction(gpsLocationTupleAction)
     }
 }

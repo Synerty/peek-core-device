@@ -3,5 +3,5 @@ import { Observable } from "rxjs"
 
 
 export abstract class DeviceGpsLocationService {
-    abstract location(): Observable<GpsLocationTuple|null>
+    abstract get location(): Observable<GpsLocationTuple|null>
 }
