@@ -30,8 +30,6 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
         }
         
     private async getInitialGeoLocation() {
-        // TODO: get vortex online first, then send out geo coordinates (service registration order change)
-        // TODO: get initial geolocatioin sent out (may be a broswer debugger issue)
         this.lastSeenPositionTupleAction = new GpsLocationUpdateTupleAction()
         const position = await Geolocation.getCurrentPosition()
         this.lastSeenPositionTupleAction.latitude = position.coords.latitude
@@ -44,6 +42,9 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
     private async setUpGeoLocationWatcher() {
         await this.getInitialGeoLocation()
         this.gpsWatchId = Geolocation.watchPosition({}, (position, err) => {
+                if (position == null) {
+                    this.getInitialGeoLocation()
+                }
                 const coords = position.coords
                 if (coords.latitude != this.lastSeenPositionTupleAction.latitude &&
                     coords.longitude != this.lastSeenPositionTupleAction.longitude) {
