@@ -44,7 +44,7 @@ class MainController(TupleActionProcessorDelegateABC):
             dbSessionCreator, notifierController, deviceUpdateFilePath
         )
 
-        self._gpsController = GpsController()
+        self._gpsController = GpsController(dbSessionCreator=dbSessionCreator)
 
     @property
     def deviceUpdateController(self):
