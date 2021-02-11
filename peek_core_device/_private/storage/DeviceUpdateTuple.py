@@ -24,7 +24,7 @@ class DeviceUpdateTuple(Tuple, DeclarativeBase):
     __tablename__ = "DeviceUpdate"
     __tupleType__ = deviceTuplePrefix + "DeviceUpdateTuple"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     deviceType = Column(String(20), nullable=False)
     description = Column(String, nullable=False)
     buildDate = Column(DateTime(True), nullable=False)

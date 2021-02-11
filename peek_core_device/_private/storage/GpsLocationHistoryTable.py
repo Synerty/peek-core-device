@@ -20,6 +20,7 @@ class GpsLocationHistoryTable(Tuple, DeclarativeBase):
     __tablename__ = "GpsLocationHistory"
     __tupleType__ = deviceTuplePrefix + "GpsLocationHistoryTable"
 
+    id = Column(Integer, primary_key=True, autoincrement=True)
     deviceId = Column(
         String(50),
         ForeignKey("DeviceInfo.deviceId"),

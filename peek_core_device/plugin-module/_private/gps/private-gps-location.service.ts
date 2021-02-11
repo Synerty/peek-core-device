@@ -16,25 +16,48 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
     tupleAction: TupleActionPushService
     private behaviorSubject = new BehaviorSubject<GpsLocationTuple|null>(null)
     private gpsWatchId: string
-    
+    private lastSeenPositionTupleAction: GpsLocationUpdateTupleAction
+
     constructor(
         private tupleService: DeviceTupleService
     ) {
         super()
-        this.gpsWatchId = Geolocation.watchPosition({}, (position, err) => {
-            // console.table(this.location)
-            this.updateLocation(position, err)
-        })
+        this.setUpGeoLocationWatcher()
     }
 
     get location(): Observable<GpsLocationTuple|null> {
         return this.behaviorSubject
         }
         
+    private async getInitialGeoLocation() {
+        // TODO: get vortex online first, then send out geo coordinates (service registration order change)
+        // TODO: get initial geolocatioin sent out (may be a broswer debugger issue)
+        this.lastSeenPositionTupleAction = new GpsLocationUpdateTupleAction()
+        const position = await Geolocation.getCurrentPosition()
+        this.lastSeenPositionTupleAction.latitude = position.coords.latitude
+        this.lastSeenPositionTupleAction.longitude = position.coords.longitude
+        this.lastSeenPositionTupleAction.updateType = GpsLocationUpdateTupleAction.ACCURACY_FINE
+        this.behaviorSubject.next(this.lastSeenPositionTupleAction)
+        this.tupleService.tupleAction.pushAction(this.lastSeenPositionTupleAction)
+    }
+        
+    private async setUpGeoLocationWatcher() {
+        await this.getInitialGeoLocation()
+        this.gpsWatchId = Geolocation.watchPosition({}, (position, err) => {
+                const coords = position.coords
+                if (coords.latitude != this.lastSeenPositionTupleAction.latitude &&
+                    coords.longitude != this.lastSeenPositionTupleAction.longitude) {
+                    this.updateLocation(coords, err)
+                    this.lastSeenPositionTupleAction.latitude = coords.latitude
+                    this.lastSeenPositionTupleAction.longitude = coords.longitude
+                }
+        })
+    }
     private updateLocation(coordinates, err) {
+        // console.table(coordinates)
         const gpsLocationTupleAction = new GpsLocationUpdateTupleAction()
-        gpsLocationTupleAction.latitude = coordinates.coords.latitude
-        gpsLocationTupleAction.longitude = coordinates.coords.longitude
+        gpsLocationTupleAction.latitude = coordinates.latitude
+        gpsLocationTupleAction.longitude = coordinates.longitude
         gpsLocationTupleAction.updateType = GpsLocationUpdateTupleAction.ACCURACY_FINE
         this.behaviorSubject.next(gpsLocationTupleAction)
         
