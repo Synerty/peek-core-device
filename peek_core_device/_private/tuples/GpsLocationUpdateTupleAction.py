@@ -17,3 +17,4 @@ class GpsLocationUpdateTupleAction(TupleActionABC):
     latitude: float = TupleField()
     longitude: float = TupleField()
     updateType: int = TupleField()
+    timestamp: int = TupleField(comment="timestamp in milliseconds")

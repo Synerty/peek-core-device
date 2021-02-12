@@ -12,6 +12,7 @@ export class GpsLocationUpdateTupleAction extends TupleActionABC {
     latitude: number
     longitude: number
     updateType: number
+    timestamp: number
     
     constructor() {
         super(GpsLocationUpdateTupleAction.tupleName)

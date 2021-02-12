@@ -76,11 +76,13 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
         if (!position?.coords) {
             return
         }
+        const now = Date.now() // in milliseconds
         // send to Peek Logic
         const action = new GpsLocationUpdateTupleAction()
         action.latitude = position.coords.latitude
         action.longitude = position.coords.longitude
         action.updateType = GpsLocationUpdateTupleAction.ACCURACY_FINE
+        action.timestamp = now
         this.lastSeenPositionTupleAction = action
         this.sendLiveLocation()
         
@@ -88,6 +90,7 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
         const location = new GpsLocationTuple()
         location.latitude = position.coords.latitude
         location.longitude = position.coords.longitude
+        location.timestamp = now
         this.location$.next(location)
     }
     
