@@ -83,7 +83,7 @@
             {
                 "file": "_private/device-tuple.service",
                 "class": "DeviceTupleService",
-                "persistent": false
+                "persistent": true
             },
             {
                 "file": "device-status.service",
@@ -143,7 +143,7 @@
             {
                 "file": "_private/device-tuple.service",
                 "class": "DeviceTupleService",
-                "persistent": false
+                "persistent": true
             },
             {
                 "file": "device-status.service",

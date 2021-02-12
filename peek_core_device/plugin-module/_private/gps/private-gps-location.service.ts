@@ -1,67 +1,117 @@
 import { Injectable } from "@angular/core"
-import { BehaviorSubject, Observable } from "rxjs"
-import { TupleActionPushService } from "@synerty/vortexjs"
+import { BehaviorSubject, Observable, combineLatest } from "rxjs"
+
+import { filter } from "rxjs/operators"
 
 import { DeviceGpsLocationService, GpsLocationTuple } from "@peek/peek_core_device"
+import { UserService } from "@peek/peek_core_user"
+import { VortexStatusService } from "@synerty/vortexjs"
 
 import { Plugins } from "@capacitor/core"
 import { DeviceTupleService } from "../device-tuple.service"
 
 import { GpsLocationUpdateTupleAction } from "./GpsLocationUpdateTupleAction"
+import { DeviceEnrolmentService } from "../../device-enrolment.service"
 
 const {Geolocation} = Plugins
 
 @Injectable()
 export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
-    tupleAction: TupleActionPushService
-    private behaviorSubject = new BehaviorSubject<GpsLocationTuple|null>(null)
+    private location$ = new BehaviorSubject<GpsLocationTuple|null>(null)
     private gpsWatchId: string
+    private lastSeenPositionTuple: GpsLocationTuple
     private lastSeenPositionTupleAction: GpsLocationUpdateTupleAction
+    private offlineLocationRecords: GpsLocationUpdateTupleAction[] = []
+    private deviceId: string
+
 
     constructor(
-        private tupleService: DeviceTupleService
+        private tupleService: DeviceTupleService,
+        private deviceService: DeviceEnrolmentService,
+        private userService: UserService,
+        private vortexStatusService: VortexStatusService,
     ) {
         super()
-        this.setUpGeoLocationWatcher()
+
+        combineLatest(this.userService.loggedInStatus,
+            this.deviceService.deviceInfoObservable()).subscribe(
+            ([isLoggedIn, deviceInfo]) => {
+                console.warn(isLoggedIn)
+                console.warn(deviceInfo)
+                if (isLoggedIn && deviceInfo.isEnrolled) {
+                    this.deviceId = deviceInfo.deviceId
+                    this.setupGeoLocationWatcher()
+                }
+            }
+        )
+        
+        // TODO: capture UTC timestamp and store unpushed GPS tuples
+        this.vortexStatusService.isOnline
+            .pipe(filter(online => online))
+            .subscribe(() => this.sendOfflineLocations())
+        
     }
 
     get location(): Observable<GpsLocationTuple|null> {
-        return this.behaviorSubject
+        return this.location$
         }
         
     private async getInitialGeoLocation() {
-        this.lastSeenPositionTupleAction = new GpsLocationUpdateTupleAction()
+        this.lastSeenPositionTuple = new GpsLocationUpdateTupleAction()
         const position = await Geolocation.getCurrentPosition()
-        this.lastSeenPositionTupleAction.latitude = position.coords.latitude
-        this.lastSeenPositionTupleAction.longitude = position.coords.longitude
-        this.lastSeenPositionTupleAction.updateType = GpsLocationUpdateTupleAction.ACCURACY_FINE
-        this.behaviorSubject.next(this.lastSeenPositionTupleAction)
-        this.tupleService.tupleAction.pushAction(this.lastSeenPositionTupleAction)
+        this.updateLocation(position)
     }
         
-    private async setUpGeoLocationWatcher() {
+    private async setupGeoLocationWatcher() {
         await this.getInitialGeoLocation()
-        this.gpsWatchId = Geolocation.watchPosition({}, (position, err) => {
-                if (position == null) {
-                    this.getInitialGeoLocation()
-                }
-                const coords = position.coords
-                if (coords.latitude != this.lastSeenPositionTupleAction.latitude &&
-                    coords.longitude != this.lastSeenPositionTupleAction.longitude) {
-                    this.updateLocation(coords, err)
-                    this.lastSeenPositionTupleAction.latitude = coords.latitude
-                    this.lastSeenPositionTupleAction.longitude = coords.longitude
-                }
+        this.gpsWatchId = Geolocation.watchPosition({"enableHighAccuracy": true},
+            (position, err) => {
+                if (position != null) {
+                this.updateLocation(position)
+            }
         })
     }
-    private updateLocation(coordinates, err) {
-        // console.table(coordinates)
-        const gpsLocationTupleAction = new GpsLocationUpdateTupleAction()
-        gpsLocationTupleAction.latitude = coordinates.latitude
-        gpsLocationTupleAction.longitude = coordinates.longitude
-        gpsLocationTupleAction.updateType = GpsLocationUpdateTupleAction.ACCURACY_FINE
-        this.behaviorSubject.next(gpsLocationTupleAction)
+    
+    private updateLocation(position) {
+        if (!position?.coords) {
+            return
+        }
+        // send to Peek Logic
+        const action = new GpsLocationUpdateTupleAction()
+        action.latitude = position.coords.latitude
+        action.longitude = position.coords.longitude
+        action.updateType = GpsLocationUpdateTupleAction.ACCURACY_FINE
+        this.lastSeenPositionTupleAction = action
+        this.sendLiveLocation()
         
-        this.tupleService.tupleAction.pushAction(gpsLocationTupleAction)
+        // update location observable
+        const location = new GpsLocationTuple()
+        location.latitude = position.coords.latitude
+        location.longitude = position.coords.longitude
+        this.location$.next(location)
+    }
+    
+    private sendPositionTupleAction(action: GpsLocationUpdateTupleAction) {
+        // push action tuple via vortex
+        if (!this.vortexStatusService.snapshot.isOnline) {
+            this.offlineLocationRecords.push(action)
+            return
+        }
+        console.table(action)
+        this.tupleService.tupleAction.pushAction(action)
+    }
+    
+    private sendLiveLocation() {
+        this.sendPositionTupleAction(this.lastSeenPositionTupleAction)
+    }
+    
+    private sendOfflineLocations() {
+        if (this.offlineLocationRecords.length == 0) {
+            return
+        }
+        // TODO: a better way to sync offline locations to Peek Logic
+        for (let i = 0; i < this.offlineLocationRecords.length; ++i) {
+            this.sendPositionTupleAction(this.offlineLocationRecords.shift())
+        }
     }
 }
