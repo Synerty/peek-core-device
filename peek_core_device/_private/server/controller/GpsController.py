@@ -45,8 +45,7 @@ class GpsController(TupleActionProcessorDelegateABC):
     ):
         capturedDate = self._convertMillisecondTimestampFromUtcToLocal(action.timestamp)
         currentLocation = DeviceLocationTuple(
-            # TODO: get deviceId
-            deviceId="55558558358173e746e31cdaa2f840b0",
+            deviceId=action.deviceId,
             latitude=action.latitude,
             longitude=action.longitude,
             updatedDate=capturedDate,

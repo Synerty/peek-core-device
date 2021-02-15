@@ -74,6 +74,7 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
         action.longitude = position.coords.longitude
         action.updateType = GpsLocationUpdateTupleAction.ACCURACY_FINE
         action.timestamp = now
+        action.deviceId = this.deviceId
         this.lastSeenPositionTupleAction = action
         this.sendLiveLocation()
         
@@ -82,6 +83,7 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
         location.latitude = position.coords.latitude
         location.longitude = position.coords.longitude
         location.timestamp = now
+        location.deviceId = this.deviceId
         this.location$.next(location)
     }
     
