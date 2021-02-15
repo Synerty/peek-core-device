@@ -9,7 +9,6 @@ import { VortexStatusService } from "@synerty/vortexjs"
 
 import { Plugins } from "@capacitor/core"
 import { DeviceTupleService } from "../device-tuple.service"
-
 import { GpsLocationUpdateTupleAction } from "./GpsLocationUpdateTupleAction"
 import { DeviceEnrolmentService } from "../../device-enrolment.service"
 
@@ -21,7 +20,6 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
     private gpsWatchId: string
     private lastSeenPositionTuple: GpsLocationTuple
     private lastSeenPositionTupleAction: GpsLocationUpdateTupleAction
-    private offlineLocationRecords: GpsLocationUpdateTupleAction[] = []
     private deviceId: string
 
 
@@ -29,7 +27,6 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
         private tupleService: DeviceTupleService,
         private deviceService: DeviceEnrolmentService,
         private userService: UserService,
-        private vortexStatusService: VortexStatusService,
     ) {
         super()
 
@@ -44,12 +41,6 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
                 }
             }
         )
-        
-        // TODO: capture UTC timestamp and store unpushed GPS tuples
-        this.vortexStatusService.isOnline
-            .pipe(filter(online => online))
-            .subscribe(() => this.sendOfflineLocations())
-        
     }
 
     get location(): Observable<GpsLocationTuple|null> {
@@ -76,7 +67,7 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
         if (!position?.coords) {
             return
         }
-        const now = Date.now() // in milliseconds
+        const now = Date.now() // in milliseconds, UTC
         // send to Peek Logic
         const action = new GpsLocationUpdateTupleAction()
         action.latitude = position.coords.latitude
@@ -95,26 +86,11 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
     }
     
     private sendPositionTupleAction(action: GpsLocationUpdateTupleAction) {
-        // push action tuple via vortex
-        if (!this.vortexStatusService.snapshot.isOnline) {
-            this.offlineLocationRecords.push(action)
-            return
-        }
         console.table(action)
-        this.tupleService.tupleAction.pushAction(action)
+        this.tupleService.tupleOfflineAction.pushAction(action)
     }
     
     private sendLiveLocation() {
         this.sendPositionTupleAction(this.lastSeenPositionTupleAction)
-    }
-    
-    private sendOfflineLocations() {
-        if (this.offlineLocationRecords.length == 0) {
-            return
-        }
-        // TODO: a better way to sync offline locations to Peek Logic
-        for (let i = 0; i < this.offlineLocationRecords.length; ++i) {
-            this.sendPositionTupleAction(this.offlineLocationRecords.shift())
-        }
     }
 }
