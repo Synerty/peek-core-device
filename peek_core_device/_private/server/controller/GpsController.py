@@ -2,6 +2,7 @@ import logging
 from collections import namedtuple
 from datetime import datetime
 
+import pytz
 from sqlalchemy.dialects.postgresql import insert
 from twisted.internet.defer import Deferred
 from twisted.internet.defer import inlineCallbacks
@@ -20,11 +21,16 @@ logger = logging.getLogger(__name__)
 DeviceLocationTuple = namedtuple(
     "DeviceLocationTuple", ["deviceId", "latitude", "longitude", "updatedDate"]
 )
+TimezoneSetting = namedtuple("TimezoneSetting", ["timezone"])
 
 
 class GpsController(TupleActionProcessorDelegateABC):
     def __init__(self, dbSessionCreator):
         self._dbSessionCreator = dbSessionCreator
+        self._localTimezoneSetting = TimezoneSetting(
+            timezone=self._getPeekDatabaseTimezone()
+        )
+        self._count = 0
 
     def shutdown(self):
         pass
@@ -37,13 +43,13 @@ class GpsController(TupleActionProcessorDelegateABC):
     def _processGpsLocationUpdateTupleAction(
         self, action: GpsLocationUpdateTupleAction
     ):
-        now = datetime.now()
+        capturedDate = self._convertMillisecondTimestampFromUtcToLocal(action.timestamp)
         currentLocation = DeviceLocationTuple(
             # TODO: get deviceId
             deviceId="55558558358173e746e31cdaa2f840b0",
             latitude=action.latitude,
             longitude=action.longitude,
-            updatedDate=now,
+            updatedDate=capturedDate,
         )
         self._updateCurrentLocation(currentLocation)
         self._logToHistory(currentLocation)
@@ -76,3 +82,15 @@ class GpsController(TupleActionProcessorDelegateABC):
             session.commit()
         finally:
             session.close()
+
+    def _convertMillisecondTimestampFromUtcToLocal(self, timestamp: int):
+        timestamp = datetime.utcfromtimestamp(timestamp / 1000.0)
+        # from UTC
+        timestamp = timestamp.replace(tzinfo=pytz.utc)
+        # set as local
+        return timestamp.astimezone(pytz.timezone(self._localTimezoneSetting.timezone))
+
+    def _getPeekDatabaseTimezone(self) -> str:
+        session = self._dbSessionCreator()
+        result = session.execute("SELECT current_setting('TIMEZONE') AS \"timezone\";")
+        return result.first()["timezone"]
