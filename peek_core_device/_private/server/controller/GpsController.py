@@ -7,7 +7,9 @@ from sqlalchemy.dialects.postgresql import insert
 from twisted.internet.defer import Deferred
 from twisted.internet.defer import inlineCallbacks
 from vortex.TupleAction import TupleActionABC
+from vortex.TupleSelector import TupleSelector
 from vortex.handler.TupleActionProcessor import TupleActionProcessorDelegateABC
+from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
 
 from peek_core_device._private.storage.GpsLocationHistoryTable import (
     GpsLocationHistoryTable,
@@ -16,6 +18,7 @@ from peek_core_device._private.storage.GpsLocationTable import GpsLocationTable
 from peek_core_device._private.tuples.GpsLocationUpdateTupleAction import (
     GpsLocationUpdateTupleAction,
 )
+from peek_core_device.tuples.GpsLocationTuple import GpsLocationTuple
 
 logger = logging.getLogger(__name__)
 DeviceLocationTuple = namedtuple(
@@ -25,12 +28,12 @@ TimezoneSetting = namedtuple("TimezoneSetting", ["timezone"])
 
 
 class GpsController(TupleActionProcessorDelegateABC):
-    def __init__(self, dbSessionCreator):
+    def __init__(self, dbSessionCreator, tupleObservable: TupleDataObservableHandler):
         self._dbSessionCreator = dbSessionCreator
         self._localTimezoneSetting = TimezoneSetting(
             timezone=self._getPeekDatabaseTimezone()
         )
-        self._count = 0
+        self._tupleObservable = tupleObservable
 
     def shutdown(self):
         pass
@@ -39,7 +42,7 @@ class GpsController(TupleActionProcessorDelegateABC):
         if isinstance(tupleAction, GpsLocationUpdateTupleAction):
             return self._processGpsLocationUpdateTupleAction(tupleAction)
 
-    # @inlineCallbacks
+    @inlineCallbacks
     def _processGpsLocationUpdateTupleAction(
         self, action: GpsLocationUpdateTupleAction
     ):
@@ -52,8 +55,16 @@ class GpsController(TupleActionProcessorDelegateABC):
         )
         self._updateCurrentLocation(currentLocation)
         self._logToHistory(currentLocation)
+        self._notifyTuple(currentLocation)
         logger.debug(action)
         return []
+
+    def _notifyTuple(self, currentLocation: DeviceLocationTuple):
+        self._tupleObservable.notifyOfTupleUpdate(
+            TupleSelector(
+                GpsLocationTuple.tupleName(), dict(deviceId=currentLocation.deviceId)
+            )
+        )
 
     def _updateCurrentLocation(self, currentLocation: DeviceLocationTuple):
         statement = insert(GpsLocationTable).values(currentLocation._asdict())

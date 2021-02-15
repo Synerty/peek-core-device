@@ -83,6 +83,7 @@ class LogicEntryHook(PluginLogicEntryHookABC, PluginServerStorageEntryHookABC):
             dbSessionCreator=self.dbSessionCreator,
             notifierController=notifierController,
             deviceUpdateFilePath=self._deviceUpdatesPath,
+            tupleObservable=tupleObservable,
         )
         self._loadedObjects.append(mainController)
 

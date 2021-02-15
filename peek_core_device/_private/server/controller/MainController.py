@@ -30,6 +30,7 @@ class MainController(TupleActionProcessorDelegateABC):
         dbSessionCreator,
         notifierController: NotifierController,
         deviceUpdateFilePath: Path,
+        tupleObservable: TupleDataObservableHandler,
     ):
         self._dbSessionCreator = dbSessionCreator
         self._notifierController = notifierController
@@ -44,7 +45,9 @@ class MainController(TupleActionProcessorDelegateABC):
             dbSessionCreator, notifierController, deviceUpdateFilePath
         )
 
-        self._gpsController = GpsController(dbSessionCreator=dbSessionCreator)
+        self._gpsController = GpsController(
+            dbSessionCreator=dbSessionCreator, tupleObservable=tupleObservable
+        )
 
     @property
     def deviceUpdateController(self):
@@ -54,6 +57,7 @@ class MainController(TupleActionProcessorDelegateABC):
         self._enrollmentController.shutdown()
         self._onlineController.shutdown()
         self._updateController.shutdown()
+        self._gpsController.shutdown()
 
     @inlineCallbacks
     def processTupleAction(self, tupleAction: TupleActionABC) -> Deferred:
