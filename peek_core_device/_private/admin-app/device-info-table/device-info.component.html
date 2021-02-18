@@ -6,6 +6,7 @@
                 <th>Description</th>
                 <th>Last Online</th>
                 <th>Enrollment</th>
+                <th>Current Location</th>
                 <th></th>
             </tr>
             <tr *ngFor="let item of items">
@@ -32,6 +33,13 @@
                     >
                         {{item.isEnrolled ? "Enrolled" : "Not Enrolled"}}
                     </button>
+                </td>
+                <td>
+                        {{locations.get(item.deviceId)?.latitude}},
+                        {{locations.get(item.deviceId)?.longitude}}
+                        <br>
+                        <a target="_blnk" href="{{locations.get(item
+                        .deviceId)?.googleMapLink}}">View on Google Maps</a>
                 </td>
                 <td>
                     <div

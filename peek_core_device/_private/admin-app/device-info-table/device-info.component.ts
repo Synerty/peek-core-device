@@ -10,7 +10,7 @@ import {
     TupleDataObserverService,
     TupleSelector
 } from "@synerty/vortexjs"
-import { DeviceInfoTuple } from "@peek/peek_core_device"
+import { DeviceInfoTuple, GpsLocationTuple } from "@peek/peek_core_device"
 import { UpdateEnrollmentAction } from "@peek/peek_core_device/_private"
 
 @Component({
@@ -19,6 +19,7 @@ import { UpdateEnrollmentAction } from "@peek/peek_core_device/_private"
 })
 export class DeviceInfoComponent extends NgLifeCycleEvents {
     items: DeviceInfoTuple[] = []
+    locations: Map<string, GpsLocationTuple> = new Map()
     
     constructor(
         private balloonMsg: BalloonMsgService,
@@ -27,15 +28,27 @@ export class DeviceInfoComponent extends NgLifeCycleEvents {
     ) {
         super()
         
-        // Setup a subscription for the data
-        let sup = tupleDataObserver.subscribeToTupleSelector(
+        // Setup a subscription for the device info data
+        let deviceInfoSubscriber = tupleDataObserver.subscribeToTupleSelector(
             new TupleSelector(DeviceInfoTuple.tupleName, {})
         )
             .subscribe((tuples: DeviceInfoTuple[]) => {
                 this.items = tuples
             })
         
-        this.onDestroyEvent.subscribe(() => sup.unsubscribe())
+        // Setup a subscription for the device location data
+        let gpsLocationSubscriber = tupleDataObserver.subscribeToTupleSelector(
+            new TupleSelector(GpsLocationTuple.tupleName, {})
+        )
+            .subscribe((tuples: GpsLocationTuple[]) => {
+                tuples.forEach(tuple => {
+                    tuple["googleMapLink"] = `https://www.google.com/maps/search/?api=1&query=${tuple.latitude},${tuple.longitude}`
+                    this.locations.set(tuple.deviceId, tuple)
+                })
+            })
+        
+        this.onDestroyEvent.subscribe(() => deviceInfoSubscriber.unsubscribe())
+        this.onDestroyEvent.subscribe(() => gpsLocationSubscriber.unsubscribe())
     }
     
     deleteDeviceClicked(item) {

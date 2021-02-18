@@ -9,10 +9,14 @@ from peek_core_device._private.server.tuple_providers.DeviceInfoTupleProvider im
 from peek_core_device._private.server.tuple_providers.DeviceUpdateTupleProvider import (
     DeviceUpdateTupleProvider,
 )
+from peek_core_device._private.server.tuple_providers.GpsLocationTupleProvider import \
+    GpsLocationTupleProvider
 from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
 from peek_core_device._private.storage.DeviceUpdateTuple import DeviceUpdateTuple
 from peek_core_device._private.tuples.ClientSettingsTuple import ClientSettingsTuple
 from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
+
+from peek_core_device.tuples.GpsLocationTuple import GpsLocationTuple
 
 
 def makeTupleDataObservableHandler(ormSessionCreator):
@@ -41,6 +45,10 @@ def makeTupleDataObservableHandler(ormSessionCreator):
 
     tupleObservable.addTupleProvider(
         ClientSettingsTuple.tupleName(), ClientSettingsTupleProvider(ormSessionCreator)
+    )
+
+    tupleObservable.addTupleProvider(
+        GpsLocationTuple.tupleName(), GpsLocationTupleProvider(ormSessionCreator)
     )
 
     return tupleObservable
