@@ -100,12 +100,14 @@ class GpsController(TupleActionProcessorDelegateABC):
         finally:
             session.close()
 
-    def _convertMillisecondTimestampFromUtcToLocal(self, timestamp: int):
+    def _convertMillisecondTimestampFromUtcToLocal(self,
+                                                   timestamp: int) -> datetime:
         timestamp = datetime.utcfromtimestamp(timestamp / 1000.0)
         # from UTC
         timestamp = timestamp.replace(tzinfo=pytz.utc)
         # set as local
-        return timestamp.astimezone(pytz.timezone(self._localTimezoneSetting.timezone))
+        return timestamp.astimezone(
+            pytz.timezone(self._localTimezoneSetting.timezone))
 
     def _getPeekDatabaseTimezone(self) -> str:
         session = self._dbSessionCreator()

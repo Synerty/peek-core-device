@@ -13,6 +13,7 @@ export class GpsLocationTuple extends Tuple {
     longitude: number
     timestamp: number
     deviceId: string
+    deviceToken: string
     
     constructor() {
         super(GpsLocationTuple.tupleName)

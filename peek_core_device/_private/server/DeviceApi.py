@@ -6,11 +6,15 @@ from rx.subjects import Subject
 from twisted.internet.defer import Deferred
 from vortex.DeferUtil import deferToThreadWrapWithLogger, noMainThread
 
-from peek_core_device._private.server.controller.MainController import MainController
-from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
+from peek_core_device._private.server.controller.MainController import \
+    MainController
+from peek_core_device._private.storage.DeviceInfoTable import DeviceInfoTable
 from peek_core_device.server.DeviceApiABC import DeviceApiABC
 from peek_core_device.tuples.DeviceDetailTuple import DeviceDetailTuple
-from peek_core_device.tuples.DeviceOnlineDetailTuple import DeviceOnlineDetailTuple
+from peek_core_device.tuples.DeviceOnlineDetailTuple import \
+    DeviceOnlineDetailTuple
+from peek_core_device.tuples.DeviceGpsLocationTuple import \
+    DeviceGpsLocationTuple
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +25,7 @@ class DeviceApi(DeviceApiABC):
         self._ormSessionCreator = ormSessionCreator
 
         self._deviceOnlineSubject = Subject()
+        self._deviceGpsLocationSubject = Subject()
 
     def shutdown(self):
         pass
@@ -30,9 +35,9 @@ class DeviceApi(DeviceApiABC):
         ormSession = self._ormSessionCreator()
         try:
             all = (
-                ormSession.query(DeviceInfoTuple)
-                .filter(DeviceInfoTuple.deviceToken.in_(deviceTokens))
-                .all()
+                ormSession.query(DeviceInfoTable)
+                    .filter(DeviceInfoTable.deviceToken.in_(deviceTokens))
+                    .all()
             )
 
             tuples = [
@@ -61,9 +66,9 @@ class DeviceApi(DeviceApiABC):
         ormSession = self._ormSessionCreator()
         try:
             all = (
-                ormSession.query(DeviceInfoTuple)
-                .filter(DeviceInfoTuple.deviceToken == deviceToken)
-                .all()
+                ormSession.query(DeviceInfoTable)
+                    .filter(DeviceInfoTable.deviceToken == deviceToken)
+                    .all()
             )
 
             if not all:
@@ -77,9 +82,31 @@ class DeviceApi(DeviceApiABC):
     def deviceOnlineStatus(self) -> Observable:
         return self._deviceOnlineSubject
 
-    def notifyOfOnlineStatus(self, deviceId: str, deviceToken: str, status: bool):
+    def notifyOfOnlineStatus(self, deviceId: str, deviceToken: str,
+                             status: bool):
         self._deviceOnlineSubject.on_next(
             DeviceOnlineDetailTuple(
                 deviceToken=deviceToken, deviceId=deviceId, onlineStatus=status
+            )
+        )
+
+    def deviceCurrentGpsLocation(self) -> Observable:
+        return self._deviceGpsLocationSubject
+
+    def notifyCurrentGpsLocation(
+        self,
+        deviceId: str,
+        deviceToken: str,
+        latitude: float,
+        longitude: float,
+        timestamp: int,
+    ):
+        self._deviceGpsLocationSubject.on_next(
+            DeviceGpsLocationTuple(
+                deviceId=deviceId,
+                deviceToken=deviceToken,
+                latitude=latitude,
+                longitude=longitude,
+                timestamp=timestamp,
             )
         )

@@ -22,7 +22,13 @@ class GpsLocationTable(Tuple, DeclarativeBase):
 
     id = Column(Integer, primary_key=True)
     deviceId = Column(
-        String(50), ForeignKey("DeviceInfo.deviceId"), nullable=False, unique=True
+        String(50), ForeignKey("DeviceInfo.deviceId"), nullable=False,
+        unique=True
+    )
+    # TODO: update alembic migration scripts
+    deviceToken = Column(
+        String(50), ForeignKey("DeviceInfo.deviceToken"), nullable=False,
+        unique=True
     )
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)

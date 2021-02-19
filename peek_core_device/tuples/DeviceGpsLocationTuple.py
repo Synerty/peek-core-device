@@ -13,3 +13,4 @@ class DeviceGpsLocationTuple(Tuple):
     longitude: float = TupleField()
     timestamp: int = TupleField(comment="timestamp in milliseconds")
     deviceId: str = TupleField()
+    deviceToken: str = TupleField()

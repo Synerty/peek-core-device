@@ -14,6 +14,7 @@ export class GpsLocationUpdateTupleAction extends TupleActionABC {
     updateType: number
     timestamp: number
     deviceId: string
+    deviceToken: string
     
     constructor() {
         super(GpsLocationUpdateTupleAction.tupleName)

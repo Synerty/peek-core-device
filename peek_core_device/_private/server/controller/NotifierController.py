@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 from twisted.internet import reactor
 from vortex.TupleSelector import TupleSelector
@@ -76,3 +77,13 @@ class NotifierController:
         self, deviceId: str, deviceToken: str, online: bool
     ):
         self._api.notifyOfOnlineStatus(deviceId, deviceToken, online)
+
+    def notifyDeviceGpsLocation(
+        self,
+        deviceId: str,
+        deviceToken: str,
+        latitude: float,
+        longitude: float,
+        updatedDate: datetime,
+    ):
+        pass
