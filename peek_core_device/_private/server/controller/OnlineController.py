@@ -7,7 +7,7 @@ from twisted.internet.defer import Deferred
 from peek_core_device._private.server.controller.NotifierController import (
     NotifierController,
 )
-from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
+from peek_core_device._private.storage.DeviceInfoTable import DeviceInfoTable
 from peek_core_device._private.tuples.UpdateDeviceOnlineAction import (
     UpdateDeviceOnlineAction,
 )
@@ -42,9 +42,9 @@ class OnlineController:
         session = self._dbSessionCreator()
         try:
             deviceInfo = (
-                session.query(DeviceInfoTuple)
-                .filter(DeviceInfoTuple.deviceId == action.deviceId)
-                .one()
+                session.query(DeviceInfoTable)
+                    .filter(DeviceInfoTable.deviceId == action.deviceId)
+                    .one()
             )
 
             deviceId = deviceInfo.deviceId
@@ -71,7 +71,8 @@ class OnlineController:
         """Set All Devices to Offline"""
         session = self._dbSessionCreator()
         try:
-            session.execute(DeviceInfoTuple.__table__.update().values(isOnline=False))
+            session.execute(
+                DeviceInfoTable.__table__.update().values(isOnline=False))
             session.commit()
 
         finally:

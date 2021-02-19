@@ -7,20 +7,20 @@ from .DeclarativeBase import DeclarativeBase
 from vortex.Tuple import Tuple, addTupleType
 
 from peek_core_device._private.PluginNames import deviceTuplePrefix
+from ...tuples.DeviceInfoTuple import DeviceInfoTuple
+from ...tuples.GpsLocationTuple import GpsLocationTuple
 
 logger = logging.getLogger(__name__)
 
 
-@addTupleType
-class DeviceInfoTuple(Tuple, DeclarativeBase):
-    """DeviceInfoTuple
+class DeviceInfoTable(DeclarativeBase):
+    """DeviceInfoTable
 
     This table stores information about devices.
 
     """
 
     __tablename__ = "DeviceInfo"
-    __tupleType__ = deviceTuplePrefix + "DeviceInfoTuple"
 
     TYPE_MOBILE_IOS = "mobile-ios"
     TYPE_MOBILE_ANDROUD = "mobile-android"
@@ -41,3 +41,19 @@ class DeviceInfoTuple(Tuple, DeclarativeBase):
     createdDate = Column(DateTime(True), nullable=False)
     isOnline = Column(Boolean, nullable=False, server_default="0")
     isEnrolled = Column(Boolean, nullable=False, server_default="0")
+
+    def toTuple(self, currentLocationTuple: GpsLocationTuple = None):
+        return DeviceInfoTuple(
+            description=self.description,
+            deviceId=self.deviceId,
+            deviceType=self.deviceType,
+            deviceToken=self.deviceToken,
+            appVersion=self.appVersion,
+            updateVersion=self.updateVersion,
+            lastOnline=self.lastOnline,
+            lastUpdateCheck=self.lastUpdateCheck,
+            createdDate=self.createdDate,
+            isOnline=self.isOnline,
+            isEnrolled=self.isEnrolled,
+            currentLocation=currentLocationTuple,
+        )

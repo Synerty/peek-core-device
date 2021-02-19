@@ -67,6 +67,10 @@ class GpsController(TupleActionProcessorDelegateABC):
             )
         )
 
+        self._tupleObservable.notifyOfTupleUpdate(
+            TupleSelector(GpsLocationTuple.tupleName(), dict())
+        )
+
     def _updateCurrentLocation(self, currentLocation: DeviceLocationTuple):
         statement = insert(GpsLocationTable).values(currentLocation._asdict())
         statement = statement.on_conflict_do_update(

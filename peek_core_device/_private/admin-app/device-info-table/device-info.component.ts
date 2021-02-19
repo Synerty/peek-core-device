@@ -12,6 +12,7 @@ import {
 } from "@synerty/vortexjs"
 import { DeviceInfoTuple, GpsLocationTuple } from "@peek/peek_core_device"
 import { UpdateEnrollmentAction } from "@peek/peek_core_device/_private"
+import { takeUntil } from "rxjs/operators"
 
 @Component({
     selector: "core-device-device-info",
@@ -27,29 +28,34 @@ export class DeviceInfoComponent extends NgLifeCycleEvents {
         private tupleDataObserver: TupleDataObserverService
     ) {
         super()
-        
+    
         // Setup a subscription for the device info data
-        let deviceInfoSubscriber = tupleDataObserver.subscribeToTupleSelector(
+        tupleDataObserver.subscribeToTupleSelector(
             new TupleSelector(DeviceInfoTuple.tupleName, {})
         )
+            .pipe(takeUntil(this.onDestroyEvent))
             .subscribe((tuples: DeviceInfoTuple[]) => {
                 this.items = tuples
             })
-        
+    
         // Setup a subscription for the device location data
-        let gpsLocationSubscriber = tupleDataObserver.subscribeToTupleSelector(
-            new TupleSelector(GpsLocationTuple.tupleName, {})
-        )
-            .subscribe((tuples: GpsLocationTuple[]) => {
-                tuples.forEach(tuple => {
-                    tuple["googleMapLink"] = `https://www.google.com/maps/search/?api=1&query=${tuple.latitude},${tuple.longitude}`
-                    this.locations.set(tuple.deviceId, tuple)
-                })
-            })
-        
-        this.onDestroyEvent.subscribe(() => deviceInfoSubscriber.unsubscribe())
-        this.onDestroyEvent.subscribe(() => gpsLocationSubscriber.unsubscribe())
+        // tupleDataObserver.subscribeToTupleSelector(
+        //     new TupleSelector(GpsLocationTuple.tupleName, {})
+        // )
+        //     .pipe(takeUntil(this.onDestroyEvent))
+        //     .subscribe((tuples: GpsLocationTuple[]) => {
+        //         tuples.forEach(tuple => {
+        //             tuple["googleMapLink"] =
+        //                 this.locations.set(tuple.deviceId, tuple)
+        //         })
+        //     })
+    
     }
+    
+    // makeMapsLink(gpsLocationTuple: GpsLocationTuple) {
+    //     return "https://www.google.com/maps/search/?api=1&query="
+    //         + `${gpsLocationTuple.latitude},${gpsLocationTuple.longitude}`
+    // }
     
     deleteDeviceClicked(item) {
         let action = new UpdateEnrollmentAction()

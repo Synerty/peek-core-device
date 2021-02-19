@@ -33,8 +33,8 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
         combineLatest(this.userService.loggedInStatus,
             this.deviceService.deviceInfoObservable()).subscribe(
             ([isLoggedIn, deviceInfo]) => {
-                console.warn(isLoggedIn)
-                console.warn(deviceInfo)
+                // console.warn(isLoggedIn)
+                // console.warn(deviceInfo)
                 if (isLoggedIn && deviceInfo.isEnrolled) {
                     this.deviceId = deviceInfo.deviceId
                     this.setupGeoLocationWatcher()
@@ -88,7 +88,7 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
     }
     
     private sendPositionTupleAction(action: GpsLocationUpdateTupleAction) {
-        console.table(action)
+        // console.table(action)
         this.tupleService.tupleOfflineAction.pushAction(action)
     }
     

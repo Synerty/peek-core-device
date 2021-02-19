@@ -11,8 +11,9 @@ from twisted.internet.defer import Deferred, inlineCallbacks, returnValue
 from peek_core_device._private.server.controller.NotifierController import (
     NotifierController,
 )
-from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
-from peek_core_device._private.storage.DeviceUpdateTuple import DeviceUpdateTuple
+from peek_core_device._private.storage.DeviceInfoTable import DeviceInfoTable
+from peek_core_device._private.storage.DeviceUpdateTuple import \
+    DeviceUpdateTuple
 from peek_core_device._private.tuples.AlterDeviceUpdateAction import (
     AlterDeviceUpdateAction,
 )
@@ -154,9 +155,9 @@ class UpdateController:
         session = self._dbSessionCreator()
         try:
             deviceInfo = (
-                session.query(DeviceInfoTuple)
-                .filter(DeviceInfoTuple.deviceId == action.deviceId)
-                .one()
+                session.query(DeviceInfoTable)
+                    .filter(DeviceInfoTable.deviceId == action.deviceId)
+                    .one()
             )
 
             deviceId = deviceInfo.deviceId

@@ -1,11 +1,12 @@
 import logging
 
 from twisted.internet import reactor
-
-from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
-from peek_core_device._private.storage.DeviceUpdateTuple import DeviceUpdateTuple
 from vortex.TupleSelector import TupleSelector
 from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
+
+from peek_core_device._private.storage.DeviceUpdateTuple import \
+    DeviceUpdateTuple
+from peek_core_device.tuples.DeviceInfoTuple import DeviceInfoTuple
 
 logger = logging.getLogger(__name__)
 

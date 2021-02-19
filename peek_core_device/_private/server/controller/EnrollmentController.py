@@ -10,8 +10,9 @@ from twisted.internet.defer import Deferred
 from peek_core_device._private.server.controller.NotifierController import (
     NotifierController,
 )
-from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
-from peek_core_device._private.storage.Setting import globalSetting, AUTO_ENROLLMENT
+from peek_core_device._private.storage.DeviceInfoTable import DeviceInfoTable
+from peek_core_device._private.storage.Setting import globalSetting, \
+    AUTO_ENROLLMENT
 from peek_core_device._private.tuples.EnrolDeviceAction import EnrolDeviceAction
 from peek_core_device._private.tuples.UpdateEnrollmentAction import (
     UpdateEnrollmentAction,
@@ -50,15 +51,15 @@ class EnrollmentController:
         try:
             # There should only be one item that exists if it exists.
             existing = (
-                ormSession.query(DeviceInfoTuple)
-                .filter(DeviceInfoTuple.deviceId == action.deviceId)
-                .all()
+                ormSession.query(DeviceInfoTable)
+                    .filter(DeviceInfoTable.deviceId == action.deviceId)
+                    .all()
             )
 
             if existing:
                 return list(existing)
 
-            deviceInfo = DeviceInfoTuple()
+            deviceInfo = DeviceInfoTable()
             deviceInfo.description = action.description
             deviceInfo.deviceId = action.deviceId
             deviceInfo.deviceType = action.deviceType
@@ -104,9 +105,9 @@ class EnrollmentController:
         session = self._dbSessionCreator()
         try:
             deviceInfo = (
-                session.query(DeviceInfoTuple)
-                .filter(DeviceInfoTuple.id == action.deviceInfoId)
-                .one()
+                session.query(DeviceInfoTable)
+                    .filter(DeviceInfoTable.id == action.deviceInfoId)
+                    .one()
             )
 
             deviceId = deviceInfo.deviceId

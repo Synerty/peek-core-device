@@ -10,9 +10,9 @@ import {
     TupleActionPushService,
     TupleDataObservableNameService,
     TupleDataObserverService,
+    TupleDataOfflineObserverService,
     TupleOfflineStorageNameService,
-    TupleOfflineStorageService,
-    TupleDataOfflineObserverService
+    TupleOfflineStorageService
 } from "@synerty/vortexjs"
 // Import our components
 import { DeviceComponent } from "./device.component"
@@ -46,7 +46,6 @@ export const pluginRoutes: Routes = [
         path: "",
         component: DeviceComponent
     }
-
 ]
 
 // Define the module
@@ -55,7 +54,8 @@ export const pluginRoutes: Routes = [
         CommonModule,
         RouterModule.forChild(pluginRoutes),
         FormsModule,
-        FileUploadModule],
+        FileUploadModule
+    ],
     exports: [],
     providers: [
         TupleActionPushService, {
@@ -72,10 +72,12 @@ export const pluginRoutes: Routes = [
         },
     ],
     declarations: [
-        DeviceComponent, DeviceInfoComponent, DeviceUpdateComponent,
-        UploadDeviceUpdateComponent, EditSettingComponent
+        DeviceComponent,
+        DeviceInfoComponent,
+        DeviceUpdateComponent,
+        UploadDeviceUpdateComponent,
+        EditSettingComponent,
     ]
 })
 export class DeviceModule {
-
 }

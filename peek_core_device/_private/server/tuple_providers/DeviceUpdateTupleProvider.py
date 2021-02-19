@@ -5,8 +5,9 @@ from typing import Union
 import pytz
 from twisted.internet.defer import Deferred
 
-from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
-from peek_core_device._private.storage.DeviceUpdateTuple import DeviceUpdateTuple
+from peek_core_device._private.storage.DeviceInfoTable import DeviceInfoTable
+from peek_core_device._private.storage.DeviceUpdateTuple import \
+    DeviceUpdateTuple
 from vortex.DeferUtil import deferToThreadWrapWithLogger
 from vortex.Payload import Payload
 from vortex.TupleSelector import TupleSelector
@@ -32,9 +33,9 @@ class DeviceUpdateTupleProvider(TuplesProviderABC):
             deviceInfo = None
             if deviceId is not None:
                 deviceInfo = (
-                    ormSession.query(DeviceInfoTuple)
-                    .filter(DeviceInfoTuple.deviceId == deviceId)
-                    .one()
+                    ormSession.query(DeviceInfoTable)
+                        .filter(DeviceInfoTable.deviceId == deviceId)
+                        .one()
                 )
 
                 deviceInfo.lastUpdateCheck = datetime.now(pytz.utc)
