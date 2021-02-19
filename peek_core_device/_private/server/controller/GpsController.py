@@ -18,7 +18,8 @@ from peek_core_device._private.storage.GpsLocationTable import GpsLocationTable
 from peek_core_device._private.tuples.GpsLocationUpdateTupleAction import (
     GpsLocationUpdateTupleAction,
 )
-from peek_core_device.tuples.GpsLocationTuple import GpsLocationTuple
+from peek_core_device.tuples.DeviceGpsLocationTuple import \
+    DeviceGpsLocationTuple
 
 logger = logging.getLogger(__name__)
 DeviceLocationTuple = namedtuple(
@@ -63,12 +64,13 @@ class GpsController(TupleActionProcessorDelegateABC):
     def _notifyTuple(self, currentLocation: DeviceLocationTuple):
         self._tupleObservable.notifyOfTupleUpdate(
             TupleSelector(
-                GpsLocationTuple.tupleName(), dict(deviceId=currentLocation.deviceId)
+                DeviceGpsLocationTuple.tupleName(),
+                dict(deviceId=currentLocation.deviceId),
             )
         )
 
         self._tupleObservable.notifyOfTupleUpdate(
-            TupleSelector(GpsLocationTuple.tupleName(), dict())
+            TupleSelector(DeviceGpsLocationTuple.tupleName(), dict())
         )
 
     def _updateCurrentLocation(self, currentLocation: DeviceLocationTuple):

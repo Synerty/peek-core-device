@@ -10,7 +10,8 @@ from vortex.Tuple import TupleField
 from vortex.Tuple import addTupleType
 
 from peek_core_device._private.PluginNames import deviceTuplePrefix
-from peek_core_device.tuples.GpsLocationTuple import GpsLocationTuple
+from peek_core_device.tuples.DeviceGpsLocationTuple import \
+    DeviceGpsLocationTuple
 
 logger = logging.getLogger(__name__)
 
@@ -43,4 +44,4 @@ class DeviceInfoTuple(Tuple):
     createdDate = TupleField()
     isOnline = TupleField()
     isEnrolled = TupleField()
-    currentLocation: GpsLocationTuple = TupleField()
+    currentLocation: DeviceGpsLocationTuple = TupleField()

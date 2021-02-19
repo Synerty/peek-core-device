@@ -6,7 +6,7 @@ from peek_core_device._private.PluginNames import deviceTuplePrefix
 
 
 @addTupleType
-class GpsLocationTuple(Tuple):
+class DeviceGpsLocationTuple(Tuple):
     __tupleType__ = deviceTuplePrefix + "GpsLocationTuple"
 
     latitude: float = TupleField()

@@ -8,7 +8,7 @@ from vortex.Tuple import Tuple, addTupleType
 
 from peek_core_device._private.PluginNames import deviceTuplePrefix
 from ...tuples.DeviceInfoTuple import DeviceInfoTuple
-from ...tuples.GpsLocationTuple import GpsLocationTuple
+from ...tuples.DeviceGpsLocationTuple import DeviceGpsLocationTuple
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +42,7 @@ class DeviceInfoTable(DeclarativeBase):
     isOnline = Column(Boolean, nullable=False, server_default="0")
     isEnrolled = Column(Boolean, nullable=False, server_default="0")
 
-    def toTuple(self, currentLocationTuple: GpsLocationTuple = None):
+    def toTuple(self, currentLocationTuple: DeviceGpsLocationTuple = None):
         return DeviceInfoTuple(
             description=self.description,
             deviceId=self.deviceId,
