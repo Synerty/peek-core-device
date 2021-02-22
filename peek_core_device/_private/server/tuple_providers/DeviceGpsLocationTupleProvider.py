@@ -12,7 +12,7 @@ from peek_core_device._private.storage.GpsLocationTable import GpsLocationTable
 logger = logging.getLogger(__name__)
 
 
-class GpsLocationTupleProvider(TuplesProviderABC):
+class DeviceGpsLocationTupleProvider(TuplesProviderABC):
     def __init__(self, ormSessionCreator):
         self._ormSessionCreator = ormSessionCreator
 

@@ -5,14 +5,14 @@ from peek_core_device._private.PluginNames import deviceObservableName
 from peek_core_device._private.server.tuple_providers.ClientSettingsTupleProvider import (
     ClientSettingsTupleProvider,
 )
+from peek_core_device._private.server.tuple_providers.DeviceGpsLocationTupleProvider import (
+    DeviceGpsLocationTupleProvider,
+)
 from peek_core_device._private.server.tuple_providers.DeviceInfoTupleProvider import (
     DeviceInfoTupleProvider,
 )
 from peek_core_device._private.server.tuple_providers.DeviceUpdateTupleProvider import (
     DeviceUpdateTupleProvider,
-)
-from peek_core_device._private.server.tuple_providers.GpsLocationTupleProvider import (
-    GpsLocationTupleProvider,
 )
 from peek_core_device._private.storage.DeviceUpdateTuple import \
     DeviceUpdateTuple
@@ -55,7 +55,7 @@ def makeTupleDataObservableHandler(ormSessionCreator):
 
     tupleObservable.addTupleProvider(
         DeviceGpsLocationTuple.tupleName(),
-        GpsLocationTupleProvider(ormSessionCreator)
+        DeviceGpsLocationTupleProvider(ormSessionCreator),
     )
 
     return tupleObservable

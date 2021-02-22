@@ -26,20 +26,17 @@ class DeviceInfoTupleProvider(TuplesProviderABC):
 
         ormSession = self._ormSessionCreator()
         try:
-            qry = ormSession.query(DeviceInfoTable)
+            query = ormSession.query(DeviceInfoTable, GpsLocationTable).join(
+                DeviceInfoTable
+            )
 
             if deviceId is not None:
-                qry = qry.filter(DeviceInfoTable.deviceId == deviceId)
-
-            devices = qry.all()
+                query = query.filter(DeviceInfoTable.deviceId == deviceId)
 
             tuples = []
-            for device in devices:
-                gpsLocationQuery = ormSession.query(GpsLocationTable).filter(
-                    GpsLocationTable.deviceToken == device.deviceToken
-                )
-                locationTableRow = gpsLocationQuery.one_or_none()
-                tuples.append(device.toTuple(locationTableRow))
+            for deviceInfoTableRow, gpsLocationTableRow in query.all():
+                tuples.append(deviceInfoTableRow.toTuple(gpsLocationTableRow))
+
             # Create the vortex message
             return Payload(filt,
                 tuples=tuples).makePayloadEnvelope().toVortexMsg()
