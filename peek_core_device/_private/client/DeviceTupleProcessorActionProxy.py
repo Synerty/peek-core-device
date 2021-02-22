@@ -1,7 +1,8 @@
-from peek_plugin_base.PeekVortexUtil import peekServerName
-from peek_core_device._private.PluginNames import deviceFilt
-from peek_core_device._private.PluginNames import deviceActionProcessorName
 from vortex.handler.TupleActionProcessorProxy import TupleActionProcessorProxy
+
+from peek_core_device._private.PluginNames import deviceActionProcessorName
+from peek_core_device._private.PluginNames import deviceFilt
+from peek_plugin_base.PeekVortexUtil import peekServerName
 
 
 def makeTupleActionProcessorProxy():

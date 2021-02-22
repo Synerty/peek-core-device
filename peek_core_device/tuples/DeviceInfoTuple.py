@@ -1,10 +1,5 @@
 import logging
 
-from sqlalchemy import Column
-from sqlalchemy.sql.sqltypes import Boolean
-from sqlalchemy.sql.sqltypes import DateTime
-from sqlalchemy.sql.sqltypes import Integer
-from sqlalchemy.sql.sqltypes import String
 from vortex.Tuple import Tuple
 from vortex.Tuple import TupleField
 from vortex.Tuple import addTupleType

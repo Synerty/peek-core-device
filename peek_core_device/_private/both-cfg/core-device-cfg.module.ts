@@ -1,10 +1,9 @@
 import { CommonModule } from "@angular/common"
 import { NgModule } from "@angular/core"
-import { Routes } from "@angular/router"
+import { RouterModule, Routes } from "@angular/router"
 import { FormsModule } from "@angular/forms"
 import { HttpClientModule } from "@angular/common/http"
 import { NzIconModule } from "ng-zorro-antd/icon"
-import { RouterModule } from "@angular/router"
 import { CoreDeviceCfgComponent } from "./core-device-cfg.component"
 import { ConnectComponent } from "./connect/connect.component"
 import {

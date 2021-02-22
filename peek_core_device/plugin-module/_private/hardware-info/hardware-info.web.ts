@@ -1,8 +1,8 @@
 import {
+    addTupleType,
     Tuple,
     TupleOfflineStorageService,
-    TupleSelector,
-    addTupleType
+    TupleSelector
 } from "@synerty/vortexjs"
 
 import { deviceTuplePrefix } from "../PluginNames"

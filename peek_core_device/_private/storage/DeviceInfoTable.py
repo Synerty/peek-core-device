@@ -1,14 +1,14 @@
 import logging
 
 from sqlalchemy import Column
-from sqlalchemy.sql.sqltypes import Boolean, Integer, String, DateTime
+from sqlalchemy.sql.sqltypes import Boolean
+from sqlalchemy.sql.sqltypes import DateTime
+from sqlalchemy.sql.sqltypes import Integer
+from sqlalchemy.sql.sqltypes import String
 
 from .DeclarativeBase import DeclarativeBase
-from vortex.Tuple import Tuple, addTupleType
-
-from peek_core_device._private.PluginNames import deviceTuplePrefix
-from ...tuples.DeviceInfoTuple import DeviceInfoTuple
 from ...tuples.DeviceGpsLocationTuple import DeviceGpsLocationTuple
+from ...tuples.DeviceInfoTuple import DeviceInfoTuple
 
 logger = logging.getLogger(__name__)
 

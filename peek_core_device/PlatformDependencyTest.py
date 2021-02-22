@@ -1,6 +1,7 @@
 from os import path
 
-from peek_plugin_base.PlatformDependencyTest import PlatformDependencyTestCaseBase
+from peek_plugin_base.PlatformDependencyTest import \
+    PlatformDependencyTestCaseBase
 
 
 class PlatformDependencyTestCase(PlatformDependencyTestCaseBase):

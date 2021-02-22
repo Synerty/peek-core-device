@@ -3,6 +3,9 @@ from typing import List
 
 from sqlalchemy.orm.exc import NoResultFound
 from twisted.internet.defer import Deferred
+from vortex.DeferUtil import deferToThreadWrapWithLogger
+from vortex.Tuple import Tuple
+from vortex.TupleAction import TupleActionABC
 
 from peek_core_device._private.server.controller.NotifierController import (
     NotifierController,
@@ -11,15 +14,13 @@ from peek_core_device._private.storage.DeviceInfoTable import DeviceInfoTable
 from peek_core_device._private.tuples.UpdateDeviceOnlineAction import (
     UpdateDeviceOnlineAction,
 )
-from vortex.DeferUtil import deferToThreadWrapWithLogger
-from vortex.Tuple import Tuple
-from vortex.TupleAction import TupleActionABC
 
 logger = logging.getLogger(__name__)
 
 
 class OnlineController:
-    def __init__(self, dbSessionCreator, notifierController: NotifierController):
+    def __init__(self, dbSessionCreator,
+                 notifierController: NotifierController):
         self._dbSessionCreator = dbSessionCreator
         self._notifierController = notifierController
 
@@ -34,7 +35,8 @@ class OnlineController:
             return self._processUpdateOnline(tupleAction)
 
     @deferToThreadWrapWithLogger(logger)
-    def _processUpdateOnline(self, action: UpdateDeviceOnlineAction) -> List[Tuple]:
+    def _processUpdateOnline(self, action: UpdateDeviceOnlineAction) -> List[
+        Tuple]:
         """Process Online Status Update
 
         :rtype: Deferred

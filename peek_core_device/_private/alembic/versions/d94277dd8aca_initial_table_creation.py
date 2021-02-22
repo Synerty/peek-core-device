@@ -14,8 +14,8 @@ down_revision = None
 branch_labels = None
 depends_on = None
 
-from alembic import op
 import sqlalchemy as sa
+from alembic import op
 
 
 def upgrade():
@@ -33,7 +33,8 @@ def upgrade():
         sa.Column("lastUpdateCheck", sa.DateTime(), nullable=True),
         sa.Column("createdDate", sa.DateTime(), nullable=False),
         sa.Column("isOnline", sa.Boolean(), server_default="0", nullable=False),
-        sa.Column("isEnrolled", sa.Boolean(), server_default="0", nullable=False),
+        sa.Column("isEnrolled", sa.Boolean(), server_default="0",
+            nullable=False),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("description"),
         sa.UniqueConstraint("deviceId"),
@@ -50,7 +51,8 @@ def upgrade():
         sa.Column("updateVersion", sa.String(length=15), nullable=False),
         sa.Column("filePath", sa.String(length=150), nullable=False),
         sa.Column("urlPath", sa.String(length=150), nullable=False),
-        sa.Column("isEnabled", sa.Boolean(), server_default="0", nullable=False),
+        sa.Column("isEnabled", sa.Boolean(), server_default="0",
+            nullable=False),
         sa.PrimaryKeyConstraint("id"),
         schema="core_device",
     )
@@ -104,7 +106,8 @@ def downgrade():
     op.drop_table("SettingProperty", schema="core_device")
     op.drop_table("Setting", schema="core_device")
     op.drop_index(
-        "idx_DeviceUpdate_Version", table_name="DeviceUpdate", schema="core_device"
+        "idx_DeviceUpdate_Version", table_name="DeviceUpdate",
+        schema="core_device"
     )
     op.drop_table("DeviceUpdate", schema="core_device")
     op.drop_table("DeviceInfo", schema="core_device")

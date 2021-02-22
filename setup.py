@@ -1,8 +1,8 @@
 import os
 import shutil
-from setuptools import setup
 
 from setuptools import find_packages
+from setuptools import setup
 
 #
 # Modify these values to fork a new plugin
@@ -46,7 +46,8 @@ def find_package_files():
             if [e for e in excludeFilesStartWith if filename.startswith(e)]:
                 continue
 
-            paths.append(os.path.join(path[len(py_package_name) + 1 :], filename))
+            paths.append(
+                os.path.join(path[len(py_package_name) + 1:], filename))
 
     return paths
 
@@ -66,7 +67,8 @@ reqVer = ".".join(package_version.split(".")[0:2]) + ".*"
 
 # >=2.0.*,>=2.0.6
 requirements = [
-    "%s==%s,>=%s" % (pkg, reqVer, package_version) if pkg.startswith("peek") else pkg
+    "%s==%s,>=%s" % (pkg, reqVer, package_version) if pkg.startswith(
+        "peek") else pkg
     for pkg in requirements
 ]
 
@@ -75,7 +77,8 @@ requirements = [
 
 setup(
     name=pip_package_name,
-    packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
+    packages=find_packages(
+        exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     package_data={"": package_files},
     install_requires=requirements,
     version=package_version,

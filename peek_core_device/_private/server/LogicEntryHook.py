@@ -1,18 +1,9 @@
 import logging
 
-from peek_core_device._private.server.controller.NotifierController import (
-    NotifierController,
-)
 from txhttputil.site.FileUnderlayResource import FileUnderlayResource
 
-from peek_core_device._private.server.controller.UpdateController import (
-    UpdateController,
-)
-from peek_core_device._private.server.controller.EnrollmentController import (
-    EnrollmentController,
-)
-from peek_core_device._private.server.controller.OnlineController import (
-    OnlineController,
+from peek_core_device._private.server.controller.NotifierController import (
+    NotifierController,
 )
 from peek_core_device._private.server.update_resources.DeviceUpdateUploadResource import (
     DeviceUpdateUploadResource,
@@ -21,7 +12,8 @@ from peek_core_device._private.storage import DeclarativeBase
 from peek_core_device._private.storage.DeclarativeBase import loadStorageTuples
 from peek_core_device._private.tuples import loadPrivateTuples
 from peek_core_device.tuples import loadPublicTuples
-from peek_plugin_base.server.PluginLogicEntryHookABC import PluginLogicEntryHookABC
+from peek_plugin_base.server.PluginLogicEntryHookABC import \
+    PluginLogicEntryHookABC
 from peek_plugin_base.server.PluginServerStorageEntryHookABC import (
     PluginServerStorageEntryHookABC,
 )
@@ -98,14 +90,16 @@ class LogicEntryHook(PluginLogicEntryHookABC, PluginServerStorageEntryHookABC):
         updateDownloadResource = FileUnderlayResource()
         updateDownloadResource.addFileSystemRoot(str(self._deviceUpdatesPath))
         # noinspection PyTypeChecker
-        self.platform.addServerResource(b"device_update", updateDownloadResource)
+        self.platform.addServerResource(b"device_update",
+            updateDownloadResource)
 
         self._loadedObjects.extend(
             makeAdminBackendHandlers(tupleObservable, self.dbSessionCreator)
         )
 
         # Make the Action Processor Handler
-        self._loadedObjects.append(makeTupleActionProcessorHandler(mainController))
+        self._loadedObjects.append(
+            makeTupleActionProcessorHandler(mainController))
 
         # Initialise the API object that will be shared with other plugins
         self._api = DeviceApi(mainController, self.dbSessionCreator)

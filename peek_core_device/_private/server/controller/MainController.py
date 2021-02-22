@@ -1,25 +1,26 @@
 import logging
 from pathlib import Path
 
-from twisted.internet import defer
-from twisted.internet.defer import Deferred, inlineCallbacks
+from twisted.internet.defer import Deferred
+from twisted.internet.defer import inlineCallbacks
+from vortex.TupleAction import TupleActionABC
+from vortex.handler.TupleActionProcessor import TupleActionProcessorDelegateABC
+from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
 
-from peek_core_device._private.server.controller.GpsController import GpsController
-from peek_core_device._private.server.controller.NotifierController import (
-    NotifierController,
-)
-from peek_core_device._private.server.controller.UpdateController import (
-    UpdateController,
-)
 from peek_core_device._private.server.controller.EnrollmentController import (
     EnrollmentController,
+)
+from peek_core_device._private.server.controller.GpsController import \
+    GpsController
+from peek_core_device._private.server.controller.NotifierController import (
+    NotifierController,
 )
 from peek_core_device._private.server.controller.OnlineController import (
     OnlineController,
 )
-from vortex.TupleAction import TupleActionABC
-from vortex.handler.TupleActionProcessor import TupleActionProcessorDelegateABC
-from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
+from peek_core_device._private.server.controller.UpdateController import (
+    UpdateController,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +40,8 @@ class MainController(TupleActionProcessorDelegateABC):
             dbSessionCreator, notifierController
         )
 
-        self._onlineController = OnlineController(dbSessionCreator, notifierController)
+        self._onlineController = OnlineController(dbSessionCreator,
+            notifierController)
 
         self._updateController = UpdateController(
             dbSessionCreator, notifierController, deviceUpdateFilePath
@@ -63,7 +65,8 @@ class MainController(TupleActionProcessorDelegateABC):
 
     @inlineCallbacks
     def processTupleAction(self, tupleAction: TupleActionABC) -> Deferred:
-        result = yield self._enrollmentController.processTupleAction(tupleAction)
+        result = yield self._enrollmentController.processTupleAction(
+            tupleAction)
         if result is not None:
             return result
 

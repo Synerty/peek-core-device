@@ -1,6 +1,8 @@
-from typing import Optional, List
+from abc import ABCMeta
+from abc import abstractmethod
+from typing import List
+from typing import Optional
 
-from abc import ABCMeta, abstractmethod
 from rx import Observable
 from twisted.internet.defer import Deferred
 

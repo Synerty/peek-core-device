@@ -1,9 +1,6 @@
 import { Component, OnInit } from "@angular/core"
-import {
-    BalloonMsgService,
-    HeaderService
-} from "@synerty/peek-plugin-base-js"
-import { NgLifeCycleEvents } from "@synerty/vortexjs"
+import { BalloonMsgService, HeaderService } from "@synerty/peek-plugin-base-js"
+import { NgLifeCycleEvents, TupleSelector } from "@synerty/vortexjs"
 import { first } from "rxjs/operators"
 import {
     ClientSettingsTuple,
@@ -13,7 +10,6 @@ import {
 } from "@peek/peek_core_device/_private"
 import { DeviceEnrolmentService, DeviceInfoTuple } from "@peek/peek_core_device"
 import { DeviceTypeEnum } from "@peek/peek_core_device/_private/hardware-info/hardware-info.abstract"
-import { TupleSelector } from "@synerty/vortexjs"
 
 @Component({
     selector: "core-device-enroll",

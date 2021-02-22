@@ -11,15 +11,15 @@
             </tr>
             <tr *ngFor="let item of items">
                 <td>
-                    {{item.deviceType}}
+                    {{ item.deviceType }}
                 </td>
                 <td>
-                    {{item.description}}
+                    {{ item.description }}
                 </td>
                 <td>
                     <p *ngIf="item.isOnline">Online Now</p>
                     <p *ngIf="!item.isOnline && item.lastOnline">
-                        {{item.lastOnline | date:'HH:mm dd-MMM-yyyy'}}</p>
+                        {{ item.lastOnline | date:'HH:mm dd-MMM-yyyy'}}</p>
                     <p *ngIf="!item.isOnline && !item.lastOnline">Never
                         Connected</p>
 

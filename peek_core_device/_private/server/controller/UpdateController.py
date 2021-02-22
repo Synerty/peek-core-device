@@ -1,12 +1,18 @@
 import logging
+import shutil
 import zipfile
 from datetime import datetime
 from pathlib import Path
 from typing import List
 
 import pytz
-import shutil
-from twisted.internet.defer import Deferred, inlineCallbacks, returnValue
+from twisted.internet.defer import Deferred
+from twisted.internet.defer import inlineCallbacks
+from twisted.internet.defer import returnValue
+from txhttputil.site.SpooledNamedTemporaryFile import SpooledNamedTemporaryFile
+from vortex.DeferUtil import deferToThreadWrapWithLogger
+from vortex.Tuple import Tuple
+from vortex.TupleAction import TupleActionABC
 
 from peek_core_device._private.server.controller.NotifierController import (
     NotifierController,
@@ -20,12 +26,8 @@ from peek_core_device._private.tuples.AlterDeviceUpdateAction import (
 from peek_core_device._private.tuples.CreateDeviceUpdateAction import (
     CreateDeviceUpdateAction,
 )
-from peek_core_device._private.tuples.UpdateAppliedAction import UpdateAppliedAction
-from txhttputil.site.SpooledNamedTemporaryFile import SpooledNamedTemporaryFile
-from vortex.DeferUtil import deferToThreadWrapWithLogger
-from vortex.Tuple import Tuple
-from vortex.TupleAction import TupleActionABC
-from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
+from peek_core_device._private.tuples.UpdateAppliedAction import \
+    UpdateAppliedAction
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +55,8 @@ class UpdateController:
             return self._processDeviceUpdated(tupleAction)
 
     @deferToThreadWrapWithLogger(logger)
-    def _processAdminAlter(self, action: AlterDeviceUpdateAction) -> List[Tuple]:
+    def _processAdminAlter(self, action: AlterDeviceUpdateAction) -> List[
+        Tuple]:
         """Process Admin Update
 
         :rtype: Deferred
@@ -62,8 +65,8 @@ class UpdateController:
         try:
             deviceUpdate = (
                 session.query(DeviceUpdateTuple)
-                .filter(DeviceUpdateTuple.id == action.updateId)
-                .one()
+                    .filter(DeviceUpdateTuple.id == action.updateId)
+                    .one()
             )
 
             deviceType = deviceUpdate.deviceType
@@ -85,7 +88,8 @@ class UpdateController:
 
     @inlineCallbacks
     def processCreateUpdateUpload(
-        self, namedTempFile: SpooledNamedTemporaryFile, action: CreateDeviceUpdateAction
+        self, namedTempFile: SpooledNamedTemporaryFile,
+        action: CreateDeviceUpdateAction
     ):
         """Process Create Update Upload
 
@@ -125,7 +129,8 @@ class UpdateController:
         )
 
     @deferToThreadWrapWithLogger(logger)
-    def _createUpdateOrmObj(self, newUpdate: DeviceUpdateTuple) -> DeviceUpdateTuple:
+    def _createUpdateOrmObj(self,
+                            newUpdate: DeviceUpdateTuple) -> DeviceUpdateTuple:
         """Process Device Enrolment
 
         :rtype: Deferred

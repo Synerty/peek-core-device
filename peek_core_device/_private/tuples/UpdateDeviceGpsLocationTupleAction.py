@@ -1,6 +1,3 @@
-from typing import Optional
-
-from vortex.Tuple import Tuple
 from vortex.Tuple import TupleField
 from vortex.Tuple import addTupleType
 from vortex.TupleAction import TupleActionABC

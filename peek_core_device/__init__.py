@@ -1,7 +1,9 @@
 from typing import Type
 
-from peek_plugin_base.client.PluginClientEntryHookABC import PluginClientEntryHookABC
-from peek_plugin_base.server.PluginLogicEntryHookABC import PluginLogicEntryHookABC
+from peek_plugin_base.client.PluginClientEntryHookABC import \
+    PluginClientEntryHookABC
+from peek_plugin_base.server.PluginLogicEntryHookABC import \
+    PluginLogicEntryHookABC
 
 __version__ = "0.0.0"
 

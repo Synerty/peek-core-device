@@ -1,7 +1,6 @@
 import { addTupleType, Tuple } from "@synerty/vortexjs"
 import { deviceTuplePrefix } from "./_private/PluginNames"
 
-
 @addTupleType
 export class DeviceGpsLocationTuple extends Tuple {
     public static readonly tupleName = deviceTuplePrefix + "GpsLocationTuple"

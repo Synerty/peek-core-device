@@ -1,11 +1,15 @@
 import logging
 
-from peek_core_device._private.PluginNames import deviceFilt
-from peek_core_device._private.storage.Setting import SettingProperty, globalSetting
-from peek_core_device._private.tuples.ClientSettingsTuple import ClientSettingsTuple
 from vortex.TupleSelector import TupleSelector
 from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
-from vortex.sqla_orm.OrmCrudHandler import OrmCrudHandler, OrmCrudHandlerExtension
+from vortex.sqla_orm.OrmCrudHandler import OrmCrudHandler
+from vortex.sqla_orm.OrmCrudHandler import OrmCrudHandlerExtension
+
+from peek_core_device._private.PluginNames import deviceFilt
+from peek_core_device._private.storage.Setting import SettingProperty
+from peek_core_device._private.storage.Setting import globalSetting
+from peek_core_device._private.tuples.ClientSettingsTuple import \
+    ClientSettingsTuple
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +58,7 @@ def makeSettingPropertyHandler(tupleObservable, dbSessionCreator):
         dbSessionCreator, SettingProperty, filtKey, retreiveAll=True
     )
 
-    handler.addExtension(SettingProperty, __ExtUpdateObservable(tupleObservable))
+    handler.addExtension(SettingProperty,
+        __ExtUpdateObservable(tupleObservable))
     logger.debug("Started")
     return handler

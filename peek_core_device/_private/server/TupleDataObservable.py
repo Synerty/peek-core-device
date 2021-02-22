@@ -18,9 +18,9 @@ from peek_core_device._private.storage.DeviceUpdateTuple import \
     DeviceUpdateTuple
 from peek_core_device._private.tuples.ClientSettingsTuple import \
     ClientSettingsTuple
-from peek_core_device.tuples.DeviceInfoTuple import DeviceInfoTuple
 from peek_core_device.tuples.DeviceGpsLocationTuple import \
     DeviceGpsLocationTuple
+from peek_core_device.tuples.DeviceInfoTuple import DeviceInfoTuple
 
 
 def makeTupleDataObservableHandler(ormSessionCreator):
@@ -40,7 +40,8 @@ def makeTupleDataObservableHandler(ormSessionCreator):
 
     # Register TupleProviders here
     tupleObservable.addTupleProvider(
-        DeviceUpdateTuple.tupleName(), DeviceUpdateTupleProvider(ormSessionCreator)
+        DeviceUpdateTuple.tupleName(),
+        DeviceUpdateTupleProvider(ormSessionCreator)
     )
 
     tupleObservable.addTupleProvider(
@@ -48,7 +49,8 @@ def makeTupleDataObservableHandler(ormSessionCreator):
     )
 
     tupleObservable.addTupleProvider(
-        ClientSettingsTuple.tupleName(), ClientSettingsTupleProvider(ormSessionCreator)
+        ClientSettingsTuple.tupleName(),
+        ClientSettingsTupleProvider(ormSessionCreator)
     )
 
     tupleObservable.addTupleProvider(

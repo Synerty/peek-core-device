@@ -11,12 +11,8 @@ import {
 import { deviceFilt, deviceTuplePrefix } from "./PluginNames"
 import { DeviceTupleService } from "./device-tuple.service"
 import { DeviceNavService } from "./device-nav.service"
-import { Observable } from "rxjs"
-import { Subject } from "rxjs"
+import { Observable, Subject } from "rxjs"
 import { Capacitor } from "@capacitor/core"
-import { DeviceGpsLocationTuple } from "../DeviceGpsLocationTuple"
-import { GpsLocationUpdateTupleAction } from "./gps/GpsLocationUpdateTupleAction"
-import { PrivateDeviceGpsLocationService } from "./gps/private-gps-location.service"
 
 @addTupleType
 export class ServerInfoTuple extends Tuple {

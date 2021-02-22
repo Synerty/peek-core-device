@@ -1,14 +1,11 @@
 import { Injectable } from "@angular/core"
-import { BehaviorSubject, Observable, combineLatest } from "rxjs"
-
-import { filter } from "rxjs/operators"
+import { BehaviorSubject, combineLatest, Observable } from "rxjs"
 
 import {
     DeviceGpsLocationService,
     DeviceGpsLocationTuple
 } from "@peek/peek_core_device"
 import { UserService } from "@peek/peek_core_user"
-import { VortexStatusService } from "@synerty/vortexjs"
 
 import { Plugins } from "@capacitor/core"
 import { DeviceTupleService } from "../device-tuple.service"
@@ -24,26 +21,26 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
     private lastSeenPositionTuple: DeviceGpsLocationTuple
     private lastSeenPositionTupleAction: GpsLocationUpdateTupleAction
     private deviceId: string
-
-
+    
     constructor(
         private tupleService: DeviceTupleService,
         private deviceService: DeviceEnrolmentService,
         private userService: UserService,
     ) {
         super()
-
+        
         combineLatest(this.userService.loggedInStatus,
-            this.deviceService.deviceInfoObservable()).subscribe(
-            ([isLoggedIn, deviceInfo]) => {
-                // console.warn(isLoggedIn)
-                // console.warn(deviceInfo)
-                if (isLoggedIn && deviceInfo.isEnrolled) {
-                    this.deviceId = deviceInfo.deviceId
-                    this.setupGeoLocationWatcher()
+            this.deviceService.deviceInfoObservable())
+            .subscribe(
+                ([isLoggedIn, deviceInfo]) => {
+                    // console.warn(isLoggedIn)
+                    // console.warn(deviceInfo)
+                    if (isLoggedIn && deviceInfo.isEnrolled) {
+                        this.deviceId = deviceInfo.deviceId
+                        this.setupGeoLocationWatcher()
+                    }
                 }
-            }
-        )
+            )
     }
     
     get location(): Observable<DeviceGpsLocationTuple | null> {

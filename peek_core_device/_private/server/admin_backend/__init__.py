@@ -1,4 +1,5 @@
 from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
+
 from .SettingPropertyHandler import makeSettingPropertyHandler
 
 

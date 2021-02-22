@@ -1,13 +1,15 @@
 import logging
 
 from twisted.internet.defer import inlineCallbacks
+from txhttputil.downloader.HttpResourceProxy import HttpResourceProxy
 
-from peek_core_device._private.client.DeviceOnlineHandler import DeviceOnlineHandler
+from peek_core_device._private.client.DeviceOnlineHandler import \
+    DeviceOnlineHandler
 from peek_core_device._private.storage.DeclarativeBase import loadStorageTuples
 from peek_core_device._private.tuples import loadPrivateTuples
 from peek_core_device.tuples import loadPublicTuples
-from peek_plugin_base.client.PluginClientEntryHookABC import PluginClientEntryHookABC
-from txhttputil.downloader.HttpResourceProxy import HttpResourceProxy
+from peek_plugin_base.client.PluginClientEntryHookABC import \
+    PluginClientEntryHookABC
 from .DeviceTupleDataObservableProxy import makeDeviceTupleDataObservableProxy
 from .DeviceTupleProcessorActionProxy import makeTupleActionProcessorProxy
 

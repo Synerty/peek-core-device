@@ -2,13 +2,12 @@ import logging
 from typing import Union
 
 from twisted.internet.defer import Deferred
-
-from peek_core_device._private.storage.DeviceInfoTable import DeviceInfoTable
 from vortex.DeferUtil import deferToThreadWrapWithLogger
 from vortex.Payload import Payload
 from vortex.TupleSelector import TupleSelector
 from vortex.handler.TupleDataObservableHandler import TuplesProviderABC
 
+from peek_core_device._private.storage.DeviceInfoTable import DeviceInfoTable
 from peek_core_device._private.storage.GpsLocationTable import GpsLocationTable
 
 logger = logging.getLogger(__name__)

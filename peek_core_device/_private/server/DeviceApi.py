@@ -1,20 +1,22 @@
 import logging
-from typing import Optional, List
+from typing import List
+from typing import Optional
 
 from rx import Observable
 from rx.subjects import Subject
 from twisted.internet.defer import Deferred
-from vortex.DeferUtil import deferToThreadWrapWithLogger, noMainThread
+from vortex.DeferUtil import deferToThreadWrapWithLogger
+from vortex.DeferUtil import noMainThread
 
 from peek_core_device._private.server.controller.MainController import \
     MainController
 from peek_core_device._private.storage.DeviceInfoTable import DeviceInfoTable
 from peek_core_device.server.DeviceApiABC import DeviceApiABC
 from peek_core_device.tuples.DeviceDetailTuple import DeviceDetailTuple
-from peek_core_device.tuples.DeviceOnlineDetailTuple import \
-    DeviceOnlineDetailTuple
 from peek_core_device.tuples.DeviceGpsLocationTuple import \
     DeviceGpsLocationTuple
+from peek_core_device.tuples.DeviceOnlineDetailTuple import \
+    DeviceOnlineDetailTuple
 
 logger = logging.getLogger(__name__)
 

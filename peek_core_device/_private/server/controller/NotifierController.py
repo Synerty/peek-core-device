@@ -1,5 +1,6 @@
 import logging
-from datetime import datetime, timezone
+from datetime import datetime
+from datetime import timezone
 
 from twisted.internet import reactor
 from vortex.TupleSelector import TupleSelector
@@ -56,7 +57,8 @@ class NotifierController:
         """
 
         self._tupleObservable.notifyOfTupleUpdate(
-            TupleSelector(DeviceUpdateTuple.tupleName(), dict(deviceType=deviceType))
+            TupleSelector(DeviceUpdateTuple.tupleName(),
+                dict(deviceType=deviceType))
         )
 
         self._tupleObservable.notifyOfTupleUpdate(

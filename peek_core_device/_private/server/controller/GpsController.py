@@ -2,7 +2,6 @@ import logging
 from collections import namedtuple
 from copy import deepcopy
 from datetime import datetime
-from typing import List
 
 import pytz
 from sqlalchemy.dialects.postgresql import insert
@@ -23,8 +22,6 @@ from peek_core_device._private.storage.GpsLocationTable import GpsLocationTable
 from peek_core_device._private.tuples.UpdateDeviceGpsLocationTupleAction import (
     UpdateDeviceGpsLocationTupleAction,
 )
-from peek_core_device.tuples.DeviceGpsLocationTuple import \
-    DeviceGpsLocationTuple
 
 logger = logging.getLogger(__name__)
 DeviceLocationTuple = namedtuple(
@@ -60,7 +57,8 @@ class GpsController(TupleActionProcessorDelegateABC):
         self, action: UpdateDeviceGpsLocationTupleAction
     ):
         yield
-        capturedDate = self._convertMillisecondTimestampFromUtcToLocal(action.timestamp)
+        capturedDate = self._convertMillisecondTimestampFromUtcToLocal(
+            action.timestamp)
         currentLocation = DeviceLocationTuple(
             deviceToken=action.deviceToken,
             latitude=action.latitude,
@@ -146,5 +144,6 @@ class GpsController(TupleActionProcessorDelegateABC):
 
     def _getPeekDatabaseTimezone(self) -> str:
         session = self._dbSessionCreator()
-        result = session.execute("SELECT current_setting('TIMEZONE') AS \"timezone\";")
+        result = session.execute(
+            "SELECT current_setting('TIMEZONE') AS \"timezone\";")
         return result.first()["timezone"]

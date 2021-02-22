@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core"
 import { HeaderService } from "@synerty/peek-plugin-base-js"
-import { Subject } from "rxjs"
-import { Observable } from "rxjs"
+import { Observable, Subject } from "rxjs"
 import { TupleSelector, VortexStatusService } from "@synerty/vortexjs"
 import { DeviceInfoTuple } from "./DeviceInfoTuple"
 import { DeviceNavService } from "./_private/device-nav.service"

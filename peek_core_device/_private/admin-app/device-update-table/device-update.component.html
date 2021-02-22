@@ -12,37 +12,38 @@
             </tr>
             <tr *ngFor="let item of items">
                 <td>
-                    {{item.deviceType}}
+                    {{ item.deviceType }}
                 </td>
                 <td>
-                    {{item.description}}
+                    {{ item.description }}
                 </td>
                 <td>
-                    {{item.buildDate | date:'HH:mm dd-MMM-yyyy'}}
+                    {{ item.buildDate | date:'HH:mm dd-MMM-yyyy'}}
                 </td>
                 <td>
-                    {{item.appVersion}}
+                    {{ item.appVersion }}
                 </td>
                 <td>
-                    {{item.updateVersion}}
+                    {{ item.updateVersion }}
                 </td>
                 <td>
                     <button
-                        (click)="toggleUpdateEnabledClicked(item)"
-                        [class.btn-success]="item.isEnabled"
-                        [class.btn-warning]="!item.isEnabled"
-                        class="btn"
+                            (click)="toggleUpdateEnabledClicked(item)"
+                            [class.btn-success]="item.isEnabled"
+                            [class.btn-warning]="!item.isEnabled"
+                            class="btn"
                     >
-                        {{item.isEnabled ? "Enabled" : "Disabled"}}
+                        {{ item.isEnabled ? "Enabled" : "Disabled"}}
                     </button>
                 </td>
                 <td>
                     <div
-                        (click)="deleteUpdateClicked(item)"
-                        class="btn btn-default"
+                            (click)="deleteUpdateClicked(item)"
+                            class="btn btn-default"
                     >
                         <span
-                            aria-hidden="true" class="glyphicon glyphicon-minus"
+                                aria-hidden="true"
+                                class="glyphicon glyphicon-minus"
                         ></span>
                     </div>
                 </td>
