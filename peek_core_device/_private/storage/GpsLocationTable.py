@@ -1,4 +1,5 @@
 import logging
+from datetime import timezone
 
 from sqlalchemy import Column
 from sqlalchemy import DateTime
@@ -11,6 +12,7 @@ from vortex.Tuple import addTupleType
 
 from peek_core_device._private.PluginNames import deviceTuplePrefix
 from .DeclarativeBase import DeclarativeBase
+from ...tuples.DeviceGpsLocationTuple import DeviceGpsLocationTuple
 
 logger = logging.getLogger(__name__)
 
@@ -21,11 +23,6 @@ class GpsLocationTable(Tuple, DeclarativeBase):
     __tupleType__ = deviceTuplePrefix + "GpsLocationTable"
 
     id = Column(Integer, primary_key=True)
-    deviceId = Column(
-        String(50), ForeignKey("DeviceInfo.deviceId"), nullable=False,
-        unique=True
-    )
-    # TODO: update alembic migration scripts
     deviceToken = Column(
         String(50), ForeignKey("DeviceInfo.deviceToken"), nullable=False,
         unique=True
@@ -33,3 +30,23 @@ class GpsLocationTable(Tuple, DeclarativeBase):
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
     updatedDate = Column(DateTime(True), nullable=False)
+
+    def toTuple(self):
+        return DeviceGpsLocationTuple(
+            deviceToken=self.deviceToken,
+            latitude=self.latitude,
+            longitude=self.longitude,
+            # to utc timestamp in millisecond integer
+            timestamp=int(
+                self.updatedDate.replace(tzinfo=timezone.utc).timestamp() * 1000
+            ),
+        )
+
+    # def copy(self):
+    #     return GpsLocationTable(
+    #         id=self.id,
+    #         deviceId=self.deviceId,
+    #         latitude=self.latitude,
+    #         longitude=self.longitude,
+    #         updatedDate=self.updatedDate,
+    #     )

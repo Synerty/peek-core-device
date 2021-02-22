@@ -1,7 +1,7 @@
 import { addTupleType, Tuple } from "@synerty/vortexjs"
 import { deviceTuplePrefix } from "./_private/PluginNames"
 import { DeviceTypeEnum } from "./_private/hardware-info/hardware-info.abstract"
-import { GpsLocationTuple } from "./GpsLocationTuple"
+import { DeviceGpsLocationTuple } from "./DeviceGpsLocationTuple"
 
 @addTupleType
 export class DeviceInfoTuple extends Tuple {
@@ -26,7 +26,7 @@ export class DeviceInfoTuple extends Tuple {
     createdDate: Date
     isOnline: boolean
     isEnrolled: boolean
-    currentLocation: GpsLocationTuple
+    currentLocation: DeviceGpsLocationTuple
     
     constructor() {
         super(DeviceInfoTuple.tupleName)

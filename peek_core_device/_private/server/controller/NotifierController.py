@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 from twisted.internet import reactor
 from vortex.TupleSelector import TupleSelector
@@ -80,10 +80,32 @@ class NotifierController:
 
     def notifyDeviceGpsLocation(
         self,
-        deviceId: str,
         deviceToken: str,
         latitude: float,
         longitude: float,
         updatedDate: datetime,
     ):
-        pass
+        reactor.callLater(
+            0,
+            self._notifyDeviceGpsLocationObservable,
+            deviceToken,
+            latitude,
+            longitude,
+            updatedDate,
+        )
+
+    def _notifyDeviceGpsLocationObservable(
+        self,
+        deviceToken: str,
+        latitude: float,
+        longitude: float,
+        updatedDate: datetime,
+    ):
+        timestamp = int(
+            updatedDate.replace(tzinfo=timezone.utc).timestamp() * 1000)
+        self._api.notifyCurrentGpsLocation(
+            deviceToken,
+            latitude,
+            longitude,
+            timestamp,
+        )

@@ -46,7 +46,9 @@ class MainController(TupleActionProcessorDelegateABC):
         )
 
         self._gpsController = GpsController(
-            dbSessionCreator=dbSessionCreator, tupleObservable=tupleObservable
+            dbSessionCreator=dbSessionCreator,
+            tupleObservable=tupleObservable,
+            notifierController=notifierController,
         )
 
     @property

@@ -9,7 +9,7 @@ from peek_core_device._private.PluginNames import deviceTuplePrefix
 
 
 @addTupleType
-class GpsLocationUpdateTupleAction(TupleActionABC):
+class UpdateDeviceGpsLocationTupleAction(TupleActionABC):
     __tupleType__ = deviceTuplePrefix + "GpsLocationUpdateTupleAction"
     ACCURACY_COARSE = 1
     ACCURACY_FINE = 2
@@ -18,5 +18,4 @@ class GpsLocationUpdateTupleAction(TupleActionABC):
     longitude: float = TupleField()
     updateType: int = TupleField()
     timestamp: int = TupleField(comment="timestamp in milliseconds")
-    deviceId: str = TupleField()
     deviceToken: str = TupleField()

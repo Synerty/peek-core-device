@@ -95,7 +95,6 @@ class DeviceApi(DeviceApiABC):
 
     def notifyCurrentGpsLocation(
         self,
-        deviceId: str,
         deviceToken: str,
         latitude: float,
         longitude: float,
@@ -103,7 +102,6 @@ class DeviceApi(DeviceApiABC):
     ):
         self._deviceGpsLocationSubject.on_next(
             DeviceGpsLocationTuple(
-                deviceId=deviceId,
                 deviceToken=deviceToken,
                 latitude=latitude,
                 longitude=longitude,

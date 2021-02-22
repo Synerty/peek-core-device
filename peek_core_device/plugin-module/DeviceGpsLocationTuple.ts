@@ -3,7 +3,7 @@ import { deviceTuplePrefix } from "./_private/PluginNames"
 
 
 @addTupleType
-export class GpsLocationTuple extends Tuple {
+export class DeviceGpsLocationTuple extends Tuple {
     public static readonly tupleName = deviceTuplePrefix + "GpsLocationTuple"
     
     // This field allows customer specific data, that peek doesn't need to work
@@ -12,10 +12,9 @@ export class GpsLocationTuple extends Tuple {
     latitude: number
     longitude: number
     timestamp: number
-    deviceId: string
     deviceToken: string
     
     constructor() {
-        super(GpsLocationTuple.tupleName)
+        super(DeviceGpsLocationTuple.tupleName)
     }
 }

@@ -37,7 +37,7 @@ class DeviceInfoTupleProvider(TuplesProviderABC):
             tuples = []
             for device in devices:
                 gpsLocationQuery = ormSession.query(GpsLocationTable).filter(
-                    GpsLocationTable.deviceId == device.deviceId
+                    GpsLocationTable.deviceToken == device.deviceToken
                 )
                 locationTableRow = gpsLocationQuery.one_or_none()
                 tuples.append(device.toTuple(locationTableRow))

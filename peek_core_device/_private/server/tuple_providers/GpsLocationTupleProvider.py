@@ -11,24 +11,28 @@ from peek_core_device._private.storage.GpsLocationTable import GpsLocationTable
 
 logger = logging.getLogger(__name__)
 
+
 class GpsLocationTupleProvider(TuplesProviderABC):
     def __init__(self, ormSessionCreator):
         self._ormSessionCreator = ormSessionCreator
 
     @deferToThreadWrapWithLogger(logger)
-    def makeVortexMsg(self, filt: dict,
-                      tupleSelector: TupleSelector) -> Union[Deferred, bytes]:
-        deviceId = tupleSelector.selector.get("deviceId")
+    def makeVortexMsg(
+        self, filt: dict, tupleSelector: TupleSelector
+    ) -> Union[Deferred, bytes]:
+        deviceToken = tupleSelector.selector.get("deviceToken")
 
         ormSession = self._ormSessionCreator()
         try:
             query = ormSession.query(GpsLocationTable)
 
-            if deviceId:
-                query = query.filter(GpsLocationTable.deviceId == deviceId)
+            if deviceToken:
+                query = query.filter(
+                    GpsLocationTable.deviceToken == deviceToken)
 
             tuples = query.all()
 
-            return Payload(filt, tuples=tuples).makePayloadEnvelope().toVortexMsg()
+            return Payload(filt,
+                tuples=tuples).makePayloadEnvelope().toVortexMsg()
         finally:
             ormSession.close()

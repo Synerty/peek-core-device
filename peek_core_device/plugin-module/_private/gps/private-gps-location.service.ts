@@ -3,7 +3,10 @@ import { BehaviorSubject, Observable, combineLatest } from "rxjs"
 
 import { filter } from "rxjs/operators"
 
-import { DeviceGpsLocationService, GpsLocationTuple } from "@peek/peek_core_device"
+import {
+    DeviceGpsLocationService,
+    DeviceGpsLocationTuple
+} from "@peek/peek_core_device"
 import { UserService } from "@peek/peek_core_user"
 import { VortexStatusService } from "@synerty/vortexjs"
 
@@ -16,9 +19,9 @@ const {Geolocation} = Plugins
 
 @Injectable()
 export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
-    private location$ = new BehaviorSubject<GpsLocationTuple|null>(null)
+    private location$ = new BehaviorSubject<DeviceGpsLocationTuple | null>(null)
     private gpsWatchId: string
-    private lastSeenPositionTuple: GpsLocationTuple
+    private lastSeenPositionTuple: DeviceGpsLocationTuple
     private lastSeenPositionTupleAction: GpsLocationUpdateTupleAction
     private deviceId: string
 
@@ -42,25 +45,28 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
             }
         )
     }
-
-    get location(): Observable<GpsLocationTuple|null> {
+    
+    get location(): Observable<DeviceGpsLocationTuple | null> {
         return this.location$
-        }
-        
+    }
+    
     private async getInitialGeoLocation() {
         this.lastSeenPositionTuple = new GpsLocationUpdateTupleAction()
         const position = await Geolocation.getCurrentPosition()
         this.updateLocation(position)
     }
-        
+    
     private async setupGeoLocationWatcher() {
         await this.getInitialGeoLocation()
         this.gpsWatchId = Geolocation.watchPosition({"enableHighAccuracy": true},
-            (position, err) => {
+            (
+                position,
+                err
+            ) => {
                 if (position != null) {
-                this.updateLocation(position)
-            }
-        })
+                    this.updateLocation(position)
+                }
+            })
     }
     
     private updateLocation(position) {
@@ -74,21 +80,21 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
         action.longitude = position.coords.longitude
         action.updateType = GpsLocationUpdateTupleAction.ACCURACY_FINE
         action.timestamp = now
-        action.deviceId = this.deviceId
+        action.deviceToken = this.deviceService.enrolmentToken()
         this.lastSeenPositionTupleAction = action
         this.sendLiveLocation()
-        
+    
         // update location observable
-        const location = new GpsLocationTuple()
+        const location = new DeviceGpsLocationTuple()
         location.latitude = position.coords.latitude
         location.longitude = position.coords.longitude
         location.timestamp = now
-        location.deviceId = this.deviceId
+        location.deviceToken = this.deviceService.enrolmentToken()
         this.location$.next(location)
     }
     
     private sendPositionTupleAction(action: GpsLocationUpdateTupleAction) {
-        // console.table(action)
+        console.table(action)
         this.tupleService.tupleOfflineAction.pushAction(action)
     }
     
