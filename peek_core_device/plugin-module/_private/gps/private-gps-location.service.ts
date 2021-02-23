@@ -45,6 +45,10 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
         return this.location$
     }
     
+    set location(newLocation: DeviceGpsLocationTuple | null) {
+        this.location$.next(newLocation)
+    }
+    
     private async getInitialGeoLocation() {
         this.lastSeenPositionTuple = new GpsLocationUpdateTupleAction()
         const position = await Geolocation.getCurrentPosition()
@@ -85,7 +89,7 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
         location.longitude = position.coords.longitude
         location.datetime = now
         location.deviceToken = this.deviceService.enrolmentToken()
-        this.location$.next(location)
+        this.location = location
     }
     
     private sendPositionTupleAction(action: GpsLocationUpdateTupleAction) {
