@@ -10,7 +10,7 @@ export class DeviceGpsLocationTuple extends Tuple {
     
     latitude: number
     longitude: number
-    timestamp: number
+    datetime: Date
     deviceToken: string
     
     constructor() {

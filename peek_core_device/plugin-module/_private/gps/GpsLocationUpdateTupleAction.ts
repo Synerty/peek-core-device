@@ -12,7 +12,7 @@ export class GpsLocationUpdateTupleAction extends TupleActionABC {
     latitude: number
     longitude: number
     updateType: number
-    timestamp: number
+    datetime: Date
     deviceToken: string
     
     constructor() {

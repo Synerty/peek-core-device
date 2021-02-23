@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from typing import List
 from typing import Optional
 
@@ -100,13 +101,13 @@ class DeviceApi(DeviceApiABC):
         deviceToken: str,
         latitude: float,
         longitude: float,
-        timestamp: int,
+        datetime: datetime,
     ):
         self._deviceGpsLocationSubject.on_next(
             DeviceGpsLocationTuple(
                 deviceToken=deviceToken,
                 latitude=latitude,
                 longitude=longitude,
-                timestamp=timestamp,
+                datetime=datetime,
             )
         )

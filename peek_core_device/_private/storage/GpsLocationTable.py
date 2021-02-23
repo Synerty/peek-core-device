@@ -1,5 +1,4 @@
 import logging
-from datetime import timezone
 
 from sqlalchemy import Column
 from sqlalchemy import DateTime
@@ -36,17 +35,5 @@ class GpsLocationTable(Tuple, DeclarativeBase):
             deviceToken=self.deviceToken,
             latitude=self.latitude,
             longitude=self.longitude,
-            # to utc timestamp in millisecond integer
-            timestamp=int(
-                self.updatedDate.replace(tzinfo=timezone.utc).timestamp() * 1000
-            ),
+            datetime=self.updatedDate,
         )
-
-    # def copy(self):
-    #     return GpsLocationTable(
-    #         id=self.id,
-    #         deviceId=self.deviceId,
-    #         latitude=self.latitude,
-    #         longitude=self.longitude,
-    #         updatedDate=self.updatedDate,
-    #     )

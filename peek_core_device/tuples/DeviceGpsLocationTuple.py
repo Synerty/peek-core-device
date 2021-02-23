@@ -1,3 +1,5 @@
+import datetime as datetime
+
 from vortex.Tuple import Tuple
 from vortex.Tuple import TupleField
 from vortex.Tuple import addTupleType
@@ -11,6 +13,6 @@ class DeviceGpsLocationTuple(Tuple):
 
     latitude: float = TupleField()
     longitude: float = TupleField()
-    timestamp: int = TupleField(comment="timestamp in milliseconds")
+    datetime: datetime = TupleField()
     deviceId: str = TupleField()
     deviceToken: str = TupleField()

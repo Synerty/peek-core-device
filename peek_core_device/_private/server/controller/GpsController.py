@@ -1,9 +1,7 @@
 import logging
 from collections import namedtuple
 from copy import deepcopy
-from datetime import datetime
 
-import pytz
 from sqlalchemy.dialects.postgresql import insert
 from twisted.internet.defer import Deferred
 from twisted.internet.defer import inlineCallbacks
@@ -57,13 +55,12 @@ class GpsController(TupleActionProcessorDelegateABC):
         self, action: UpdateDeviceGpsLocationTupleAction
     ):
         yield
-        capturedDate = self._convertMillisecondTimestampFromUtcToLocal(
-            action.timestamp)
+        # capturedDate = datetime.now()
         currentLocation = DeviceLocationTuple(
             deviceToken=action.deviceToken,
             latitude=action.latitude,
             longitude=action.longitude,
-            updatedDate=capturedDate,
+            updatedDate=action.datetime,
         )
         updatedGpsLocationTableRow = self._updateCurrentLocation(
             currentLocation)
@@ -132,15 +129,6 @@ class GpsController(TupleActionProcessorDelegateABC):
             session.commit()
         finally:
             session.close()
-
-    def _convertMillisecondTimestampFromUtcToLocal(self,
-                                                   timestamp: int) -> datetime:
-        timestamp = datetime.utcfromtimestamp(timestamp / 1000.0)
-        # from UTC
-        timestamp = timestamp.replace(tzinfo=pytz.utc)
-        # set as local
-        return timestamp.astimezone(
-            pytz.timezone(self._localTimezoneSetting.timezone))
 
     def _getPeekDatabaseTimezone(self) -> str:
         session = self._dbSessionCreator()
