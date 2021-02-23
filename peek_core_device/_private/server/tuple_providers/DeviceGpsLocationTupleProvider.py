@@ -30,7 +30,7 @@ class DeviceGpsLocationTupleProvider(TuplesProviderABC):
                 query = query.filter(
                     GpsLocationTable.deviceToken == deviceToken)
 
-            tuples = query.all()
+            tuples = [t.toTuple() for t in query.all()]
 
             return Payload(filt,
                 tuples=tuples).makePayloadEnvelope().toVortexMsg()

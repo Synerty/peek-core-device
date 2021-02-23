@@ -35,7 +35,22 @@ class DeviceInfoTupleProvider(TuplesProviderABC):
 
             tuples = []
             for deviceInfoTableRow, gpsLocationTableRow in query.all():
-                tuples.append(deviceInfoTableRow.toTuple(gpsLocationTableRow))
+                tuples.append(
+                    DeviceInfoTable.toTuple(
+                        deviceInfoTableRow.description,
+                        deviceInfoTableRow.deviceId,
+                        deviceInfoTableRow.deviceType,
+                        deviceInfoTableRow.deviceToken,
+                        deviceInfoTableRow.appVersion,
+                        deviceInfoTableRow.updateVersion,
+                        deviceInfoTableRow.lastOnline,
+                        deviceInfoTableRow.lastUpdateCheck,
+                        deviceInfoTableRow.createdDate,
+                        deviceInfoTableRow.isOnline,
+                        deviceInfoTableRow.isEnrolled,
+                        currentLocationTuple=gpsLocationTableRow,
+                    )
+                )
 
             # Create the vortex message
             return Payload(filt,

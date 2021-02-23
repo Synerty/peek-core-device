@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 from sqlalchemy import Column
 from sqlalchemy.sql.sqltypes import Boolean
@@ -42,18 +43,32 @@ class DeviceInfoTable(DeclarativeBase):
     isOnline = Column(Boolean, nullable=False, server_default="0")
     isEnrolled = Column(Boolean, nullable=False, server_default="0")
 
-    def toTuple(self, currentLocationTuple: DeviceGpsLocationTuple = None):
+    @staticmethod
+    def toTuple(
+        description: str,
+        deviceId: str,
+        deviceType: str,
+        deviceToken: str,
+        appVersion: str,
+        updateVersion: str,
+        lastOnline: datetime,
+        lastUpdateCheck: datetime,
+        createdDate: datetime,
+        isOnline: bool,
+        isEnrolled: bool,
+        currentLocationTuple: DeviceGpsLocationTuple = None,
+    ):
         return DeviceInfoTuple(
-            description=self.description,
-            deviceId=self.deviceId,
-            deviceType=self.deviceType,
-            deviceToken=self.deviceToken,
-            appVersion=self.appVersion,
-            updateVersion=self.updateVersion,
-            lastOnline=self.lastOnline,
-            lastUpdateCheck=self.lastUpdateCheck,
-            createdDate=self.createdDate,
-            isOnline=self.isOnline,
-            isEnrolled=self.isEnrolled,
+            description=description,
+            deviceId=deviceId,
+            deviceType=deviceType,
+            deviceToken=deviceToken,
+            appVersion=appVersion,
+            updateVersion=updateVersion,
+            lastOnline=lastOnline,
+            lastUpdateCheck=lastUpdateCheck,
+            createdDate=createdDate,
+            isOnline=isOnline,
+            isEnrolled=isEnrolled,
             currentLocation=currentLocationTuple,
         )
