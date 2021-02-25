@@ -18,7 +18,6 @@ const {Geolocation} = Plugins
 export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
     private location$ = new BehaviorSubject<DeviceGpsLocationTuple | null>(null)
     private gpsWatchId: string
-    private lastSeenPositionTuple: DeviceGpsLocationTuple
     private lastSeenPositionTupleAction: GpsLocationUpdateTupleAction
     private deviceId: string
     
@@ -46,7 +45,6 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
     }
     
     private async getInitialGeoLocation() {
-        this.lastSeenPositionTuple = new GpsLocationUpdateTupleAction()
         const position = await Geolocation.getCurrentPosition()
         this.updateLocation(position)
     }
