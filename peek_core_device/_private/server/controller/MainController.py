@@ -81,8 +81,5 @@ class MainController(TupleActionProcessorDelegateABC):
         result = yield self._gpsController.processTupleAction(tupleAction)
         if result is not None:
             return result
-        # TODO: drop 'else' statement when GpsController is done
-        else:
-            return []
 
         raise NotImplementedError(tupleAction.tupleName())
