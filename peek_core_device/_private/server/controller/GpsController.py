@@ -1,6 +1,5 @@
 import logging
 from collections import namedtuple
-from copy import deepcopy
 
 from sqlalchemy.dialects.postgresql import insert
 from twisted.internet.defer import Deferred
@@ -108,7 +107,9 @@ class GpsController(TupleActionProcessorDelegateABC):
             updatedRows = session.query(GpsLocationTable).filter(
                 GpsLocationTable.id == r.inserted_primary_key[0]
             )
-            return deepcopy(updatedRows.one())
+            result = updatedRows.one()
+            session.expunge_all()
+            return result
         finally:
             session.rollback()
             session.close()
