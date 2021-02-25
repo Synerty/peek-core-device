@@ -37,9 +37,6 @@ class GpsController(TupleActionProcessorDelegateABC):
         notifierController: NotifierController,
     ):
         self._dbSessionCreator = dbSessionCreator
-        self._localTimezoneSetting = TimezoneSetting(
-            timezone=self._getPeekDatabaseTimezone()
-        )
         self._tupleObservable = tupleObservable
         self._notifierController = notifierController
 
@@ -129,9 +126,3 @@ class GpsController(TupleActionProcessorDelegateABC):
             session.commit()
         finally:
             session.close()
-
-    def _getPeekDatabaseTimezone(self) -> str:
-        session = self._dbSessionCreator()
-        result = session.execute(
-            "SELECT current_setting('TIMEZONE') AS \"timezone\";")
-        return result.first()["timezone"]
