@@ -75,7 +75,7 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
         action.datetime = now
         action.deviceToken = this.deviceService.enrolmentToken()
         this.lastSeenPositionTupleAction = action
-        this.sendLiveLocation()
+        this.sendPositionTupleAction(action)
         
         // update location observable
         const location = new DeviceGpsLocationTuple()
@@ -88,9 +88,5 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
     
     private sendPositionTupleAction(action: GpsLocationUpdateTupleAction) {
         this.tupleService.tupleOfflineAction.pushAction(action)
-    }
-    
-    private sendLiveLocation() {
-        this.sendPositionTupleAction(this.lastSeenPositionTupleAction)
     }
 }
