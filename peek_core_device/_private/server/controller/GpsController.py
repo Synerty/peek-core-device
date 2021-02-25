@@ -1,14 +1,6 @@
 import logging
 from collections import namedtuple
 
-from sqlalchemy.dialects.postgresql import insert
-from twisted.internet.defer import Deferred
-from twisted.internet.defer import inlineCallbacks
-from vortex.TupleAction import TupleActionABC
-from vortex.TupleSelector import TupleSelector
-from vortex.handler.TupleActionProcessor import TupleActionProcessorDelegateABC
-from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
-
 from peek_core_device._private.server.controller.NotifierController import (
     NotifierController,
 )
@@ -19,6 +11,13 @@ from peek_core_device._private.storage.GpsLocationTable import GpsLocationTable
 from peek_core_device._private.tuples.UpdateDeviceGpsLocationTupleAction import (
     UpdateDeviceGpsLocationTupleAction,
 )
+from sqlalchemy.dialects.postgresql import insert
+from twisted.internet.defer import Deferred
+from twisted.internet.defer import inlineCallbacks
+from vortex.TupleAction import TupleActionABC
+from vortex.TupleSelector import TupleSelector
+from vortex.handler.TupleActionProcessor import TupleActionProcessorDelegateABC
+from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
 
 logger = logging.getLogger(__name__)
 DeviceLocationTuple = namedtuple(
@@ -62,7 +61,6 @@ class GpsController(TupleActionProcessorDelegateABC):
             currentLocation)
         self._logToHistory(currentLocation)
         self._notifyTuple(updatedGpsLocationTableRow)
-        logger.debug(action)
         return []
 
     def _notifyTuple(self, gpsLocationTable: GpsLocationTable):
