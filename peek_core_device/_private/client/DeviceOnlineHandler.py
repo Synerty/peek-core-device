@@ -2,15 +2,7 @@ import logging
 from typing import List
 
 from twisted.internet.task import LoopingCall
-
-from peek_core_device._private.PluginNames import deviceFilt, deviceActionProcessorName
-from peek_core_device._private.PluginNames import deviceObservableName
-from peek_core_device._private.tuples.UpdateDeviceOnlineAction import (
-    UpdateDeviceOnlineAction,
-)
-from peek_plugin_base.PeekVortexUtil import peekServerName
 from vortex.DeferUtil import vortexLogFailure
-from vortex.Payload import Payload
 from vortex.PayloadEndpoint import PayloadEndpoint
 from vortex.PayloadEnvelope import PayloadEnvelope
 from vortex.VortexFactory import VortexFactory
@@ -18,6 +10,14 @@ from vortex.handler.TupleDataActionClient import TupleDataActionClient
 from vortex.handler.TupleDataObservableProxyHandler import (
     TupleDataObservableProxyHandler,
 )
+
+from peek_core_device._private.PluginNames import deviceActionProcessorName
+from peek_core_device._private.PluginNames import deviceFilt
+from peek_core_device._private.PluginNames import deviceObservableName
+from peek_core_device._private.tuples.UpdateDeviceOnlineAction import (
+    UpdateDeviceOnlineAction,
+)
+from peek_plugin_base.PeekVortexUtil import peekServerName
 
 logger = logging.getLogger(__name__)
 
@@ -76,14 +76,16 @@ class DeviceOnlineHandler:
                 deviceIds.append(self._onlineDeviceIdsByUuid.pop(vortexUuid))
 
             # Make sure the device hasn't come back online as a difference vortex UUID
-            deviceIds = list(set(deviceIds) - set(self._onlineDeviceIdsByUuid.values()))
+            deviceIds = list(
+                set(deviceIds) - set(self._onlineDeviceIdsByUuid.values()))
 
             self._sendOfflineForDeviceIds(deviceIds)
 
         except Exception as e:
             logger.exception(e)
 
-    def _process(self, payloadEnvelope: PayloadEnvelope, vortexUuid: str, **kwargs):
+    def _process(self, payloadEnvelope: PayloadEnvelope, vortexUuid: str,
+                 **kwargs):
         deviceId = payloadEnvelope.filt["deviceId"]
 
         if vortexUuid in self._onlineDeviceIdsByUuid:

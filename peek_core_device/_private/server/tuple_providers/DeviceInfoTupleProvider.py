@@ -2,12 +2,13 @@ import logging
 from typing import Union
 
 from twisted.internet.defer import Deferred
-
-from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
 from vortex.DeferUtil import deferToThreadWrapWithLogger
 from vortex.Payload import Payload
 from vortex.TupleSelector import TupleSelector
 from vortex.handler.TupleDataObservableHandler import TuplesProviderABC
+
+from peek_core_device._private.storage.DeviceInfoTable import DeviceInfoTable
+from peek_core_device._private.storage.GpsLocationTable import GpsLocationTable
 
 logger = logging.getLogger(__name__)
 
@@ -25,15 +26,35 @@ class DeviceInfoTupleProvider(TuplesProviderABC):
 
         ormSession = self._ormSessionCreator()
         try:
-            qry = ormSession.query(DeviceInfoTuple)
+            query = ormSession.query(DeviceInfoTable, GpsLocationTable).join(
+                DeviceInfoTable
+            )
 
             if deviceId is not None:
-                qry = qry.filter(DeviceInfoTuple.deviceId == deviceId)
+                query = query.filter(DeviceInfoTable.deviceId == deviceId)
 
-            tuples = qry.all()
+            tuples = []
+            for deviceInfoTableRow, gpsLocationTableRow in query.all():
+                tuples.append(
+                    DeviceInfoTable.toTuple(
+                        deviceInfoTableRow.description,
+                        deviceInfoTableRow.deviceId,
+                        deviceInfoTableRow.deviceType,
+                        deviceInfoTableRow.deviceToken,
+                        deviceInfoTableRow.appVersion,
+                        deviceInfoTableRow.updateVersion,
+                        deviceInfoTableRow.lastOnline,
+                        deviceInfoTableRow.lastUpdateCheck,
+                        deviceInfoTableRow.createdDate,
+                        deviceInfoTableRow.isOnline,
+                        deviceInfoTableRow.isEnrolled,
+                        currentLocationTuple=gpsLocationTableRow,
+                    )
+                )
 
             # Create the vortex message
-            return Payload(filt, tuples=tuples).makePayloadEnvelope().toVortexMsg()
+            return Payload(filt,
+                tuples=tuples).makePayloadEnvelope().toVortexMsg()
 
         finally:
             ormSession.close()

@@ -4,13 +4,14 @@ from typing import Union
 
 import pytz
 from twisted.internet.defer import Deferred
-
-from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
-from peek_core_device._private.storage.DeviceUpdateTuple import DeviceUpdateTuple
 from vortex.DeferUtil import deferToThreadWrapWithLogger
 from vortex.Payload import Payload
 from vortex.TupleSelector import TupleSelector
 from vortex.handler.TupleDataObservableHandler import TuplesProviderABC
+
+from peek_core_device._private.storage.DeviceInfoTable import DeviceInfoTable
+from peek_core_device._private.storage.DeviceUpdateTuple import \
+    DeviceUpdateTuple
 
 logger = logging.getLogger(__name__)
 
@@ -32,9 +33,9 @@ class DeviceUpdateTupleProvider(TuplesProviderABC):
             deviceInfo = None
             if deviceId is not None:
                 deviceInfo = (
-                    ormSession.query(DeviceInfoTuple)
-                    .filter(DeviceInfoTuple.deviceId == deviceId)
-                    .one()
+                    ormSession.query(DeviceInfoTable)
+                        .filter(DeviceInfoTable.deviceId == deviceId)
+                        .one()
                 )
 
                 deviceInfo.lastUpdateCheck = datetime.now(pytz.utc)
@@ -46,10 +47,11 @@ class DeviceUpdateTupleProvider(TuplesProviderABC):
             if deviceInfo:
                 updates = (
                     ormSession.query(DeviceUpdateTuple)
-                    .filter(DeviceUpdateTuple.deviceType == deviceInfo.deviceType)
-                    .filter(DeviceUpdateTuple.isEnabled == True)
-                    .order_by(DeviceUpdateTuple.buildDate)
-                    .all()
+                        .filter(
+                        DeviceUpdateTuple.deviceType == deviceInfo.deviceType)
+                        .filter(DeviceUpdateTuple.isEnabled == True)
+                        .order_by(DeviceUpdateTuple.buildDate)
+                        .all()
                 )
 
                 if updates:
@@ -61,12 +63,13 @@ class DeviceUpdateTupleProvider(TuplesProviderABC):
             else:
                 tuples = (
                     ormSession.query(DeviceUpdateTuple)
-                    .order_by(DeviceUpdateTuple.buildDate)
-                    .all()
+                        .order_by(DeviceUpdateTuple.buildDate)
+                        .all()
                 )
 
             # Create the vortex message
-            return Payload(filt, tuples=tuples).makePayloadEnvelope().toVortexMsg()
+            return Payload(filt,
+                tuples=tuples).makePayloadEnvelope().toVortexMsg()
 
         finally:
             ormSession.close()

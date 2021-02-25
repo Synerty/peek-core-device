@@ -6,40 +6,52 @@
                 <th>Description</th>
                 <th>Last Online</th>
                 <th>Enrollment</th>
+                <th>Current Location</th>
                 <th></th>
             </tr>
             <tr *ngFor="let item of items">
                 <td>
-                    {{item.deviceType}}
+                    {{ item.deviceType }}
                 </td>
                 <td>
-                    {{item.description}}
+                    {{ item.description }}
                 </td>
                 <td>
                     <p *ngIf="item.isOnline">Online Now</p>
                     <p *ngIf="!item.isOnline && item.lastOnline">
-                        {{item.lastOnline | date:'HH:mm dd-MMM-yyyy'}}</p>
+                        {{ item.lastOnline | date:'HH:mm dd-MMM-yyyy'}}</p>
                     <p *ngIf="!item.isOnline && !item.lastOnline">Never
-                                                                  Connected</p>
-                
+                        Connected</p>
+
                 </td>
                 <td>
                     <button
-                        (click)="toggleEnrollClicked(item)"
-                        [class.btn-success]="item.isEnrolled"
-                        [class.btn-warning]="!item.isEnrolled"
-                        class="btn"
+                            (click)="toggleEnrollClicked(item)"
+                            [class.btn-success]="item.isEnrolled"
+                            [class.btn-warning]="!item.isEnrolled"
+                            class="btn"
                     >
-                        {{item.isEnrolled ? "Enrolled" : "Not Enrolled"}}
+                        {{ item.isEnrolled ? "Enrolled" : "Not Enrolled"}}
                     </button>
                 </td>
                 <td>
+                    <div *ngIf="item.hasCurrentLocation()">
+                        {{ item.currentLocation.latitude }},
+                        {{ item.currentLocation.longitude }}
+                        <br>
+                        <a target="_blank" href="{{ item.googleMapLink }}">View
+                            on
+                            Google Maps</a>
+                    </div>
+                </td>
+                <td>
                     <div
-                        (click)="deleteDeviceClicked(item)"
-                        class="btn btn-default"
+                            (click)="deleteDeviceClicked(item)"
+                            class="btn btn-default"
                     >
                         <span
-                            aria-hidden="true" class="glyphicon glyphicon-minus"
+                                aria-hidden="true"
+                                class="glyphicon glyphicon-minus"
                         ></span>
                     </div>
                 </td>

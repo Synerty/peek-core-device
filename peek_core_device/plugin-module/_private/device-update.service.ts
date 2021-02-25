@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core"
 import { TupleSelector, VortexStatusService } from "@synerty/vortexjs"
 import {
-    BalloonMsgService,
     BalloonMsgLevel,
+    BalloonMsgService,
     BalloonMsgType
 } from "@synerty/peek-plugin-base-js"
 

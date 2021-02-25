@@ -1,4 +1,4 @@
-import { Injectable, NgZone } from "@angular/core"
+import { Injectable } from "@angular/core"
 import {
     TupleActionPushNameService,
     TupleActionPushOfflineService,
@@ -83,7 +83,6 @@ export class DeviceTupleService {
         )
         
         this.hardwareInfo = new HardwareInfo(this.offlineStorage)
-        
     }
     
 }

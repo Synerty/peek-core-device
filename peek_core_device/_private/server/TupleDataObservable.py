@@ -1,7 +1,12 @@
+from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
+
 from peek_core_device._private.PluginNames import deviceFilt
 from peek_core_device._private.PluginNames import deviceObservableName
 from peek_core_device._private.server.tuple_providers.ClientSettingsTupleProvider import (
     ClientSettingsTupleProvider,
+)
+from peek_core_device._private.server.tuple_providers.DeviceGpsLocationTupleProvider import (
+    DeviceGpsLocationTupleProvider,
 )
 from peek_core_device._private.server.tuple_providers.DeviceInfoTupleProvider import (
     DeviceInfoTupleProvider,
@@ -9,10 +14,13 @@ from peek_core_device._private.server.tuple_providers.DeviceInfoTupleProvider im
 from peek_core_device._private.server.tuple_providers.DeviceUpdateTupleProvider import (
     DeviceUpdateTupleProvider,
 )
-from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
-from peek_core_device._private.storage.DeviceUpdateTuple import DeviceUpdateTuple
-from peek_core_device._private.tuples.ClientSettingsTuple import ClientSettingsTuple
-from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
+from peek_core_device._private.storage.DeviceUpdateTuple import \
+    DeviceUpdateTuple
+from peek_core_device._private.tuples.ClientSettingsTuple import \
+    ClientSettingsTuple
+from peek_core_device.tuples.DeviceGpsLocationTuple import \
+    DeviceGpsLocationTuple
+from peek_core_device.tuples.DeviceInfoTuple import DeviceInfoTuple
 
 
 def makeTupleDataObservableHandler(ormSessionCreator):
@@ -32,7 +40,8 @@ def makeTupleDataObservableHandler(ormSessionCreator):
 
     # Register TupleProviders here
     tupleObservable.addTupleProvider(
-        DeviceUpdateTuple.tupleName(), DeviceUpdateTupleProvider(ormSessionCreator)
+        DeviceUpdateTuple.tupleName(),
+        DeviceUpdateTupleProvider(ormSessionCreator)
     )
 
     tupleObservable.addTupleProvider(
@@ -40,7 +49,13 @@ def makeTupleDataObservableHandler(ormSessionCreator):
     )
 
     tupleObservable.addTupleProvider(
-        ClientSettingsTuple.tupleName(), ClientSettingsTupleProvider(ormSessionCreator)
+        ClientSettingsTuple.tupleName(),
+        ClientSettingsTupleProvider(ormSessionCreator)
+    )
+
+    tupleObservable.addTupleProvider(
+        DeviceGpsLocationTuple.tupleName(),
+        DeviceGpsLocationTupleProvider(ormSessionCreator),
     )
 
     return tupleObservable

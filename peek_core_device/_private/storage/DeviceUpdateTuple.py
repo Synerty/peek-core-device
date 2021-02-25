@@ -1,14 +1,16 @@
 import logging
 
-from sqlalchemy import Column, Boolean
-from sqlalchemy import Integer, String, DateTime
-from sqlalchemy.orm import relationship
-from sqlalchemy.sql.schema import ForeignKey, Index
-
-from .DeclarativeBase import DeclarativeBase
-from vortex.Tuple import Tuple, addTupleType
+from sqlalchemy import Boolean
+from sqlalchemy import Column
+from sqlalchemy import DateTime
+from sqlalchemy import Integer
+from sqlalchemy import String
+from sqlalchemy.sql.schema import Index
+from vortex.Tuple import Tuple
+from vortex.Tuple import addTupleType
 
 from peek_core_device._private.PluginNames import deviceTuplePrefix
+from .DeclarativeBase import DeclarativeBase
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +26,7 @@ class DeviceUpdateTuple(Tuple, DeclarativeBase):
     __tablename__ = "DeviceUpdate"
     __tupleType__ = deviceTuplePrefix + "DeviceUpdateTuple"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     deviceType = Column(String(20), nullable=False)
     description = Column(String, nullable=False)
     buildDate = Column(DateTime(True), nullable=False)

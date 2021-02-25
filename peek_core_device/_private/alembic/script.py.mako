@@ -16,7 +16,6 @@ depends_on = ${repr(depends_on)}
 
 from alembic import op
 import sqlalchemy as sa
-import geoalchemy2
 ${imports if imports else ""}
 
 def upgrade():

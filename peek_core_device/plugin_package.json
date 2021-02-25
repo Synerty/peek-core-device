@@ -83,12 +83,22 @@
             {
                 "file": "_private/device-tuple.service",
                 "class": "DeviceTupleService",
-                "persistent": false
+                "persistent": true
             },
             {
                 "file": "device-status.service",
                 "class": "DeviceStatusService",
                 "persistent": true
+            },
+            {
+                "file": "_private/gps/private-gps-location.service",
+                "class": "PrivateDeviceGpsLocationService",
+                "persistent": true
+            },
+            {
+                "file": "gps-location.service",
+                "class": "DeviceGpsLocationService",
+                "useExistingClass": "PrivateDeviceGpsLocationService"
             }
         ]
     },
@@ -133,12 +143,22 @@
             {
                 "file": "_private/device-tuple.service",
                 "class": "DeviceTupleService",
-                "persistent": false
+                "persistent": true
             },
             {
                 "file": "device-status.service",
                 "class": "DeviceStatusService",
                 "persistent": true
+            },
+            {
+                "file": "_private/gps/private-gps-location.service",
+                "class": "PrivateDeviceGpsLocationService",
+                "persistent": true
+            },
+            {
+                "file": "gps-location.service",
+                "class": "DeviceGpsLocationService",
+                "useExistingClass": "PrivateDeviceGpsLocationService"
             }
         ]
     }

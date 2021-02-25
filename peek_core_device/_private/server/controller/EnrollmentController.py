@@ -6,26 +6,27 @@ from uuid import uuid4
 import pytz
 from sqlalchemy.exc import IntegrityError
 from twisted.internet.defer import Deferred
+from vortex.DeferUtil import deferToThreadWrapWithLogger
+from vortex.Tuple import Tuple
+from vortex.TupleAction import TupleActionABC
 
 from peek_core_device._private.server.controller.NotifierController import (
     NotifierController,
 )
-from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
-from peek_core_device._private.storage.Setting import globalSetting, AUTO_ENROLLMENT
+from peek_core_device._private.storage.DeviceInfoTable import DeviceInfoTable
+from peek_core_device._private.storage.Setting import AUTO_ENROLLMENT
+from peek_core_device._private.storage.Setting import globalSetting
 from peek_core_device._private.tuples.EnrolDeviceAction import EnrolDeviceAction
 from peek_core_device._private.tuples.UpdateEnrollmentAction import (
     UpdateEnrollmentAction,
 )
-from vortex.DeferUtil import deferToThreadWrapWithLogger
-from vortex.Tuple import Tuple
-from vortex.TupleAction import TupleActionABC
-from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
 
 logger = logging.getLogger(__name__)
 
 
 class EnrollmentController:
-    def __init__(self, dbSessionCreator, notifierController: NotifierController):
+    def __init__(self, dbSessionCreator,
+                 notifierController: NotifierController):
         self._dbSessionCreator = dbSessionCreator
         self._notifierController = notifierController
 
@@ -50,15 +51,15 @@ class EnrollmentController:
         try:
             # There should only be one item that exists if it exists.
             existing = (
-                ormSession.query(DeviceInfoTuple)
-                .filter(DeviceInfoTuple.deviceId == action.deviceId)
-                .all()
+                ormSession.query(DeviceInfoTable)
+                    .filter(DeviceInfoTable.deviceId == action.deviceId)
+                    .all()
             )
 
             if existing:
                 return list(existing)
 
-            deviceInfo = DeviceInfoTuple()
+            deviceInfo = DeviceInfoTable()
             deviceInfo.description = action.description
             deviceInfo.deviceId = action.deviceId
             deviceInfo.deviceType = action.deviceType
@@ -74,7 +75,8 @@ class EnrollmentController:
             ormSession.add(deviceInfo)
             ormSession.commit()
 
-            self._notifierController.notifyDeviceInfo(deviceId=deviceInfo.deviceId)
+            self._notifierController.notifyDeviceInfo(
+                deviceId=deviceInfo.deviceId)
 
             ormSession.refresh(deviceInfo)
             ormSession.expunge_all()
@@ -104,9 +106,9 @@ class EnrollmentController:
         session = self._dbSessionCreator()
         try:
             deviceInfo = (
-                session.query(DeviceInfoTuple)
-                .filter(DeviceInfoTuple.id == action.deviceInfoId)
-                .one()
+                session.query(DeviceInfoTable)
+                    .filter(DeviceInfoTable.id == action.deviceInfoId)
+                    .one()
             )
 
             deviceId = deviceInfo.deviceId

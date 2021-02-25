@@ -1,9 +1,10 @@
 import logging
+from datetime import datetime
 
-from twisted.internet import reactor
-
-from peek_core_device._private.storage.DeviceInfoTuple import DeviceInfoTuple
-from peek_core_device._private.storage.DeviceUpdateTuple import DeviceUpdateTuple
+from peek_core_device._private.storage.DeviceUpdateTuple import \
+    DeviceUpdateTuple
+from peek_core_device.tuples.DeviceInfoTuple import DeviceInfoTuple
+from vortex.DeferUtil import callLaterWrap
 from vortex.TupleSelector import TupleSelector
 from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
 
@@ -25,8 +26,9 @@ class NotifierController:
         self._tupleObservable = None
         self._api = None
 
+    @callLaterWrap(seconds=0.0)
     def notifyDeviceInfo(self, deviceId: str):
-        reactor.callLater(0, self._notifyDeviceInfoObservable, deviceId)
+        self._notifyDeviceInfoObservable(deviceId)
 
     def _notifyDeviceInfoObservable(self, deviceId: str):
         """Notify the observer of the update
@@ -43,8 +45,9 @@ class NotifierController:
             TupleSelector(DeviceInfoTuple.tupleName(), dict())
         )
 
+    @callLaterWrap(seconds=0.0)
     def notifyDeviceUpdate(self, deviceType: str):
-        reactor.callLater(0, self._notifyDeviceUpdateObservable, deviceType)
+        self._notifyDeviceUpdateObservable(deviceType)
 
     def _notifyDeviceUpdateObservable(self, deviceType: str):
         """Notify the observer of the update
@@ -54,24 +57,53 @@ class NotifierController:
         """
 
         self._tupleObservable.notifyOfTupleUpdate(
-            TupleSelector(DeviceUpdateTuple.tupleName(), dict(deviceType=deviceType))
+            TupleSelector(DeviceUpdateTuple.tupleName(),
+                dict(deviceType=deviceType))
         )
 
         self._tupleObservable.notifyOfTupleUpdate(
             TupleSelector(DeviceUpdateTuple.tupleName(), dict())
         )
 
+    @callLaterWrap(seconds=0.0)
     def notifyDeviceOnline(self, deviceId: str, deviceToken: str, online: bool):
         """Notify Device Online
 
         Notify that the device has changed it's online status
 
         """
-        reactor.callLater(
-            0, self._notifyDeviceOnlineObservable, deviceId, deviceToken, online
-        )
+        self._notifyDeviceOnlineObservable(deviceId, deviceToken, online)
 
     def _notifyDeviceOnlineObservable(
         self, deviceId: str, deviceToken: str, online: bool
     ):
         self._api.notifyOfOnlineStatus(deviceId, deviceToken, online)
+
+    @callLaterWrap(seconds=0.0)
+    def notifyDeviceGpsLocation(
+        self,
+        deviceToken: str,
+        latitude: float,
+        longitude: float,
+        updatedDate: datetime,
+    ):
+        self._notifyDeviceGpsLocationObservable(
+            deviceToken,
+            latitude,
+            longitude,
+            updatedDate,
+        )
+
+    def _notifyDeviceGpsLocationObservable(
+        self,
+        deviceToken: str,
+        latitude: float,
+        longitude: float,
+        updatedDate: datetime,
+    ):
+        self._api.notifyCurrentGpsLocation(
+            deviceToken,
+            latitude,
+            longitude,
+            updatedDate,
+        )

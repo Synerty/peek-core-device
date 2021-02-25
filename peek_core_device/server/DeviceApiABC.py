@@ -1,6 +1,8 @@
-from typing import Optional, List
+from abc import ABCMeta
+from abc import abstractmethod
+from typing import List
+from typing import Optional
 
-from abc import ABCMeta, abstractmethod
 from rx import Observable
 from twisted.internet.defer import Deferred
 
@@ -53,4 +55,12 @@ class DeviceApiABC(metaclass=ABCMeta):
 
         :return: An observable that fires when devices go online or offline.
 
+        """
+
+    @abstractmethod
+    def deviceCurrentGpsLocation(self) -> Observable:
+        """Device Current GPS Location
+
+        Subscribe to device current GPS location
+        :return: An observable that fires when devices update GPS locations
         """

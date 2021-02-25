@@ -1,8 +1,10 @@
 from typing import Optional
 
-from peek_core_device._private.PluginNames import deviceTuplePrefix
-from vortex.Tuple import addTupleType, TupleField
+from vortex.Tuple import TupleField
+from vortex.Tuple import addTupleType
 from vortex.TupleAction import TupleActionABC
+
+from peek_core_device._private.PluginNames import deviceTuplePrefix
 
 
 # I'm using the word Alter here, because UpdateUpdate is confusing.

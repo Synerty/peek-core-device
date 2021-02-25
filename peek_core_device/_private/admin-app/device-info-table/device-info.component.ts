@@ -12,6 +12,7 @@ import {
 } from "@synerty/vortexjs"
 import { DeviceInfoTuple } from "@peek/peek_core_device"
 import { UpdateEnrollmentAction } from "@peek/peek_core_device/_private"
+import { takeUntil } from "rxjs/operators"
 
 @Component({
     selector: "core-device-device-info",
@@ -27,15 +28,14 @@ export class DeviceInfoComponent extends NgLifeCycleEvents {
     ) {
         super()
         
-        // Setup a subscription for the data
-        let sup = tupleDataObserver.subscribeToTupleSelector(
+        // Setup a subscription for the device info data
+        tupleDataObserver.subscribeToTupleSelector(
             new TupleSelector(DeviceInfoTuple.tupleName, {})
         )
+            .pipe(takeUntil(this.onDestroyEvent))
             .subscribe((tuples: DeviceInfoTuple[]) => {
                 this.items = tuples
             })
-        
-        this.onDestroyEvent.subscribe(() => sup.unsubscribe())
     }
     
     deleteDeviceClicked(item) {
