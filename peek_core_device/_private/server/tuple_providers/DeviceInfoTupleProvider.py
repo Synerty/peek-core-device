@@ -1,14 +1,13 @@
 import logging
 from typing import Union
 
+from peek_core_device._private.storage.DeviceInfoTable import DeviceInfoTable
+from peek_core_device._private.storage.GpsLocationTable import GpsLocationTable
 from twisted.internet.defer import Deferred
 from vortex.DeferUtil import deferToThreadWrapWithLogger
 from vortex.Payload import Payload
 from vortex.TupleSelector import TupleSelector
 from vortex.handler.TupleDataObservableHandler import TuplesProviderABC
-
-from peek_core_device._private.storage.DeviceInfoTable import DeviceInfoTable
-from peek_core_device._private.storage.GpsLocationTable import GpsLocationTable
 
 logger = logging.getLogger(__name__)
 
@@ -26,8 +25,9 @@ class DeviceInfoTupleProvider(TuplesProviderABC):
 
         ormSession = self._ormSessionCreator()
         try:
-            query = ormSession.query(DeviceInfoTable, GpsLocationTable).join(
-                DeviceInfoTable
+            query = ormSession.query(DeviceInfoTable,
+                GpsLocationTable).outerjoin(
+                GpsLocationTable
             )
 
             if deviceId is not None:
@@ -36,18 +36,7 @@ class DeviceInfoTupleProvider(TuplesProviderABC):
             tuples = []
             for deviceInfoTableRow, gpsLocationTableRow in query.all():
                 tuples.append(
-                    DeviceInfoTable.toTuple(
-                        deviceInfoTableRow.description,
-                        deviceInfoTableRow.deviceId,
-                        deviceInfoTableRow.deviceType,
-                        deviceInfoTableRow.deviceToken,
-                        deviceInfoTableRow.appVersion,
-                        deviceInfoTableRow.updateVersion,
-                        deviceInfoTableRow.lastOnline,
-                        deviceInfoTableRow.lastUpdateCheck,
-                        deviceInfoTableRow.createdDate,
-                        deviceInfoTableRow.isOnline,
-                        deviceInfoTableRow.isEnrolled,
+                    deviceInfoTableRow.toTuple(
                         currentLocationTuple=gpsLocationTableRow,
                     )
                 )
