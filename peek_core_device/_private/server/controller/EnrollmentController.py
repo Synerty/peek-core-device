@@ -4,12 +4,6 @@ from typing import List
 from uuid import uuid4
 
 import pytz
-from sqlalchemy.exc import IntegrityError
-from twisted.internet.defer import Deferred
-from vortex.DeferUtil import deferToThreadWrapWithLogger
-from vortex.Tuple import Tuple
-from vortex.TupleAction import TupleActionABC
-
 from peek_core_device._private.server.controller.NotifierController import (
     NotifierController,
 )
@@ -20,6 +14,11 @@ from peek_core_device._private.tuples.EnrolDeviceAction import EnrolDeviceAction
 from peek_core_device._private.tuples.UpdateEnrollmentAction import (
     UpdateEnrollmentAction,
 )
+from sqlalchemy.exc import IntegrityError
+from twisted.internet.defer import Deferred
+from vortex.DeferUtil import deferToThreadWrapWithLogger
+from vortex.Tuple import Tuple
+from vortex.TupleAction import TupleActionABC
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +56,7 @@ class EnrollmentController:
             )
 
             if existing:
-                return list(existing)
+                return [e.toTuple() for e in existing]
 
             deviceInfo = DeviceInfoTable()
             deviceInfo.description = action.description
@@ -80,7 +79,7 @@ class EnrollmentController:
 
             ormSession.refresh(deviceInfo)
             ormSession.expunge_all()
-            return [deviceInfo]
+            return [deviceInfo.toTuple()]
 
         except IntegrityError as e:
             if "DeviceInfo_deviceId_key" in str(e):

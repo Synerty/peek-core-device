@@ -1,6 +1,6 @@
 import logging
-from datetime import datetime
 
+from peek_core_device.tuples.DeviceInfoTuple import DeviceInfoTuple
 from sqlalchemy import Column
 from sqlalchemy.sql.sqltypes import Boolean
 from sqlalchemy.sql.sqltypes import DateTime
@@ -9,7 +9,6 @@ from sqlalchemy.sql.sqltypes import String
 
 from .DeclarativeBase import DeclarativeBase
 from ...tuples.DeviceGpsLocationTuple import DeviceGpsLocationTuple
-from ...tuples.DeviceInfoTuple import DeviceInfoTuple
 
 logger = logging.getLogger(__name__)
 
@@ -43,32 +42,28 @@ class DeviceInfoTable(DeclarativeBase):
     isOnline = Column(Boolean, nullable=False, server_default="0")
     isEnrolled = Column(Boolean, nullable=False, server_default="0")
 
-    @staticmethod
     def toTuple(
-        description: str,
-        deviceId: str,
-        deviceType: str,
-        deviceToken: str,
-        appVersion: str,
-        updateVersion: str,
-        lastOnline: datetime,
-        lastUpdateCheck: datetime,
-        createdDate: datetime,
-        isOnline: bool,
-        isEnrolled: bool,
+        self,
         currentLocationTuple: DeviceGpsLocationTuple = None,
     ):
+        return self.toTupleStatic(self, currentLocationTuple)
+
+    @staticmethod
+    def toTupleStatic(
+        table: "DeviceInfoTable",
+        currentLocationTuple: DeviceGpsLocationTuple = None
+    ):
         return DeviceInfoTuple(
-            description=description,
-            deviceId=deviceId,
-            deviceType=deviceType,
-            deviceToken=deviceToken,
-            appVersion=appVersion,
-            updateVersion=updateVersion,
-            lastOnline=lastOnline,
-            lastUpdateCheck=lastUpdateCheck,
-            createdDate=createdDate,
-            isOnline=isOnline,
-            isEnrolled=isEnrolled,
+            description=table.description,
+            deviceId=table.deviceId,
+            deviceType=table.deviceType,
+            deviceToken=table.deviceToken,
+            appVersion=table.appVersion,
+            updateVersion=table.updateVersion,
+            lastOnline=table.lastOnline,
+            lastUpdateCheck=table.lastUpdateCheck,
+            createdDate=table.createdDate,
+            isOnline=table.isOnline,
+            isEnrolled=table.isEnrolled,
             currentLocation=currentLocationTuple,
         )
