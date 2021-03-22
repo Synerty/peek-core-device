@@ -5,6 +5,7 @@ from typing import Optional
 
 from rx import Observable
 from rx.subjects import Subject
+from sqlalchemy.orm.exc import NoResultFound
 from twisted.internet.defer import Deferred
 from vortex.DeferUtil import deferToThreadWrapWithLogger
 from vortex.DeferUtil import noMainThread
@@ -12,6 +13,7 @@ from vortex.DeferUtil import noMainThread
 from peek_core_device._private.server.controller.MainController import \
     MainController
 from peek_core_device._private.storage.DeviceInfoTable import DeviceInfoTable
+from peek_core_device._private.storage.GpsLocationTable import GpsLocationTable
 from peek_core_device.server.DeviceApiABC import DeviceApiABC
 from peek_core_device.tuples.DeviceDetailTuple import DeviceDetailTuple
 from peek_core_device.tuples.DeviceGpsLocationTuple import \
@@ -111,3 +113,18 @@ class DeviceApi(DeviceApiABC):
                 datetime=datetime,
             )
         )
+
+    @deferToThreadWrapWithLogger(logger)
+    def deviceCurrentGpsLocations(
+        self, deviceTokens: List[str]
+    ) -> List[DeviceGpsLocationTuple]:
+        session = self._ormSessionCreator()
+        try:
+            query = session.query(GpsLocationTable).filter(
+                GpsLocationTable.deviceToken.in_(deviceTokens)
+            )
+            return [d.toTuple() for d in query.all()]
+        except NoResultFound:
+            return []
+        finally:
+            session.close()
