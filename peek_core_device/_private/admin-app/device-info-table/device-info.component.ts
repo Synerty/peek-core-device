@@ -13,6 +13,7 @@ import {
 import { DeviceInfoTuple } from "@peek/peek_core_device"
 import { UpdateEnrollmentAction } from "@peek/peek_core_device/_private"
 import { takeUntil } from "rxjs/operators"
+import { DatePipe } from "@angular/common"
 
 @Component({
     selector: "core-device-device-info",
@@ -24,7 +25,8 @@ export class DeviceInfoComponent extends NgLifeCycleEvents {
     constructor(
         private balloonMsg: BalloonMsgService,
         private actionService: TupleActionPushService,
-        private tupleDataObserver: TupleDataObserverService
+        private tupleDataObserver: TupleDataObserverService,
+        private datePipe: DatePipe,
     ) {
         super()
         
@@ -36,6 +38,16 @@ export class DeviceInfoComponent extends NgLifeCycleEvents {
             .subscribe((tuples: DeviceInfoTuple[]) => {
                 this.items = tuples
             })
+    }
+    
+    deviceStatus(device: DeviceInfoTuple): string {
+        if (device.deviceStatus === 1) {
+            return "Online now"
+        }
+        if (device.lastOnline) {
+            return this.datePipe.transform(device.lastOnline)
+        }
+        return "Never connected"
     }
     
     deleteDeviceClicked(item) {
