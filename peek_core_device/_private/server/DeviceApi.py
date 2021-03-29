@@ -49,7 +49,7 @@ class DeviceApi(DeviceApiABC):
                     deviceType=d.deviceType,
                     description=d.description,
                     lastOnline=d.lastOnline,
-                    isOnline=d.isOnline,
+                    deviceStatus=d.deviceStatus,
                 )
                 for d in all
             ]

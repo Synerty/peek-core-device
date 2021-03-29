@@ -14,6 +14,7 @@ from peek_core_device._private.storage.DeviceInfoTable import DeviceInfoTable
 from peek_core_device._private.tuples.UpdateDeviceOnlineAction import (
     UpdateDeviceOnlineAction,
 )
+from peek_core_device.tuples import DeviceInfoTuple
 
 logger = logging.getLogger(__name__)
 
@@ -52,13 +53,14 @@ class OnlineController:
             deviceId = deviceInfo.deviceId
 
             deviceInfo.lastOnline = action.dateTime
-            deviceInfo.isOnline = action.isOnline
+            deviceInfo.deviceStatus = action.deviceStatus
 
             session.commit()
 
             self._notifierController.notifyDeviceInfo(deviceId=deviceId)
             self._notifierController.notifyDeviceOnline(
-                deviceInfo.deviceId, deviceInfo.deviceToken, deviceInfo.isOnline
+                deviceInfo.deviceId, deviceInfo.deviceToken,
+                deviceInfo.deviceStatus
             )
 
             return []
@@ -74,7 +76,10 @@ class OnlineController:
         session = self._dbSessionCreator()
         try:
             session.execute(
-                DeviceInfoTable.__table__.update().values(isOnline=False))
+                DeviceInfoTable.__table__.update().values(
+                    deviceStatus=DeviceInfoTuple.DEVICE_OFFLINE
+                )
+            )
             session.commit()
 
         finally:

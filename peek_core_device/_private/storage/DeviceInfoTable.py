@@ -39,7 +39,7 @@ class DeviceInfoTable(DeclarativeBase):
     lastOnline = Column(DateTime(True))
     lastUpdateCheck = Column(DateTime(True))
     createdDate = Column(DateTime(True), nullable=False)
-    isOnline = Column(Boolean, nullable=False, server_default="0")
+    deviceStatus = Column(Integer, nullable=False, server_default="0")
     isEnrolled = Column(Boolean, nullable=False, server_default="0")
 
     def toTuple(
@@ -63,7 +63,7 @@ class DeviceInfoTable(DeclarativeBase):
             lastOnline=table.lastOnline,
             lastUpdateCheck=table.lastUpdateCheck,
             createdDate=table.createdDate,
-            isOnline=table.isOnline,
+            deviceStatus=table.deviceStatus,
             isEnrolled=table.isEnrolled,
             currentLocation=currentLocationTuple,
         )
