@@ -6,6 +6,9 @@ from typing import Optional
 from rx import Observable
 from twisted.internet.defer import Deferred
 
+from peek_core_device.tuples.DeviceGpsLocationTuple import \
+    DeviceGpsLocationTuple
+
 
 class DeviceApiABC(metaclass=ABCMeta):
     """Device API
@@ -63,4 +66,14 @@ class DeviceApiABC(metaclass=ABCMeta):
 
         Subscribe to device current GPS location
         :return: An observable that fires when devices update GPS locations
+        """
+
+    @abstractmethod
+    def deviceCurrentGpsLocations(
+        self, deviceTokens: List[str]
+    ) -> List[DeviceGpsLocationTuple]:
+        """Device Current GPS Locations from a list device tokens
+
+        :param deviceTokens:  A list of string
+        :return: A list of DeviceGpsLocationTuple
         """
