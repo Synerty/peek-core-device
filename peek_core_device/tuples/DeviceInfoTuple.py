@@ -28,6 +28,10 @@ class DeviceInfoTuple(Tuple):
     TYPE_DESKTOP_WINDOWS = "desktop-windows"
     TYPE_DESKTOP_MACOS = "desktop-macos"
 
+    DEVICE_OFFLINE = 0
+    DEVICE_ONLINE = 1
+    DEVICE_BACKGROUND = 2
+
     description = TupleField()
     deviceId = TupleField()
     deviceType = TupleField()
@@ -37,6 +41,6 @@ class DeviceInfoTuple(Tuple):
     lastOnline = TupleField()
     lastUpdateCheck = TupleField()
     createdDate = TupleField()
-    isOnline = TupleField()
+    deviceStatus = TupleField()
     isEnrolled = TupleField()
     currentLocation: DeviceGpsLocationTuple = TupleField()

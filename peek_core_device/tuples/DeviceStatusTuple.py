@@ -7,15 +7,20 @@ from peek_core_device.tuples.DeviceInfoTuple import DeviceInfoTuple
 
 
 @addTupleType
-class DeviceDetailTuple(Tuple):
-    __tupleType__ = deviceTuplePrefix + "DeviceDetailTuple"
+class DeviceStatusTuple(Tuple):
+    __tupleType__ = deviceTuplePrefix + "DeviceStatusTuple"
 
     DEVICE_OFFLINE = DeviceInfoTuple.DEVICE_OFFLINE
     DEVICE_ONLINE = DeviceInfoTuple.DEVICE_ONLINE
     DEVICE_BACKGROUND = DeviceInfoTuple.DEVICE_BACKGROUND
 
+    deviceId: str = TupleField()
     deviceToken: str = TupleField()
-    deviceType: str = TupleField()
-    description: str = TupleField()
-    lastOnline: str = TupleField()
     deviceStatus: int = TupleField()
+
+    @property
+    def deviceOnline(self) -> bool:
+        return bool(
+            self.deviceStatus & self.DEVICE_ONLINE and not
+            self.deviceStatus & self.DEVICE_BACKGROUND
+        )

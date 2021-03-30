@@ -19,6 +19,8 @@ from peek_core_device._private.tuples.UpdateDeviceOnlineAction import (
 )
 from peek_plugin_base.PeekVortexUtil import peekServerName
 
+from peek_core_device.tuples.DeviceInfoTuple import DeviceInfoTuple
+
 logger = logging.getLogger(__name__)
 
 
@@ -95,17 +97,16 @@ class DeviceOnlineHandler:
 
         action = UpdateDeviceOnlineAction()
         action.deviceId = deviceId
-        action.isOnline = True
+        action.deviceStatus = DeviceInfoTuple.DEVICE_ONLINE
 
         d = self._actionClient.pushAction(action)
         d.addErrback(vortexLogFailure, logger, consumeError=True)
 
     def _sendOfflineForDeviceIds(self, deviceIds: List[str]):
-
         for deviceId in deviceIds:
             action = UpdateDeviceOnlineAction()
             action.deviceId = deviceId
-            action.isOnline = False
+            action.deviceStatus = DeviceInfoTuple.DEVICE_OFFLINE
 
             d = self._actionClient.pushAction(action)
             d.addErrback(vortexLogFailure, logger, consumeError=True)

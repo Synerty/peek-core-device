@@ -18,8 +18,8 @@ from peek_core_device.server.DeviceApiABC import DeviceApiABC
 from peek_core_device.tuples.DeviceDetailTuple import DeviceDetailTuple
 from peek_core_device.tuples.DeviceGpsLocationTuple import \
     DeviceGpsLocationTuple
-from peek_core_device.tuples.DeviceOnlineDetailTuple import \
-    DeviceOnlineDetailTuple
+from peek_core_device.tuples.DeviceStatusTuple import \
+    DeviceStatusTuple
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +51,7 @@ class DeviceApi(DeviceApiABC):
                     deviceType=d.deviceType,
                     description=d.description,
                     lastOnline=d.lastOnline,
-                    isOnline=d.isOnline,
+                    deviceStatus=d.deviceStatus,
                 )
                 for d in all
             ]
@@ -90,7 +90,7 @@ class DeviceApi(DeviceApiABC):
     def notifyOfOnlineStatus(self, deviceId: str, deviceToken: str,
                              status: bool):
         self._deviceOnlineSubject.on_next(
-            DeviceOnlineDetailTuple(
+            DeviceStatusTuple(
                 deviceToken=deviceToken, deviceId=deviceId, onlineStatus=status
             )
         )

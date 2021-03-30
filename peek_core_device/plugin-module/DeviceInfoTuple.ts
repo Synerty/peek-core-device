@@ -14,6 +14,10 @@ export class DeviceInfoTuple extends Tuple {
     readonly TYPE_DESKTOP_WINDOWS = "desktop-windows"
     readonly TYPE_DESKTOP_MACOS = "desktop-macos"
     
+    readonly DEVICE_OFFLINE = 0
+    readonly DEVICE_ONLINE = 1
+    readonly DEVICE_BACKGROUND = 2
+    
     id: number
     description: string
     deviceId: string
@@ -24,7 +28,7 @@ export class DeviceInfoTuple extends Tuple {
     lastOnline: Date
     lastUpdateCheck: Date
     createdDate: Date
-    isOnline: boolean
+    deviceStatus: number
     isEnrolled: boolean
     currentLocation: DeviceGpsLocationTuple
     

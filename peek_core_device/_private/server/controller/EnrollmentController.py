@@ -20,6 +20,8 @@ from vortex.DeferUtil import deferToThreadWrapWithLogger
 from vortex.Tuple import Tuple
 from vortex.TupleAction import TupleActionABC
 
+from peek_core_device.tuples.DeviceInfoTuple import DeviceInfoTuple
+
 logger = logging.getLogger(__name__)
 
 
@@ -69,7 +71,7 @@ class EnrollmentController:
 
             # TODO, Move these to their own tuple
             deviceInfo.lastOnline = datetime.now(pytz.utc)
-            deviceInfo.isOnline = True
+            deviceInfo.deviceStatus = DeviceInfoTuple.DEVICE_ONLINE
 
             ormSession.add(deviceInfo)
             ormSession.commit()

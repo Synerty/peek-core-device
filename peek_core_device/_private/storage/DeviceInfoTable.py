@@ -29,6 +29,10 @@ class DeviceInfoTable(DeclarativeBase):
     TYPE_DESKTOP_WINDOWS = "desktop-windows"
     TYPE_DESKTOP_MACOS = "desktop-macos"
 
+    DEVICE_OFFLINE = DeviceInfoTuple.DEVICE_OFFLINE
+    DEVICE_ONLINE = DeviceInfoTuple.DEVICE_ONLINE
+    DEVICE_BACKGROUND = DeviceInfoTuple.DEVICE_BACKGROUND
+
     id = Column(Integer, primary_key=True)
     description = Column(String(100), nullable=False, unique=True)
     deviceId = Column(String(50), nullable=False, unique=True)
@@ -39,7 +43,7 @@ class DeviceInfoTable(DeclarativeBase):
     lastOnline = Column(DateTime(True))
     lastUpdateCheck = Column(DateTime(True))
     createdDate = Column(DateTime(True), nullable=False)
-    isOnline = Column(Boolean, nullable=False, server_default="0")
+    deviceStatus = Column(Integer, nullable=False, server_default="0")
     isEnrolled = Column(Boolean, nullable=False, server_default="0")
 
     def toTuple(
@@ -63,7 +67,7 @@ class DeviceInfoTable(DeclarativeBase):
             lastOnline=table.lastOnline,
             lastUpdateCheck=table.lastUpdateCheck,
             createdDate=table.createdDate,
-            isOnline=table.isOnline,
+            deviceStatus=table.deviceStatus,
             isEnrolled=table.isEnrolled,
             currentLocation=currentLocationTuple,
         )

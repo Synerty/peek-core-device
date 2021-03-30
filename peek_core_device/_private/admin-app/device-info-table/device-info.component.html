@@ -17,21 +17,17 @@
                     {{ item.description }}
                 </td>
                 <td>
-                    <p *ngIf="item.isOnline">Online Now</p>
-                    <p *ngIf="!item.isOnline && item.lastOnline">
-                        {{ item.lastOnline | date:'HH:mm dd-MMM-yyyy'}}</p>
-                    <p *ngIf="!item.isOnline && !item.lastOnline">Never
-                        Connected</p>
+                    <p>{{deviceStatus(item)}}</p>
 
                 </td>
                 <td>
                     <button
-                            (click)="toggleEnrollClicked(item)"
-                            [class.btn-success]="item.isEnrolled"
-                            [class.btn-warning]="!item.isEnrolled"
-                            class="btn"
+                        (click)="toggleEnrollClicked(item)"
+                        [class.btn-success]="item.isEnrolled"
+                        [class.btn-warning]="!item.isEnrolled"
+                        class="btn"
                     >
-                        {{ item.isEnrolled ? "Enrolled" : "Not Enrolled"}}
+                        {{item.isEnrolled ? "Enrolled" : "Not Enrolled"}}
                     </button>
                 </td>
                 <td>
