@@ -14,7 +14,7 @@ from peek_core_device._private.storage.DeviceInfoTable import DeviceInfoTable
 from peek_core_device._private.tuples.UpdateDeviceOnlineAction import (
     UpdateDeviceOnlineAction,
 )
-from peek_core_device.tuples import DeviceInfoTuple
+from peek_core_device.tuples.DeviceInfoTuple import DeviceInfoTuple
 
 logger = logging.getLogger(__name__)
 

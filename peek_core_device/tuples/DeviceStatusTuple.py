@@ -3,7 +3,7 @@ from vortex.Tuple import TupleField
 from vortex.Tuple import addTupleType
 
 from peek_core_device._private.PluginNames import deviceTuplePrefix
-from peek_core_device.tuples import DeviceInfoTuple
+from peek_core_device.tuples.DeviceInfoTuple import DeviceInfoTuple
 
 
 @addTupleType
@@ -18,5 +18,9 @@ class DeviceStatusTuple(Tuple):
     deviceToken: str = TupleField()
     deviceStatus: int = TupleField()
 
-    def deviceOnline(self):
-        return self.deviceStatus == self.DEVICE_ONLINE
+    @property
+    def deviceOnline(self) -> bool:
+        return bool(
+            self.deviceStatus & self.DEVICE_ONLINE and not
+            self.deviceStatus & self.DEVICE_BACKGROUND
+        )

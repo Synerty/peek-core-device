@@ -19,7 +19,7 @@ from peek_core_device._private.tuples.UpdateDeviceOnlineAction import (
 )
 from peek_plugin_base.PeekVortexUtil import peekServerName
 
-from peek_core_device.tuples import DeviceInfoTuple
+from peek_core_device.tuples.DeviceInfoTuple import DeviceInfoTuple
 
 logger = logging.getLogger(__name__)
 

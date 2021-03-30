@@ -32,7 +32,7 @@ def upgrade():
         sa.Column("lastOnline", sa.DateTime(), nullable=True),
         sa.Column("lastUpdateCheck", sa.DateTime(), nullable=True),
         sa.Column("createdDate", sa.DateTime(), nullable=False),
-        sa.Column("deviceStatus", sa.Integer(), server_default="0", nullable=False),
+        sa.Column("isOnline", sa.Boolean(), server_default="0", nullable=False),
         sa.Column("isEnrolled", sa.Boolean(), server_default="0",
             nullable=False),
         sa.PrimaryKeyConstraint("id"),

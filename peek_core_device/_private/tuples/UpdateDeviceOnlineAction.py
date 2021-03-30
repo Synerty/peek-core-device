@@ -3,7 +3,7 @@ from vortex.Tuple import addTupleType
 from vortex.TupleAction import TupleActionABC
 
 from peek_core_device._private.PluginNames import deviceTuplePrefix
-from peek_core_device.tuples import DeviceInfoTuple
+from peek_core_device.tuples.DeviceInfoTuple import DeviceInfoTuple
 
 
 @addTupleType

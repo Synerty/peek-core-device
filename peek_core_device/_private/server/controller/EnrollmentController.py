@@ -20,7 +20,7 @@ from vortex.DeferUtil import deferToThreadWrapWithLogger
 from vortex.Tuple import Tuple
 from vortex.TupleAction import TupleActionABC
 
-from peek_core_device.tuples import DeviceInfoTuple
+from peek_core_device.tuples.DeviceInfoTuple import DeviceInfoTuple
 
 logger = logging.getLogger(__name__)
 

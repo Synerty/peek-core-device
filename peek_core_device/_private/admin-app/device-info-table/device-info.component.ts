@@ -41,13 +41,19 @@ export class DeviceInfoComponent extends NgLifeCycleEvents {
     }
     
     deviceStatus(device: DeviceInfoTuple): string {
-        if (device.deviceStatus === 1) {
-            return "Online now"
+        if (
+            device.deviceStatus === device.DEVICE_ONLINE
+            && device.deviceStatus !== device.DEVICE_BACKGROUNDED
+        ) {
+            return "Online, App Visible"
+        }
+        if (device.deviceStatus === device.DEVICE_BACKGROUNDED) {
+            return "Online, App Backgrounded"
         }
         if (device.lastOnline) {
             return this.datePipe.transform(device.lastOnline)
         }
-        return "Never connected"
+        return "Never Connected"
     }
     
     deleteDeviceClicked(item) {

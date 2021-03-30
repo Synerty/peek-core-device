@@ -29,6 +29,10 @@ class DeviceInfoTable(DeclarativeBase):
     TYPE_DESKTOP_WINDOWS = "desktop-windows"
     TYPE_DESKTOP_MACOS = "desktop-macos"
 
+    DEVICE_OFFLINE = DeviceInfoTuple.DEVICE_OFFLINE
+    DEVICE_ONLINE = DeviceInfoTuple.DEVICE_ONLINE
+    DEVICE_BACKGROUND = DeviceInfoTuple.DEVICE_BACKGROUND
+
     id = Column(Integer, primary_key=True)
     description = Column(String(100), nullable=False, unique=True)
     deviceId = Column(String(50), nullable=False, unique=True)
