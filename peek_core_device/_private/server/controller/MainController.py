@@ -10,13 +10,12 @@ from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
 from peek_core_device._private.server.controller.EnrollmentController import (
     EnrollmentController,
 )
-from peek_core_device._private.server.controller.GpsController import \
-    GpsController
+from peek_core_device._private.server.controller.GpsController import GpsController
 from peek_core_device._private.server.controller.NotifierController import (
     NotifierController,
 )
-from peek_core_device._private.server.controller.OnlineController import (
-    OnlineController,
+from peek_core_device._private.server.controller.DeviceStatusController import (
+    DeviceStatusController,
 )
 from peek_core_device._private.server.controller.UpdateController import (
     UpdateController,
@@ -40,8 +39,9 @@ class MainController(TupleActionProcessorDelegateABC):
             dbSessionCreator, notifierController
         )
 
-        self._onlineController = OnlineController(dbSessionCreator,
-            notifierController)
+        self._onlineController = DeviceStatusController(
+            dbSessionCreator, notifierController
+        )
 
         self._updateController = UpdateController(
             dbSessionCreator, notifierController, deviceUpdateFilePath
@@ -65,8 +65,7 @@ class MainController(TupleActionProcessorDelegateABC):
 
     @inlineCallbacks
     def processTupleAction(self, tupleAction: TupleActionABC) -> Deferred:
-        result = yield self._enrollmentController.processTupleAction(
-            tupleAction)
+        result = yield self._enrollmentController.processTupleAction(tupleAction)
         if result is not None:
             return result
 
