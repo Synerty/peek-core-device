@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core"
-import { BehaviorSubject, combineLatest, Observable } from "rxjs"
+import { BehaviorSubject, combineLatest } from "rxjs"
 
 import {
     DeviceGpsLocationService,
@@ -16,7 +16,8 @@ const {Geolocation} = Plugins
 
 @Injectable()
 export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
-    private location$ = new BehaviorSubject<DeviceGpsLocationTuple | null>(null)
+    location$ = new BehaviorSubject<DeviceGpsLocationTuple | null>(null)
+    
     private gpsWatchId: string
     private lastSeenPositionTupleAction: GpsLocationUpdateTupleAction
     private deviceId: string
@@ -28,45 +29,46 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
     ) {
         super()
         
-        combineLatest(this.userService.loggedInStatus,
-            this.deviceService.deviceInfoObservable())
+        combineLatest(
+            this.userService.loggedInStatus,
+            this.deviceService.deviceInfoObservable()
+        )
             .subscribe(
-                ([isLoggedIn, deviceInfo]) => {
+                async ([isLoggedIn, deviceInfo]) => {
                     if (isLoggedIn && deviceInfo.isEnrolled) {
                         this.deviceId = deviceInfo.deviceId
-                        this.setupGeoLocationWatcher()
+                        
+                        const position = await Geolocation.getCurrentPosition()
+                            .catch(err => {})
+                        
+                        this.updateLocation(position)
+                        
+                        this.gpsWatchId = Geolocation.watchPosition(
+                            {"enableHighAccuracy": true},
+                            (position, err) => {
+                                if (position != null) {
+                                    this.updateLocation(position)
+                                }
+                            })
                     }
                 }
             )
     }
     
-    get location(): Observable<DeviceGpsLocationTuple | null> {
-        return this.location$
+    get location() {
+        return this.location$.getValue()
     }
     
-    private async getInitialGeoLocation() {
-        const position = await Geolocation.getCurrentPosition()
-        this.updateLocation(position)
+    set location(value) {
+        this.location$.next(value)
     }
     
-    private async setupGeoLocationWatcher() {
-        await this.getInitialGeoLocation()
-        this.gpsWatchId = Geolocation.watchPosition({"enableHighAccuracy": true},
-            (
-                position,
-                err
-            ) => {
-                if (position != null) {
-                    this.updateLocation(position)
-                }
-            })
-    }
-    
-    private updateLocation(position) {
+    private updateLocation(position): void {
         if (!position?.coords) {
             return
         }
         const now = new Date() // in datetime with timezone
+        
         // send to Peek Logic
         const action = new GpsLocationUpdateTupleAction()
         action.latitude = position.coords.latitude
@@ -75,7 +77,7 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
         action.datetime = now
         action.deviceToken = this.deviceService.enrolmentToken()
         this.lastSeenPositionTupleAction = action
-        this.sendPositionTupleAction(action)
+        this.tupleService.tupleOfflineAction.pushAction(action)
         
         // update location observable
         const location = new DeviceGpsLocationTuple()
@@ -83,10 +85,6 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
         location.longitude = position.coords.longitude
         location.datetime = now
         location.deviceToken = this.deviceService.enrolmentToken()
-        this.location$.next(location)
-    }
-    
-    private sendPositionTupleAction(action: GpsLocationUpdateTupleAction) {
-        this.tupleService.tupleOfflineAction.pushAction(action)
+        this.location = location
     }
 }

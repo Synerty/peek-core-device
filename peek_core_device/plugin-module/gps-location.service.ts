@@ -1,6 +1,7 @@
 import { DeviceGpsLocationTuple } from "./DeviceGpsLocationTuple"
-import { Observable } from "rxjs"
+import { BehaviorSubject } from "rxjs"
 
 export abstract class DeviceGpsLocationService {
-    abstract get location(): Observable<DeviceGpsLocationTuple | null>
+    abstract location$: BehaviorSubject<DeviceGpsLocationTuple | null>
+    abstract location: DeviceGpsLocationTuple | null
 }
