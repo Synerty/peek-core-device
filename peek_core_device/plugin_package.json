@@ -96,6 +96,11 @@
                 "persistent": true
             },
             {
+                "file": "_private/device-background.service",
+                "class": "DeviceBackgroundService",
+                "persistent": true
+            },
+            {
                 "file": "gps-location.service",
                 "class": "DeviceGpsLocationService",
                 "useExistingClass": "PrivateDeviceGpsLocationService"

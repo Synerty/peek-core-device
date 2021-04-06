@@ -2,11 +2,10 @@ export * from "./PluginNames"
 
 export { DeviceUpdateTuple } from "./tuples/DeviceUpdateTuple"
 export { SettingPropertyTuple } from "./tuples/admin/SettingPropertyTuple"
-
 export { EnrolDeviceAction } from "./tuples/EnrolDeviceAction"
 export { UpdateAppliedAction } from "./tuples/UpdateAppliedAction"
 export { ClientSettingsTuple } from "./tuples/ClientSettingsTuple"
-
+export { DeviceBackgroundStateTupleAction } from "./tuples/DeviceBackgroundStateTupleAction"
 export { UpdateEnrollmentAction } from "./tuples/admin/UpdateEnrollmentAction"
 
 export {
