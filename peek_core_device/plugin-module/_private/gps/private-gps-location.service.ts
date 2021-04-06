@@ -16,8 +16,7 @@ const {Geolocation} = Plugins
 
 @Injectable()
 export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
-    location$ = new BehaviorSubject<DeviceGpsLocationTuple | null>(null)
-    
+    private _location$ = new BehaviorSubject<DeviceGpsLocationTuple | null>(null)
     private gpsWatchId: string
     private lastSeenPositionTupleAction: GpsLocationUpdateTupleAction
     private deviceId: string
@@ -39,13 +38,18 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
                         this.deviceId = deviceInfo.deviceId
                         
                         const position = await Geolocation.getCurrentPosition()
-                            .catch(err => {})
+                            .catch(err => {
+                                console.log("Cannot get current GPS position.")
+                            })
                         
                         this.updateLocation(position)
                         
                         this.gpsWatchId = Geolocation.watchPosition(
                             {"enableHighAccuracy": true},
-                            (position, err) => {
+                            (
+                                position,
+                                err
+                            ) => {
                                 if (position != null) {
                                     this.updateLocation(position)
                                 }
@@ -56,13 +60,21 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
     }
     
     get location() {
-        return this.location$.getValue()
+        return this._location$.getValue()
     }
     
-    set location(value) {
-        this.location$.next(value)
+    get location$() {
+        return this._location$.asObservable()
     }
     
+    private get _location() {
+        return this.location
+    }
+    
+    private set _location(value) {
+        this._location$.next(value)
+    }
+
     private updateLocation(position): void {
         if (!position?.coords) {
             return
@@ -85,6 +97,6 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
         location.longitude = position.coords.longitude
         location.datetime = now
         location.deviceToken = this.deviceService.enrolmentToken()
-        this.location = location
+        this._location = location
     }
 }
