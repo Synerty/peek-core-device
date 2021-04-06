@@ -1,29 +1,31 @@
 import { Injectable } from "@angular/core"
 import { BehaviorSubject, combineLatest, Observable } from "rxjs"
-
 import {
     DeviceGpsLocationService,
     DeviceGpsLocationTuple
 } from "@peek/peek_core_device"
 import { UserService } from "@peek/peek_core_user"
-
 import { Plugins } from "@capacitor/core"
 import { DeviceTupleService } from "../device-tuple.service"
 import { GpsLocationUpdateTupleAction } from "./GpsLocationUpdateTupleAction"
 import { DeviceEnrolmentService } from "../../device-enrolment.service"
+import { DeviceBackgroundService } from "../device-background.service"
+import { BackgroundGeolocationPlugin } from "@capacitor-community/background-geolocation"
 
-const {Geolocation} = Plugins
+const BackgroundGeolocation = Plugins.BackgroundGeolocation as BackgroundGeolocationPlugin
+
+const {Geolocation, Modals} = Plugins
 
 @Injectable()
 export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
     private _location$ = new BehaviorSubject<DeviceGpsLocationTuple | null>(null)
     private gpsWatchId: string | null
     private lastSeenPositionTupleAction: GpsLocationUpdateTupleAction
-    private deviceId: string
-
+    
     constructor(
         private tupleService: DeviceTupleService,
         private deviceService: DeviceEnrolmentService,
+        private deviceBackgroundService: DeviceBackgroundService,
         private userService: UserService,
     ) {
         super()
@@ -34,40 +36,13 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
         )
             .subscribe(async ([isLoggedIn, deviceInfo]) => {
                 if (isLoggedIn && deviceInfo.isEnrolled) {
-                    this.deviceId = deviceInfo.deviceId
-                    
-                    // Try to update current position
-                    const position = await Geolocation.getCurrentPosition()
-                        .catch(err => {
-                            console.log("Cannot get current GPS position.")
-                        })
-                    
-                    if (position?.coords) {
-                        this.updateLocation(position)
+                    if (!this.gpsWatchId) {
+                        this.startLocationListener()
                     }
-                    
-                    // Don't setup listener if already listening
-                    if (this.gpsWatchId) {
-                        return
-                    }
-                    
-                    // Setup listener for location changes
-                    this.gpsWatchId = Geolocation.watchPosition(
-                        {"enableHighAccuracy": true},
-                        (
-                            position,
-                            err
-                        ) => {
-                            if (position?.coords) {
-                                this.updateLocation(position)
-                            }
-                        })
                 }
                 else {
-                    // Clear listener if not logged in or enrolled
                     if (this.gpsWatchId) {
-                        Geolocation.clearWatch({id: this.gpsWatchId})
-                        this.gpsWatchId = null
+                        this.stopLocationListener()
                     }
                 }
             })
@@ -87,6 +62,52 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
     
     private set _location(value) {
         this._location$.next(value)
+    }
+    
+    private startLocationListener(): void {
+        this.gpsWatchId = BackgroundGeolocation.addWatcher(
+            {
+                backgroundMessage: "Allow Peek track this devices GPS location.",
+                backgroundTitle: "Peek GPS Feature",
+                requestPermissions: true,
+                stale: false,
+                distanceFilter: 25
+            },
+            (
+                coords,
+                error
+            ) => {
+                if (error) {
+                    if (error.code === "NOT_AUTHORIZED") {
+                        this.handleLocationPermission()
+                    }
+                    return console.log(error)
+                }
+                if (coords) {
+                    this.updateLocation({coords})
+                }
+            })
+    }
+    
+    private handleLocationPermission(): void {
+        Modals.confirm({
+            title: "Location Required",
+            message: (
+                "This app needs your location, " +
+                "but does not have permission.\n\n" +
+                "Do you want to enable GPS support now?"
+            )
+        })
+            .then(({value}) => {
+                if (value) {
+                    BackgroundGeolocation.openSettings()
+                }
+            })
+    }
+    
+    private stopLocationListener(): void {
+        BackgroundGeolocation.removeWatcher({id: this.gpsWatchId})
+        this.gpsWatchId = null
     }
     
     private updateLocation(position): void {
