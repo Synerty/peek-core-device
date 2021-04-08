@@ -6,8 +6,7 @@ from typing import Optional
 from rx import Observable
 from twisted.internet.defer import Deferred
 
-from peek_core_device.tuples.DeviceGpsLocationTuple import \
-    DeviceGpsLocationTuple
+from peek_core_device.tuples.DeviceGpsLocationTuple import DeviceGpsLocationTuple
 
 
 class DeviceApiABC(metaclass=ABCMeta):
@@ -76,4 +75,11 @@ class DeviceApiABC(metaclass=ABCMeta):
 
         :param deviceTokens:  A list of string
         :return: A list of DeviceGpsLocationTuple
+        """
+
+    @abstractmethod
+    def deviceTokens(self) -> List[str]:
+        """List all device tokens in str
+
+        :return: A list of all device tokens in str
         """
