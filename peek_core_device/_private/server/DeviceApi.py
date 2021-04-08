@@ -124,3 +124,9 @@ class DeviceApi(DeviceApiABC):
             return []
         finally:
             session.close()
+
+    @deferToThreadWrapWithLogger(logger)
+    def deviceTokens(self):
+        ormSession = self._ormSessionCreator()
+        query = ormSession.query(DeviceInfoTable)
+        return [device.deviceToken for device in query.all()]
