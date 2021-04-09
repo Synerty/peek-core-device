@@ -2,6 +2,7 @@ import { addTupleType, Tuple } from "@synerty/vortexjs"
 import { deviceTuplePrefix } from "./_private/PluginNames"
 import { DeviceTypeEnum } from "./_private/hardware-info/hardware-info.abstract"
 import { DeviceGpsLocationTuple } from "./DeviceGpsLocationTuple"
+import { Capacitor } from "@capacitor/core"
 
 @addTupleType
 export class DeviceInfoTuple extends Tuple {
@@ -36,6 +37,22 @@ export class DeviceInfoTuple extends Tuple {
         super(DeviceInfoTuple.tupleName)
     }
     
+    get isWeb(): boolean {
+        return Capacitor.getPlatform() === "web"
+    }
+    
+    get isBackgrounded(): boolean {
+        return !!(this.deviceStatus & this.DEVICE_BACKGROUND)
+    }
+    
+    get googleMapLink() {
+        if (!this.hasCurrentLocation()) {
+            throw new Error("current location is not available")
+        }
+        return "https://www.google.com/maps/search/?api=1&query="
+            + `${this.currentLocation.latitude},${this.currentLocation.longitude}`
+    }
+    
     setDeviceType(val: DeviceTypeEnum) {
         switch (val) {
             case DeviceTypeEnum.DESKTOP_WEB:
@@ -53,15 +70,15 @@ export class DeviceInfoTuple extends Tuple {
             case DeviceTypeEnum.MOBILE_IOS:
                 this.deviceType = this.TYPE_MOBILE_IOS
                 break
-    
+            
             case DeviceTypeEnum.MOBILE_ANDROID:
                 this.deviceType = this.TYPE_MOBILE_ANDROUD
                 break
-    
+            
             case DeviceTypeEnum.MOBILE_WEB:
                 this.deviceType = this.TYPE_MOBILE_WEB
                 break
-    
+            
         }
     }
     
@@ -73,13 +90,5 @@ export class DeviceInfoTuple extends Tuple {
             return true
         }
         return false
-    }
-    
-    get googleMapLink() {
-        if (!this.hasCurrentLocation()) {
-            throw new Error("current location is not available")
-        }
-        return "https://www.google.com/maps/search/?api=1&query="
-            + `${this.currentLocation.latitude},${this.currentLocation.longitude}`
     }
 }
