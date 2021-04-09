@@ -5,7 +5,7 @@ import {
     DeviceGpsLocationTuple
 } from "@peek/peek_core_device"
 import { UserService } from "@peek/peek_core_user"
-import { Plugins } from "@capacitor/core"
+import { Capacitor, Plugins } from "@capacitor/core"
 import { DeviceTupleService } from "../device-tuple.service"
 import { GpsLocationUpdateTupleAction } from "./GpsLocationUpdateTupleAction"
 import { DeviceEnrolmentService } from "../../device-enrolment.service"
@@ -21,7 +21,7 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
     private _location$ = new BehaviorSubject<DeviceGpsLocationTuple | null>(null)
     private gpsWatchId: string | null
     private lastSeenPositionTupleAction: GpsLocationUpdateTupleAction
-    
+
     constructor(
         private tupleService: DeviceTupleService,
         private deviceService: DeviceEnrolmentService,
@@ -65,28 +65,52 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
     }
     
     private startLocationListener(): void {
-        this.gpsWatchId = BackgroundGeolocation.addWatcher(
-            {
-                backgroundMessage: "Allow Peek track this devices GPS location.",
-                backgroundTitle: "Peek GPS Feature",
-                requestPermissions: true,
-                stale: false,
-                distanceFilter: 25
-            },
-            (
-                coords,
-                error
-            ) => {
-                if (error) {
-                    if (error.code === "NOT_AUTHORIZED") {
-                        this.handleLocationPermission()
+        if (Capacitor.getPlatform() !== "web") {
+            this.gpsWatchId = BackgroundGeolocation.addWatcher(
+                {
+                    backgroundMessage: "Allow Peek track this devices GPS location.",
+                    backgroundTitle: "Peek GPS Feature",
+                    requestPermissions: true,
+                    stale: false,
+                    distanceFilter: 25
+                },
+                (
+                    coords,
+                    error
+                ) => {
+                    if (error) {
+                        if (error.code === "NOT_AUTHORIZED") {
+                            this.handleLocationPermission()
+                        }
+                        return console.log(error)
                     }
-                    return console.log(error)
-                }
-                if (coords) {
-                    this.updateLocation({coords})
-                }
-            })
+                    if (coords) {
+                        this.updateLocation({coords})
+                    }
+                })
+        }
+        else {
+            Geolocation.getCurrentPosition()
+                .then((position) => {
+                    if (position) {
+                        this.updateLocation(position)
+                    }
+                })
+                .catch(err => {
+                    console.log("Cannot get current GPS position.")
+                })
+
+            this.gpsWatchId = Geolocation.watchPosition(
+                {"enableHighAccuracy": true},
+                (
+                    position,
+                    err
+                ) => {
+                    if (position) {
+                        this.updateLocation(position)
+                    }
+                })
+        }
     }
     
     private handleLocationPermission(): void {
@@ -106,7 +130,12 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
     }
     
     private stopLocationListener(): void {
-        BackgroundGeolocation.removeWatcher({id: this.gpsWatchId})
+        if (Capacitor.getPlatform() !== "web") {
+            BackgroundGeolocation.removeWatcher({id: this.gpsWatchId})
+        }
+        else {
+            Geolocation.clearWatch({id: this.gpsWatchId})
+        }
         this.gpsWatchId = null
     }
     
