@@ -8,8 +8,8 @@ import { Capacitor } from "@capacitor/core"
 export class DeviceInfoTuple extends Tuple {
     public static readonly tupleName = deviceTuplePrefix + "DeviceInfoTuple"
     
-    readonly TYPE_MOBILE_IOS = "mobile-ios"
-    readonly TYPE_MOBILE_ANDROUD = "mobile-android"
+    readonly TYPE_FIELD_IOS = "field-ios"
+    readonly TYPE_FIELD_ANDROID = "field-android"
     readonly TYPE_MOBILE_WEB = "mobile-web"
     readonly TYPE_DESKTOP_WEB = "desktop-web"
     readonly TYPE_DESKTOP_WINDOWS = "desktop-windows"
@@ -67,12 +67,12 @@ export class DeviceInfoTuple extends Tuple {
                 this.deviceType = this.TYPE_DESKTOP_WINDOWS
                 break
             
-            case DeviceTypeEnum.MOBILE_IOS:
-                this.deviceType = this.TYPE_MOBILE_IOS
+            case DeviceTypeEnum.FIELD_IOS:
+                this.deviceType = this.TYPE_FIELD_IOS
                 break
             
-            case DeviceTypeEnum.MOBILE_ANDROID:
-                this.deviceType = this.TYPE_MOBILE_ANDROUD
+            case DeviceTypeEnum.FIELD_ANDROID:
+                this.deviceType = this.TYPE_FIELD_ANDROID
                 break
             
             case DeviceTypeEnum.MOBILE_WEB:

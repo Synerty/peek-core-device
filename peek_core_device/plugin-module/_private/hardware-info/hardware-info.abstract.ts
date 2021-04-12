@@ -1,10 +1,10 @@
 export enum DeviceTypeEnum {
     MOBILE_WEB,
-    MOBILE_IOS,
-    MOBILE_ANDROID,
+    FIELD_IOS,
+    FIELD_ANDROID,
     DESKTOP_WEB,
     DESKTOP_WINDOWS,
-    DESKTOP_MACOS
+    DESKTOP_MACOS,
 }
 
 export function isWeb(type: DeviceTypeEnum): boolean {
@@ -14,8 +14,8 @@ export function isWeb(type: DeviceTypeEnum): boolean {
 
 export function isField(type: DeviceTypeEnum): boolean {
     return type == DeviceTypeEnum.MOBILE_WEB
-        || type == DeviceTypeEnum.MOBILE_ANDROID
-        || type == DeviceTypeEnum.MOBILE_IOS
+        || type == DeviceTypeEnum.FIELD_IOS
+        || type == DeviceTypeEnum.FIELD_ANDROID
 }
 
 export function isOffice(type: DeviceTypeEnum): boolean {
