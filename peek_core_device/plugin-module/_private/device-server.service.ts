@@ -46,12 +46,9 @@ export class DeviceServerService {
         private vortexStatusService: VortexStatusService,
         private tupleService: DeviceTupleService
     ) {
-        
-        this._isWeb = Capacitor.getPlatform() === "web"
-        
         // Web doesn't need connection details,
         // The websocket now connects to the same port as the http server.
-        if (this.isWeb) {
+        if (!Capacitor.isNative) {
             this._isLoading = false
             this.serverInfo = this.extractHttpDetails()
             this.serverInfo.hasConnected = true
@@ -59,12 +56,6 @@ export class DeviceServerService {
         else {
             this._loadNsWebsocket()
         }
-    }
-    
-    private _isWeb: boolean = false
-    
-    get isWeb(): boolean {
-        return this._isWeb
     }
     
     private _isLoading = true
@@ -149,7 +140,7 @@ export class DeviceServerService {
     }
     
     private extractHttpDetails(): ServerInfoTuple {
-        if (!this._isWeb) {
+        if (Capacitor.isNative) {
             throw new Error("This method is only for the web version of the app")
         }
         
