@@ -4,10 +4,11 @@ import {
     TupleOfflineStorageService,
     TupleSelector
 } from "@synerty/vortexjs"
-
 import { deviceTuplePrefix } from "../PluginNames"
 import { Md5 } from "ts-md5/dist/md5"
 import { DeviceTypeEnum, HardwareInfoI } from "./hardware-info.abstract"
+import { isField } from "./is-field.mweb"
+import { Capacitor } from "@capacitor/core"
 
 @addTupleType
 class DeviceUuidTuple extends Tuple {
@@ -61,6 +62,21 @@ export class HardwareInfo extends HardwareInfoI {
     }
     
     deviceType(): DeviceTypeEnum {
-        return DeviceTypeEnum.MOBILE_WEB
+        // Field
+        if (isField) {
+            switch (Capacitor.getPlatform()) {
+                case "ios":
+                    return DeviceTypeEnum.FIELD_IOS
+                case "android":
+                    return DeviceTypeEnum.FIELD_ANDROID
+                case "web":
+                default:
+                    return DeviceTypeEnum.MOBILE_WEB
+            }
+        }
+        // Office
+        else {
+            return DeviceTypeEnum.DESKTOP_WEB
+        }
     }
 }

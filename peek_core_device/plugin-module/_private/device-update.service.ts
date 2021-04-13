@@ -35,8 +35,8 @@ export class DeviceUpdateService {
         this.delegate = new DeviceUpdateServiceDelegate(serverService, balloonMsg)
         
         let dt = this.tupleService.hardwareInfo.deviceType()
-        if (dt != DeviceTypeEnum.MOBILE_ANDROID && dt != DeviceTypeEnum.MOBILE_IOS) {
-            console.log("Skipping updates as this is not nativescript")
+        if (dt != DeviceTypeEnum.FIELD_ANDROID && dt != DeviceTypeEnum.FIELD_IOS) {
+            console.log("Skipping updates as this is not Capacitor")
             return
         }
         
