@@ -38,7 +38,7 @@ export class DeviceInfoTuple extends Tuple {
     }
     
     get isWeb(): boolean {
-        return Capacitor.getPlatform() === "web"
+        return !Capacitor.isNative
     }
     
     get isBackgrounded(): boolean {

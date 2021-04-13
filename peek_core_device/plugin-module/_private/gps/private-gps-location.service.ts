@@ -65,7 +65,7 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
     }
     
     private startLocationListener(): void {
-        if (Capacitor.getPlatform() !== "web") {
+        if (Capacitor.isNative) {
             this.gpsWatchId = BackgroundGeolocation.addWatcher(
                 {
                     backgroundMessage: "Allow Peek track this devices GPS location.",
@@ -130,7 +130,7 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
     }
     
     private stopLocationListener(): void {
-        if (Capacitor.getPlatform() !== "web") {
+        if (Capacitor.isNative) {
             BackgroundGeolocation.removeWatcher({id: this.gpsWatchId})
         }
         else {
