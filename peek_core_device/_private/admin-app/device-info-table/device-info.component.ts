@@ -17,7 +17,8 @@ import { DatePipe } from "@angular/common"
 
 @Component({
     selector: "core-device-device-info",
-    templateUrl: "./device-info.component.html"
+    templateUrl: "./device-info.component.html",
+    providers: [DatePipe]
 })
 export class DeviceInfoComponent extends NgLifeCycleEvents {
     items: DeviceInfoTuple[] = []
