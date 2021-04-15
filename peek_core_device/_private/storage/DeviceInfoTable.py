@@ -29,12 +29,12 @@ class DeviceInfoTable(Tuple, DeclarativeBase):
     __tablename__ = "DeviceInfo"
     __tupleType__ = deviceTuplePrefix + "DeviceInfoTable"
 
-    TYPE_MOBILE_IOS = "mobile-ios"
-    TYPE_MOBILE_ANDROUD = "mobile-android"
-    TYPE_MOBILE_WEB = "mobile-web"
-    TYPE_DESKTOP_WEB = "desktop-web"
-    TYPE_DESKTOP_WINDOWS = "desktop-windows"
-    TYPE_DESKTOP_MACOS = "desktop-macos"
+    TYPE_FIELD_IOS = DeviceInfoTuple.TYPE_FIELD_IOS
+    TYPE_FIELD_ANDROID = DeviceInfoTuple.TYPE_FIELD_ANDROID
+    TYPE_MOBILE_WEB = DeviceInfoTuple.TYPE_MOBILE_WEB
+    TYPE_DESKTOP_WEB = DeviceInfoTuple.TYPE_DESKTOP_WEB
+    TYPE_DESKTOP_WINDOWS = DeviceInfoTuple.TYPE_DESKTOP_WINDOWS
+    TYPE_DESKTOP_MACOS = DeviceInfoTuple.TYPE_DESKTOP_MACOS
 
     DEVICE_OFFLINE = DeviceInfoTuple.DEVICE_OFFLINE
     DEVICE_ONLINE = DeviceInfoTuple.DEVICE_ONLINE
