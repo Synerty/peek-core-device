@@ -1,5 +1,9 @@
 import logging
 
+from vortex.Tuple import TupleField
+from vortex.Tuple import addTupleType
+from vortex.Tuple import Tuple
+
 from peek_core_device.tuples.DeviceInfoTuple import DeviceInfoTuple
 from sqlalchemy import Column
 from sqlalchemy.sql.sqltypes import Boolean
@@ -8,12 +12,14 @@ from sqlalchemy.sql.sqltypes import Integer
 from sqlalchemy.sql.sqltypes import String
 
 from .DeclarativeBase import DeclarativeBase
+from ..PluginNames import deviceTuplePrefix
 from ...tuples.DeviceGpsLocationTuple import DeviceGpsLocationTuple
 
 logger = logging.getLogger(__name__)
 
 
-class DeviceInfoTable(DeclarativeBase):
+@addTupleType
+class DeviceInfoTable(Tuple, DeclarativeBase):
     """DeviceInfoTable
 
     This table stores information about devices.
@@ -21,6 +27,7 @@ class DeviceInfoTable(DeclarativeBase):
     """
 
     __tablename__ = "DeviceInfo"
+    __tupleType__ = deviceTuplePrefix + "DeviceInfoTable"
 
     TYPE_MOBILE_IOS = "mobile-ios"
     TYPE_MOBILE_ANDROUD = "mobile-android"
@@ -45,6 +52,7 @@ class DeviceInfoTable(DeclarativeBase):
     createdDate = Column(DateTime(True), nullable=False)
     deviceStatus = Column(Integer, nullable=False, server_default="0")
     isEnrolled = Column(Boolean, nullable=False, server_default="0")
+    currentLocation: DeviceGpsLocationTuple = TupleField()
 
     def toTuple(
         self,

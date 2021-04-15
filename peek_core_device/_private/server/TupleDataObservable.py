@@ -8,18 +8,25 @@ from peek_core_device._private.server.tuple_providers.ClientSettingsTupleProvide
 from peek_core_device._private.server.tuple_providers.DeviceGpsLocationTupleProvider import (
     DeviceGpsLocationTupleProvider,
 )
+from peek_core_device._private.server.tuple_providers.DeviceInfoTableTupleProvider import (
+    DeviceInfoTableTupleProvider,
+)
 from peek_core_device._private.server.tuple_providers.DeviceInfoTupleProvider import (
     DeviceInfoTupleProvider,
 )
 from peek_core_device._private.server.tuple_providers.DeviceUpdateTupleProvider import (
     DeviceUpdateTupleProvider,
 )
-from peek_core_device._private.storage.DeviceUpdateTuple import \
-    DeviceUpdateTuple
-from peek_core_device._private.tuples.ClientSettingsTuple import \
-    ClientSettingsTuple
-from peek_core_device.tuples.DeviceGpsLocationTuple import \
-    DeviceGpsLocationTuple
+from peek_core_device._private.storage.DeviceInfoTable import DeviceInfoTable
+from peek_core_device._private.storage.DeviceUpdateTuple import (
+    DeviceUpdateTuple,
+)
+from peek_core_device._private.tuples.ClientSettingsTuple import (
+    ClientSettingsTuple,
+)
+from peek_core_device.tuples.DeviceGpsLocationTuple import (
+    DeviceGpsLocationTuple,
+)
 from peek_core_device.tuples.DeviceInfoTuple import DeviceInfoTuple
 
 
@@ -41,7 +48,7 @@ def makeTupleDataObservableHandler(ormSessionCreator):
     # Register TupleProviders here
     tupleObservable.addTupleProvider(
         DeviceUpdateTuple.tupleName(),
-        DeviceUpdateTupleProvider(ormSessionCreator)
+        DeviceUpdateTupleProvider(ormSessionCreator),
     )
 
     tupleObservable.addTupleProvider(
@@ -49,8 +56,13 @@ def makeTupleDataObservableHandler(ormSessionCreator):
     )
 
     tupleObservable.addTupleProvider(
+        DeviceInfoTable.tupleName(),
+        DeviceInfoTableTupleProvider(ormSessionCreator),
+    )
+
+    tupleObservable.addTupleProvider(
         ClientSettingsTuple.tupleName(),
-        ClientSettingsTupleProvider(ormSessionCreator)
+        ClientSettingsTupleProvider(ormSessionCreator),
     )
 
     tupleObservable.addTupleProvider(

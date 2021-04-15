@@ -10,7 +10,7 @@ import {
     TupleDataObserverService,
     TupleSelector
 } from "@synerty/vortexjs"
-import { DeviceInfoTuple } from "@peek/peek_core_device"
+import { DeviceInfoTable } from "../tuples"
 import { UpdateEnrollmentAction } from "@peek/peek_core_device/_private"
 import { takeUntil } from "rxjs/operators"
 import { DatePipe } from "@angular/common"
@@ -21,7 +21,7 @@ import { DatePipe } from "@angular/common"
     providers: [DatePipe]
 })
 export class DeviceInfoComponent extends NgLifeCycleEvents {
-    items: DeviceInfoTuple[] = []
+    items: DeviceInfoTable[] = []
     
     constructor(
         private balloonMsg: BalloonMsgService,
@@ -33,15 +33,15 @@ export class DeviceInfoComponent extends NgLifeCycleEvents {
         
         // Setup a subscription for the device info data
         tupleDataObserver.subscribeToTupleSelector(
-            new TupleSelector(DeviceInfoTuple.tupleName, {})
+            new TupleSelector(DeviceInfoTable.tupleName, {})
         )
             .pipe(takeUntil(this.onDestroyEvent))
-            .subscribe((tuples: DeviceInfoTuple[]) => {
+            .subscribe((tuples: DeviceInfoTable[]) => {
                 this.items = tuples
             })
     }
     
-    deviceStatus(device: DeviceInfoTuple): string {
+    deviceStatus(device: DeviceInfoTable): string {
         if (
             device.deviceStatus & device.DEVICE_ONLINE
             && !(device.deviceStatus & device.DEVICE_BACKGROUND)

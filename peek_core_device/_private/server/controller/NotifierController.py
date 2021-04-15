@@ -5,6 +5,7 @@ from vortex.DeferUtil import callMethodLater
 from vortex.TupleSelector import TupleSelector
 from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
 
+from peek_core_device._private.storage.DeviceInfoTable import DeviceInfoTable
 from peek_core_device._private.storage.DeviceUpdateTuple import \
     DeviceUpdateTuple
 from peek_core_device.tuples.DeviceInfoTuple import DeviceInfoTuple
@@ -35,6 +36,10 @@ class NotifierController:
 
         self._tupleObservable.notifyOfTupleUpdate(
             TupleSelector(DeviceInfoTuple.tupleName(), dict())
+        )
+
+        self._tupleObservable.notifyOfTupleUpdate(
+            TupleSelector(DeviceInfoTable.tupleName(), dict())
         )
 
     @callMethodLater
