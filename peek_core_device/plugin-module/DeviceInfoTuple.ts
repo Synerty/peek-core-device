@@ -8,16 +8,16 @@ import { Capacitor } from "@capacitor/core"
 export class DeviceInfoTuple extends Tuple {
     public static readonly tupleName = deviceTuplePrefix + "DeviceInfoTuple"
     
-    readonly TYPE_FIELD_IOS = "field-ios"
-    readonly TYPE_FIELD_ANDROID = "field-android"
-    readonly TYPE_MOBILE_WEB = "mobile-web"
-    readonly TYPE_DESKTOP_WEB = "desktop-web"
-    readonly TYPE_DESKTOP_WINDOWS = "desktop-windows"
-    readonly TYPE_DESKTOP_MACOS = "desktop-macos"
+    static readonly TYPE_FIELD_IOS = "field-ios"
+    static readonly TYPE_FIELD_ANDROID = "field-android"
+    static readonly TYPE_MOBILE_WEB = "mobile-web"
+    static readonly TYPE_DESKTOP_WEB = "desktop-web"
+    static readonly TYPE_DESKTOP_WINDOWS = "desktop-windows"
+    static readonly TYPE_DESKTOP_MACOS = "desktop-macos"
     
-    readonly DEVICE_OFFLINE = 0
-    readonly DEVICE_ONLINE = 1
-    readonly DEVICE_BACKGROUND = 2
+    static readonly DEVICE_OFFLINE = 0
+    static readonly DEVICE_ONLINE = 1
+    static readonly DEVICE_BACKGROUND = 2
 
     description: string
     deviceId: string
@@ -41,7 +41,7 @@ export class DeviceInfoTuple extends Tuple {
     }
     
     get isBackgrounded(): boolean {
-        return !!(this.deviceStatus & this.DEVICE_BACKGROUND)
+        return !!(this.deviceStatus & DeviceInfoTuple.DEVICE_BACKGROUND)
     }
     
     get googleMapLink() {
@@ -55,27 +55,27 @@ export class DeviceInfoTuple extends Tuple {
     setDeviceType(val: DeviceTypeEnum) {
         switch (val) {
             case DeviceTypeEnum.DESKTOP_WEB:
-                this.deviceType = this.TYPE_DESKTOP_WEB
+                this.deviceType = DeviceInfoTuple.TYPE_DESKTOP_WEB
                 break
             
             case DeviceTypeEnum.DESKTOP_MACOS:
-                this.deviceType = this.TYPE_DESKTOP_MACOS
+                this.deviceType = DeviceInfoTuple.TYPE_DESKTOP_MACOS
                 break
             
             case DeviceTypeEnum.DESKTOP_WINDOWS:
-                this.deviceType = this.TYPE_DESKTOP_WINDOWS
+                this.deviceType = DeviceInfoTuple.TYPE_DESKTOP_WINDOWS
                 break
             
             case DeviceTypeEnum.FIELD_IOS:
-                this.deviceType = this.TYPE_FIELD_IOS
+                this.deviceType = DeviceInfoTuple.TYPE_FIELD_IOS
                 break
             
             case DeviceTypeEnum.FIELD_ANDROID:
-                this.deviceType = this.TYPE_FIELD_ANDROID
+                this.deviceType = DeviceInfoTuple.TYPE_FIELD_ANDROID
                 break
             
             case DeviceTypeEnum.MOBILE_WEB:
-                this.deviceType = this.TYPE_MOBILE_WEB
+                this.deviceType = DeviceInfoTuple.TYPE_MOBILE_WEB
                 break
             
         }

@@ -43,12 +43,12 @@ export class DeviceInfoComponent extends NgLifeCycleEvents {
     
     deviceStatus(device: DeviceInfoTable): string {
         if (
-            device.deviceStatus & device.DEVICE_ONLINE
-            && !(device.deviceStatus & device.DEVICE_BACKGROUND)
+            device.deviceStatus & DeviceInfoTable.DEVICE_ONLINE
+            && !(device.deviceStatus & DeviceInfoTable.DEVICE_BACKGROUND)
         ) {
             return "Online, App Visible"
         }
-        if (device.deviceStatus & device.DEVICE_BACKGROUND) {
+        if (device.deviceStatus & DeviceInfoTable.DEVICE_BACKGROUND) {
             return "Online, App Backgrounded"
         }
         if (device.lastOnline) {

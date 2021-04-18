@@ -21,8 +21,8 @@ class DeviceInfoTuple(Tuple):
 
     __tupleType__ = deviceTuplePrefix + "DeviceInfoTuple"
 
-    TYPE_MOBILE_IOS = "mobile-ios"
-    TYPE_MOBILE_ANDROUD = "mobile-android"
+    TYPE_FIELD_IOS = "field-ios"
+    TYPE_FIELD_ANDROID = "field-android"
     TYPE_MOBILE_WEB = "mobile-web"
     TYPE_DESKTOP_WEB = "desktop-web"
     TYPE_DESKTOP_WINDOWS = "desktop-windows"
