@@ -23,8 +23,10 @@ class GpsLocationTable(Tuple, DeclarativeBase):
 
     id = Column(Integer, primary_key=True)
     deviceToken = Column(
-        String(50), ForeignKey("DeviceInfo.deviceToken"), nullable=False,
-        unique=True
+        String(50),
+        ForeignKey("DeviceInfo.deviceToken", ondelete="CASCADE"),
+        nullable=False,
+        unique=True,
     )
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
