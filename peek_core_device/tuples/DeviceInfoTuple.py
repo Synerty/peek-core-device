@@ -23,8 +23,8 @@ class DeviceInfoTuple(Tuple):
 
     TYPE_FIELD_IOS = "field-ios"
     TYPE_FIELD_ANDROID = "field-android"
-    TYPE_MOBILE_WEB = "mobile-web"
-    TYPE_DESKTOP_WEB = "desktop-web"
+    TYPE_FIELD_WEB = "field-web"
+    TYPE_OFFICE_WEB = "office-web"
     TYPE_DESKTOP_WINDOWS = "desktop-windows"
     TYPE_DESKTOP_MACOS = "desktop-macos"
 

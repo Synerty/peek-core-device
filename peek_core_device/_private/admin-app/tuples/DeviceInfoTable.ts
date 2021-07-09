@@ -9,8 +9,8 @@ export class DeviceInfoTable extends Tuple {
 
     static readonly TYPE_FIELD_IOS = DeviceInfoTuple.TYPE_FIELD_IOS
     static readonly TYPE_FIELD_ANDROID = DeviceInfoTuple.TYPE_FIELD_ANDROID
-    static readonly TYPE_MOBILE_WEB = DeviceInfoTuple.TYPE_MOBILE_WEB
-    static readonly TYPE_DESKTOP_WEB = DeviceInfoTuple.TYPE_DESKTOP_WEB
+    static readonly TYPE_FIELD_WEB = DeviceInfoTuple.TYPE_FIELD_WEB
+    static readonly TYPE_OFFICE_WEB = DeviceInfoTuple.TYPE_OFFICE_WEB
     static readonly TYPE_DESKTOP_WINDOWS = DeviceInfoTuple.TYPE_DESKTOP_WINDOWS
     static readonly TYPE_DESKTOP_MACOS = DeviceInfoTuple.TYPE_DESKTOP_MACOS
     
@@ -55,7 +55,7 @@ export class DeviceInfoTable extends Tuple {
     setDeviceType(val: DeviceTypeEnum) {
         switch (val) {
             case DeviceTypeEnum.DESKTOP_WEB:
-                this.deviceType = DeviceInfoTuple.TYPE_DESKTOP_WEB
+                this.deviceType = DeviceInfoTuple.TYPE_OFFICE_WEB
                 break
 
             case DeviceTypeEnum.DESKTOP_MACOS:
@@ -75,7 +75,7 @@ export class DeviceInfoTable extends Tuple {
                 break
 
             case DeviceTypeEnum.MOBILE_WEB:
-                this.deviceType = DeviceInfoTuple.TYPE_MOBILE_WEB
+                this.deviceType = DeviceInfoTuple.TYPE_FIELD_WEB
                 break
 
         }
