@@ -59,8 +59,10 @@ class DeviceStatusController:
             deviceId = deviceInfo.deviceId
             deviceInfo.lastOnline = action.dateTime
 
-            # Device is online as it sent this action
-            deviceInfo.deviceStatus = DeviceInfoTuple.DEVICE_ONLINE
+            if deviceInfo.deviceStatus & DeviceInfoTuple.DEVICE_ONLINE:
+                deviceInfo.deviceStatus = DeviceInfoTuple.DEVICE_ONLINE
+            else:
+                deviceInfo.deviceStatus = DeviceInfoTuple.DEVICE_OFFLINE
 
             if action.deviceBackgrounded:
                 deviceInfo.deviceStatus |= DeviceInfoTuple.DEVICE_BACKGROUND
