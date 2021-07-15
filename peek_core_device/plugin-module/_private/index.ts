@@ -7,6 +7,7 @@ export { UpdateAppliedAction } from "./tuples/UpdateAppliedAction"
 export { ClientSettingsTuple } from "./tuples/ClientSettingsTuple"
 export { DeviceBackgroundStateTupleAction } from "./tuples/DeviceBackgroundStateTupleAction"
 export { UpdateEnrollmentAction } from "./tuples/admin/UpdateEnrollmentAction"
+export { UpdateDeviceOnlineAction } from "./tuples/UpdateDeviceOnlineAction"
 
 export {
     AlterDeviceUpdateAction
@@ -21,3 +22,4 @@ export { DeviceTypeEnum } from "./hardware-info/hardware-info.abstract"
 export { DeviceNavService } from "./device-nav.service"
 export { DeviceServerService, ServerInfoTuple } from "./device-server.service"
 export { DeviceTupleService } from "./device-tuple.service"
+export { DeviceOnlineService } from "./device-online.service"

@@ -101,6 +101,11 @@
                 "persistent": true
             },
             {
+                "file": "_private/device-online.service",
+                "class": "DeviceOnlineService",
+                "persistent": true
+            },
+            {
                 "file": "gps-location.service",
                 "class": "DeviceGpsLocationService",
                 "useExistingClass": "PrivateDeviceGpsLocationService"
