@@ -31,8 +31,8 @@ class DeviceInfoTable(Tuple, DeclarativeBase):
 
     TYPE_FIELD_IOS = DeviceInfoTuple.TYPE_FIELD_IOS
     TYPE_FIELD_ANDROID = DeviceInfoTuple.TYPE_FIELD_ANDROID
-    TYPE_MOBILE_WEB = DeviceInfoTuple.TYPE_MOBILE_WEB
-    TYPE_DESKTOP_WEB = DeviceInfoTuple.TYPE_DESKTOP_WEB
+    TYPE_FIELD_WEB = DeviceInfoTuple.TYPE_FIELD_WEB
+    TYPE_OFFICE_WEB = DeviceInfoTuple.TYPE_OFFICE_WEB
     TYPE_DESKTOP_WINDOWS = DeviceInfoTuple.TYPE_DESKTOP_WINDOWS
     TYPE_DESKTOP_MACOS = DeviceInfoTuple.TYPE_DESKTOP_MACOS
 
