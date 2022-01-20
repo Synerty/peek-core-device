@@ -1,11 +1,15 @@
 import logging
+from datetime import datetime
+from typing import Optional
 
 from vortex.Tuple import Tuple
 from vortex.Tuple import TupleField
 from vortex.Tuple import addTupleType
 
 from peek_core_device._private.PluginNames import deviceTuplePrefix
-from peek_core_device.tuples.DeviceGpsLocationTuple import DeviceGpsLocationTuple
+from peek_core_device.tuples.DeviceGpsLocationTuple import (
+    DeviceGpsLocationTuple,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -44,3 +48,4 @@ class DeviceInfoTuple(Tuple):
     deviceStatus = TupleField()
     isEnrolled = TupleField()
     currentLocation: DeviceGpsLocationTuple = TupleField()
+    lastCacheCheck: Optional[datetime] = TupleField()

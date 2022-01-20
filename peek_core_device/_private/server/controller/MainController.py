@@ -10,12 +10,17 @@ from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
 from peek_core_device._private.server.controller.EnrollmentController import (
     EnrollmentController,
 )
-from peek_core_device._private.server.controller.GpsController import GpsController
+from peek_core_device._private.server.controller.GpsController import (
+    GpsController,
+)
 from peek_core_device._private.server.controller.NotifierController import (
     NotifierController,
 )
 from peek_core_device._private.server.controller.DeviceStatusController import (
     DeviceStatusController,
+)
+from peek_core_device._private.server.controller.OfflineCacheController import (
+    OfflineCacheController,
 )
 from peek_core_device._private.server.controller.UpdateController import (
     UpdateController,
@@ -29,6 +34,7 @@ class MainController(TupleActionProcessorDelegateABC):
         self,
         dbSessionCreator,
         notifierController: NotifierController,
+        offlineCacheController: OfflineCacheController,
         deviceUpdateFilePath: Path,
         tupleObservable: TupleDataObservableHandler,
     ):
@@ -53,6 +59,8 @@ class MainController(TupleActionProcessorDelegateABC):
             notifierController=notifierController,
         )
 
+        self._offlineCacheController = offlineCacheController
+
     @property
     def deviceUpdateController(self):
         return self._updateController
@@ -65,7 +73,9 @@ class MainController(TupleActionProcessorDelegateABC):
 
     @inlineCallbacks
     def processTupleAction(self, tupleAction: TupleActionABC) -> Deferred:
-        result = yield self._enrollmentController.processTupleAction(tupleAction)
+        result = yield self._enrollmentController.processTupleAction(
+            tupleAction
+        )
         if result is not None:
             return result
 
@@ -78,6 +88,12 @@ class MainController(TupleActionProcessorDelegateABC):
             return result
 
         result = yield self._gpsController.processTupleAction(tupleAction)
+        if result is not None:
+            return result
+
+        result = yield self._offlineCacheController.processTupleAction(
+            tupleAction
+        )
         if result is not None:
             return result
 

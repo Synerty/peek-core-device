@@ -6,8 +6,12 @@ from vortex.TupleSelector import TupleSelector
 from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
 
 from peek_core_device._private.storage.DeviceInfoTable import DeviceInfoTable
-from peek_core_device._private.storage.DeviceUpdateTuple import \
-    DeviceUpdateTuple
+from peek_core_device._private.storage.DeviceUpdateTuple import (
+    DeviceUpdateTuple,
+)
+from peek_core_device._private.tuples.OfflineCacheSettingTuple import (
+    OfflineCacheSettingTuple,
+)
 from peek_core_device.tuples.DeviceInfoTuple import DeviceInfoTuple
 
 logger = logging.getLogger(__name__)
@@ -45,8 +49,9 @@ class NotifierController:
     @callMethodLater
     def notifyDeviceUpdate(self, deviceType: str):
         self._tupleObservable.notifyOfTupleUpdate(
-            TupleSelector(DeviceUpdateTuple.tupleName(),
-                dict(deviceType=deviceType))
+            TupleSelector(
+                DeviceUpdateTuple.tupleName(), dict(deviceType=deviceType)
+            )
         )
 
         self._tupleObservable.notifyOfTupleUpdate(
@@ -70,9 +75,30 @@ class NotifierController:
         longitude: float,
         updatedDate: datetime,
     ):
+
+        from peek_core_device._private.storage.GpsLocationTable import (
+            GpsLocationTable,
+        )
+
+        self._tupleObservable.notifyOfTupleUpdate(
+            TupleSelector(GpsLocationTable.tupleName(), dict())
+        )
+
         self._api.notifyCurrentGpsLocation(
             deviceToken,
             latitude,
             longitude,
             updatedDate,
+        )
+
+    @callMethodLater
+    def notifyDeviceOfflineCacheSetting(
+        self,
+        deviceToken: str,
+    ):
+        self._tupleObservable.notifyOfTupleUpdate(
+            TupleSelector(
+                OfflineCacheSettingTuple.tupleName(),
+                dict(deviceToken=deviceToken),
+            )
         )

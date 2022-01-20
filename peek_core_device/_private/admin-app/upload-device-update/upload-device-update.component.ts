@@ -1,46 +1,48 @@
-import { Component, OnInit } from "@angular/core"
+import { Component, OnInit } from "@angular/core";
 import {
     NgLifeCycleEvents,
     Payload,
     PayloadEnvelope,
-    VortexService
-} from "@synerty/vortexjs"
-import { BalloonMsgService, } from "@synerty/peek-plugin-base-js"
-import { FileUploader } from "ng2-file-upload"
+    VortexService,
+} from "@synerty/vortexjs";
+import { BalloonMsgService } from "@synerty/peek-plugin-base-js";
+// import { FileUploader } from "ng2-file-upload"
 import {
     CreateDeviceUpdateAction,
-    DeviceUpdateTuple
-} from "@peek/peek_core_device/_private"
+    DeviceUpdateTuple,
+} from "@peek/peek_core_device/_private";
 
 @Component({
     selector: "core-device-upload-device-update",
-    templateUrl: "./upload-device-update.component.html"
+    templateUrl: "./upload-device-update.component.html",
 })
-export class UploadDeviceUpdateComponent extends NgLifeCycleEvents implements OnInit {
-    newUpdate: DeviceUpdateTuple = new DeviceUpdateTuple()
-    serverRestarting: boolean = false
-    progressPercentage: string = ""
-    uploader: FileUploader = null
-    hasBaseDropZoneOver: boolean = false
+export class UploadDeviceUpdateComponent
+    extends NgLifeCycleEvents
+    implements OnInit
+{
+    newUpdate: DeviceUpdateTuple = new DeviceUpdateTuple();
+    serverRestarting: boolean = false;
+    progressPercentage: string = "";
+    // uploader: FileUploader = null
+    hasBaseDropZoneOver: boolean = false;
     private readonly filt = {
         plugin: "peek_logic_service",
-        key: "peek_logic_service.plugin.version.info"
-    }
-    
+        key: "peek_logic_service.plugin.version.info",
+    };
+
     constructor(
         private vortexService: VortexService,
         private balloonMsg: BalloonMsgService
     ) {
-        super()
-        
+        super();
+
         // Subscribe to the angular check event
-        this.doCheckEvent.subscribe(() => this.checkProgress())
-        
+        // this.doCheckEvent.subscribe(() => this.checkProgress());
     }
-    
-    ngOnInit() {
-    }
-    
+
+    ngOnInit() {}
+
+    /*
     formEnabled(): boolean {
         return this.uploader == null
     }
@@ -132,8 +134,5 @@ export class UploadDeviceUpdateComponent extends NgLifeCycleEvents implements On
     fileOverBase(e: any): void {
         this.hasBaseDropZoneOver = e
     }
-    
+     */
 }
-
-
-

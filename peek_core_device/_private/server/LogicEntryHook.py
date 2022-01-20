@@ -12,8 +12,9 @@ from peek_core_device._private.storage import DeclarativeBase
 from peek_core_device._private.storage.DeclarativeBase import loadStorageTuples
 from peek_core_device._private.tuples import loadPrivateTuples
 from peek_core_device.tuples import loadPublicTuples
-from peek_plugin_base.server.PluginLogicEntryHookABC import \
-    PluginLogicEntryHookABC
+from peek_plugin_base.server.PluginLogicEntryHookABC import (
+    PluginLogicEntryHookABC,
+)
 from peek_plugin_base.server.PluginServerStorageEntryHookABC import (
     PluginServerStorageEntryHookABC,
 )
@@ -22,13 +23,14 @@ from .TupleActionProcessor import makeTupleActionProcessorHandler
 from .TupleDataObservable import makeTupleDataObservableHandler
 from .admin_backend import makeAdminBackendHandlers
 from .controller.MainController import MainController
+from .controller.OfflineCacheController import OfflineCacheController
 
 logger = logging.getLogger(__name__)
 
 
 class LogicEntryHook(PluginLogicEntryHookABC, PluginServerStorageEntryHookABC):
     def __init__(self, *args, **kwargs):
-        """" Constructor """
+        """ " Constructor"""
         # Call the base classes constructor
         PluginLogicEntryHookABC.__init__(self, *args, **kwargs)
 
@@ -49,7 +51,9 @@ class LogicEntryHook(PluginLogicEntryHookABC, PluginServerStorageEntryHookABC):
         Place any custom initialiastion steps here.
 
         """
-        self._deviceUpdatesPath = self.platform.fileStorageDirectory / "device_update"
+        self._deviceUpdatesPath = (
+            self.platform.fileStorageDirectory / "device_update"
+        )
         self._deviceUpdatesPath.mkdir(parents=True, exist_ok=True)
 
         loadStorageTuples()
@@ -64,16 +68,25 @@ class LogicEntryHook(PluginLogicEntryHookABC, PluginServerStorageEntryHookABC):
         Place any custom initialiastion steps here.
 
         """
+        offlineCacheController = OfflineCacheController(
+            dbSessionCreator=self.dbSessionCreator,
+        )
+        self._loadedObjects.append(offlineCacheController)
 
-        tupleObservable = makeTupleDataObservableHandler(self.dbSessionCreator)
+        tupleObservable = makeTupleDataObservableHandler(
+            self.dbSessionCreator, offlineCacheController
+        )
         self._loadedObjects.append(tupleObservable)
 
         notifierController = NotifierController(tupleObservable=tupleObservable)
         self._loadedObjects.append(notifierController)
 
+        offlineCacheController.setNotificationController(notifierController)
+
         mainController = MainController(
             dbSessionCreator=self.dbSessionCreator,
             notifierController=notifierController,
+            offlineCacheController=offlineCacheController,
             deviceUpdateFilePath=self._deviceUpdatesPath,
             tupleObservable=tupleObservable,
         )
@@ -90,8 +103,9 @@ class LogicEntryHook(PluginLogicEntryHookABC, PluginServerStorageEntryHookABC):
         updateDownloadResource = FileUnderlayResource()
         updateDownloadResource.addFileSystemRoot(str(self._deviceUpdatesPath))
         # noinspection PyTypeChecker
-        self.platform.addServerResource(b"device_update",
-            updateDownloadResource)
+        self.platform.addServerResource(
+            b"device_update", updateDownloadResource
+        )
 
         self._loadedObjects.extend(
             makeAdminBackendHandlers(tupleObservable, self.dbSessionCreator)
@@ -99,7 +113,8 @@ class LogicEntryHook(PluginLogicEntryHookABC, PluginServerStorageEntryHookABC):
 
         # Make the Action Processor Handler
         self._loadedObjects.append(
-            makeTupleActionProcessorHandler(mainController))
+            makeTupleActionProcessorHandler(mainController)
+        )
 
         # Initialise the API object that will be shared with other plugins
         self._api = DeviceApi(mainController, self.dbSessionCreator)

@@ -1,6 +1,9 @@
 import logging
 from typing import Union
 
+from peek_core_device._private.server.controller.OfflineCacheController import (
+    OfflineCacheController,
+)
 from peek_core_device._private.storage.DeviceInfoTable import DeviceInfoTable
 from peek_core_device._private.storage.GpsLocationTable import GpsLocationTable
 from twisted.internet.defer import Deferred
@@ -13,8 +16,11 @@ logger = logging.getLogger(__name__)
 
 
 class DeviceInfoTupleProvider(TuplesProviderABC):
-    def __init__(self, ormSessionCreator):
+    def __init__(
+        self, ormSessionCreator, offlineCacheController: OfflineCacheController
+    ):
         self._ormSessionCreator = ormSessionCreator
+        self._offlineCacheController = offlineCacheController
 
     @deferToThreadWrapWithLogger(logger)
     def makeVortexMsg(
@@ -25,10 +31,9 @@ class DeviceInfoTupleProvider(TuplesProviderABC):
 
         ormSession = self._ormSessionCreator()
         try:
-            query = ormSession.query(DeviceInfoTable,
-                GpsLocationTable).outerjoin(
-                GpsLocationTable
-            )
+            query = ormSession.query(
+                DeviceInfoTable, GpsLocationTable
+            ).outerjoin(GpsLocationTable)
 
             if deviceId is not None:
                 query = query.filter(DeviceInfoTable.deviceId == deviceId)
@@ -38,12 +43,16 @@ class DeviceInfoTupleProvider(TuplesProviderABC):
                 tuples.append(
                     deviceInfoTableRow.toTuple(
                         currentLocationTuple=gpsLocationTableRow,
+                        lastCacheCheck=self._offlineCacheController.lastCacheUpdate(
+                            deviceInfoTableRow.deviceToken
+                        ),
                     )
                 )
 
             # Create the vortex message
-            return Payload(filt,
-                tuples=tuples).makePayloadEnvelope().toVortexMsg()
+            return (
+                Payload(filt, tuples=tuples).makePayloadEnvelope().toVortexMsg()
+            )
 
         finally:
             ormSession.close()

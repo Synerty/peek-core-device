@@ -56,6 +56,11 @@
         ],
         "rootServices": [
             {
+                "file": "device-offline-cache-controller.service",
+                "class": "DeviceOfflineCacheControllerService",
+                "persistent": true
+            },
+            {
                 "file": "device-enrolment.service",
                 "class": "DeviceEnrolmentService",
                 "persistent": true
@@ -125,6 +130,11 @@
             }
         ],
         "rootServices": [
+            {
+                "file": "device-offline-cache-controller.service",
+                "class": "DeviceOfflineCacheControllerService",
+                "persistent": true
+            },
             {
                 "file": "device-enrolment.service",
                 "class": "DeviceEnrolmentService",

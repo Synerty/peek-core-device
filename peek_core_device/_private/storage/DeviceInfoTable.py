@@ -1,4 +1,6 @@
 import logging
+from datetime import datetime
+from typing import Optional
 
 from vortex.Tuple import TupleField
 from vortex.Tuple import addTupleType
@@ -52,18 +54,22 @@ class DeviceInfoTable(Tuple, DeclarativeBase):
     createdDate = Column(DateTime(True), nullable=False)
     deviceStatus = Column(Integer, nullable=False, server_default="0")
     isEnrolled = Column(Boolean, nullable=False, server_default="0")
+    isOfflineCacheEnabled = Column(Boolean, nullable=False, server_default="0")
     currentLocation: DeviceGpsLocationTuple = TupleField()
+    lastCacheUpdate: Optional[datetime] = TupleField()
 
     def toTuple(
         self,
         currentLocationTuple: DeviceGpsLocationTuple = None,
+        lastCacheCheck: Optional[datetime] = None,
     ):
-        return self.toTupleStatic(self, currentLocationTuple)
+        return self.toTupleStatic(self, currentLocationTuple, lastCacheCheck)
 
     @staticmethod
     def toTupleStatic(
         table: "DeviceInfoTable",
-        currentLocationTuple: DeviceGpsLocationTuple = None
+        currentLocationTuple: Optional[DeviceGpsLocationTuple] = None,
+        lastCacheCheck: Optional[datetime] = None,
     ):
         return DeviceInfoTuple(
             description=table.description,
@@ -78,4 +84,5 @@ class DeviceInfoTable(Tuple, DeclarativeBase):
             deviceStatus=table.deviceStatus,
             isEnrolled=table.isEnrolled,
             currentLocation=currentLocationTuple,
+            lastCacheCheck=lastCacheCheck,
         )

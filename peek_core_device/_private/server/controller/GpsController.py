@@ -22,7 +22,7 @@ from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
 logger = logging.getLogger(__name__)
 DeviceLocationTuple = namedtuple(
     "DeviceLocationTuple",
-    ["deviceToken", "latitude", "longitude", "updatedDate"]
+    ["deviceToken", "latitude", "longitude", "updatedDate"],
 )
 TimezoneSetting = namedtuple("TimezoneSetting", ["timezone"])
 
@@ -58,7 +58,8 @@ class GpsController(TupleActionProcessorDelegateABC):
             updatedDate=action.datetime,
         )
         updatedGpsLocationTableRow = self._updateCurrentLocation(
-            currentLocation)
+            currentLocation
+        )
         self._logToHistory(currentLocation)
         self._notifyTuple(updatedGpsLocationTableRow)
         return []
@@ -70,10 +71,6 @@ class GpsController(TupleActionProcessorDelegateABC):
                 tuple_.tupleName(),
                 dict(deviceToken=tuple_.deviceToken),
             )
-        )
-
-        self._tupleObservable.notifyOfTupleUpdate(
-            TupleSelector(tuple_.tupleName(), dict())
         )
 
         self._notifierController.notifyDeviceGpsLocation(
