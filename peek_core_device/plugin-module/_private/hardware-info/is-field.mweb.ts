@@ -1,1 +1,1 @@
-export const isField = true
+export const isField = true;

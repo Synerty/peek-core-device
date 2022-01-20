@@ -1,5 +1,5 @@
-import { addTupleType, Tuple } from "@synerty/vortexjs"
-import { deviceTuplePrefix } from "../PluginNames"
+import { addTupleType, Tuple } from "@synerty/vortexjs";
+import { deviceTuplePrefix } from "../PluginNames";
 
 /** Device Update - Local Values - Tuple
  *
@@ -9,13 +9,14 @@ import { deviceTuplePrefix } from "../PluginNames"
  */
 @addTupleType
 export class DeviceUpdateLocalValuesTuple extends Tuple {
-    public static readonly tupleName = deviceTuplePrefix + "DeviceUpdateLocalValuesTuple"
-    
-    lastUpdateCheck: Date
-    updateVersion: string
-    appVersion: string
-    
+    public static readonly tupleName =
+        deviceTuplePrefix + "DeviceUpdateLocalValuesTuple";
+
+    lastUpdateCheck: Date;
+    updateVersion: string;
+    appVersion: string;
+
     constructor() {
-        super(DeviceUpdateLocalValuesTuple.tupleName)
+        super(DeviceUpdateLocalValuesTuple.tupleName);
     }
 }

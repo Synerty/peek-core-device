@@ -8,38 +8,43 @@ export enum DeviceTypeEnum {
 }
 
 export function isWeb(type: DeviceTypeEnum): boolean {
-    return type == DeviceTypeEnum.MOBILE_WEB
-        || type == DeviceTypeEnum.DESKTOP_WEB
+    return (
+        type == DeviceTypeEnum.MOBILE_WEB || type == DeviceTypeEnum.DESKTOP_WEB
+    );
 }
 
 export function isField(type: DeviceTypeEnum): boolean {
-    return type == DeviceTypeEnum.MOBILE_WEB
-        || type == DeviceTypeEnum.FIELD_IOS
-        || type == DeviceTypeEnum.FIELD_ANDROID
+    return (
+        type == DeviceTypeEnum.MOBILE_WEB ||
+        type == DeviceTypeEnum.FIELD_IOS ||
+        type == DeviceTypeEnum.FIELD_ANDROID
+    );
 }
 
 export function isOffice(type: DeviceTypeEnum): boolean {
-    return type == DeviceTypeEnum.DESKTOP_MACOS
-        || type == DeviceTypeEnum.DESKTOP_WINDOWS
-        || type == DeviceTypeEnum.DESKTOP_WEB
+    return (
+        type == DeviceTypeEnum.DESKTOP_MACOS ||
+        type == DeviceTypeEnum.DESKTOP_WINDOWS ||
+        type == DeviceTypeEnum.DESKTOP_WEB
+    );
 }
 
 export abstract class HardwareInfoI {
-    abstract uuid(): Promise<string> ;
-    
+    abstract uuid(): Promise<string>;
+
     abstract description(): string;
-    
+
     abstract deviceType(): DeviceTypeEnum;
-    
+
     isWeb(): boolean {
-        return isWeb(this.deviceType())
+        return isWeb(this.deviceType());
     }
-    
+
     isField(): boolean {
-        return isField(this.deviceType())
+        return isField(this.deviceType());
     }
-    
+
     isOffice(): boolean {
-        return isOffice(this.deviceType())
+        return isOffice(this.deviceType());
     }
 }

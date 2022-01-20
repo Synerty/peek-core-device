@@ -1,1 +1,1 @@
-export { DeviceInfoTable } from "./DeviceInfoTable"
+export { DeviceInfoTable } from "./DeviceInfoTable";

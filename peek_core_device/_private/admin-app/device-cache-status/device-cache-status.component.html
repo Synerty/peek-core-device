@@ -1,13 +1,13 @@
-
 <div *ngIf="(statusList$ | async).length !== 0; else emptyTpl">
-    <div *ngFor="let status of (statusList$ | async)">
-        <h4>{{status.pluginName}} - {{status.indexName}}</h4>
+    <div *ngFor="let status of statusList$ | async">
+        <h4>{{ status.pluginName }} - {{ status.indexName }}</h4>
         <p>
             Load Complete :
-            {{status.initialFullLoadComplete}}<br />
+            {{ status.initialFullLoadComplete }}<br />
             Load Progress :
-            {{status.totalLoadedCount}}/{{status.loadingQueueCount}}<br />
-            Last Check Finished : {{status.lastCheckDate | date:"medium"}}<br />
+            {{ status.totalLoadedCount }}/{{ status.loadingQueueCount }}<br />
+            Last Check Finished : {{ status.lastCheckDate | date: "medium"
+            }}<br />
         </p>
     </div>
 </div>

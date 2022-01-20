@@ -1,24 +1,27 @@
-import { Component, OnInit } from "@angular/core"
-import { BalloonMsgService, HeaderService } from "@synerty/peek-plugin-base-js"
-import { NgLifeCycleEvents, TupleSelector } from "@synerty/vortexjs"
-import { first } from "rxjs/operators"
+import { Component, OnInit } from "@angular/core";
+import { BalloonMsgService, HeaderService } from "@synerty/peek-plugin-base-js";
+import { NgLifeCycleEvents, TupleSelector } from "@synerty/vortexjs";
+import { first } from "rxjs/operators";
 import {
     ClientSettingsTuple,
     DeviceNavService,
     DeviceTupleService,
-    EnrolDeviceAction
-} from "@peek/peek_core_device/_private"
-import { DeviceEnrolmentService, DeviceInfoTuple } from "@peek/peek_core_device"
-import { DeviceTypeEnum } from "@peek/peek_core_device/_private/hardware-info/hardware-info.abstract"
+    EnrolDeviceAction,
+} from "@peek/peek_core_device/_private";
+import {
+    DeviceEnrolmentService,
+    DeviceInfoTuple,
+} from "@peek/peek_core_device";
+import { DeviceTypeEnum } from "@peek/peek_core_device/_private/hardware-info/hardware-info.abstract";
 
 @Component({
     selector: "core-device-enroll",
-    templateUrl: "enroll.component.web.html"
+    templateUrl: "enroll.component.web.html",
 })
 export class EnrollComponent extends NgLifeCycleEvents implements OnInit {
-    data: EnrolDeviceAction = new EnrolDeviceAction()
-    deviceType: DeviceTypeEnum
-    
+    data: EnrolDeviceAction = new EnrolDeviceAction();
+    deviceType: DeviceTypeEnum;
+
     constructor(
         private balloonMsg: BalloonMsgService,
         private headerService: HeaderService,
@@ -26,93 +29,93 @@ export class EnrollComponent extends NgLifeCycleEvents implements OnInit {
         private nav: DeviceNavService,
         private enrolmentService: DeviceEnrolmentService
     ) {
-        super()
-        
-        this.deviceType = this.tupleService.hardwareInfo.deviceType()
-        
+        super();
+
+        this.deviceType = this.tupleService.hardwareInfo.deviceType();
+
         // Make sure we're not on this page when things are fine.
         let sub = this.doCheckEvent
             .takeUntil(this.onDestroyEvent)
             .subscribe(() => {
                 if (this.enrolmentService.isEnrolled()) {
-                    this.nav.toHome()
-                    sub.unsubscribe()
+                    this.nav.toHome();
+                    sub.unsubscribe();
+                } else if (this.enrolmentService.isSetup()) {
+                    this.nav.toEnrolling();
+                    sub.unsubscribe();
                 }
-                else if (this.enrolmentService.isSetup()) {
-                    this.nav.toEnrolling()
-                    sub.unsubscribe()
-                }
-            })
+            });
     }
-    
+
     ngOnInit() {
-        this.headerService.setEnabled(false)
-        this.headerService.setTitle("")
-        
-        let t = this.deviceType
-        
+        this.headerService.setEnabled(false);
+        this.headerService.setTitle("");
+
+        let t = this.deviceType;
+
         // Use DeviceInfoTuple to convert it.
-        let deviceInfo = new DeviceInfoTuple()
-        deviceInfo.setDeviceType(t)
-        this.data.deviceType = deviceInfo.deviceType
-        
-        this.tupleService.hardwareInfo.uuid()
-            .then(uuid => {
-                this.data.deviceId = uuid
-                this.checkForEnrollEnabled()
-            })
+        let deviceInfo = new DeviceInfoTuple();
+        deviceInfo.setDeviceType(t);
+        this.data.deviceType = deviceInfo.deviceType;
+
+        this.tupleService.hardwareInfo.uuid().then((uuid) => {
+            this.data.deviceId = uuid;
+            this.checkForEnrollEnabled();
+        });
     }
-    
+
     enrollEnabled(): boolean {
         if (this.data.description == null || !this.data.description.length)
-            return false
-        
-        return true
+            return false;
+
+        return true;
     }
-    
+
     enrollClicked() {
         if (!this.enrollEnabled()) {
-            this.balloonMsg
-                .showWarning("Please enter a unique description for this device")
-            return
+            this.balloonMsg.showWarning(
+                "Please enter a unique description for this device"
+            );
+            return;
         }
-        
-        this.tupleService.tupleAction.pushAction(this.data)
+
+        this.tupleService.tupleAction
+            .pushAction(this.data)
             .then((tuples: DeviceInfoTuple[]) => {
-                this.balloonMsg.showSuccess("Enrollement successful")
+                this.balloonMsg.showSuccess("Enrollement successful");
             })
             .catch((err) => {
-                this.balloonMsg.showError(err)
-            })
+                this.balloonMsg.showError(err);
+            });
     }
-    
+
     private checkForEnrollEnabled(): void {
-        let ts = new TupleSelector(ClientSettingsTuple.tupleName, {})
+        let ts = new TupleSelector(ClientSettingsTuple.tupleName, {});
         this.tupleService.offlineObserver
             .subscribeToTupleSelector(ts)
             .pipe(first())
             .takeUntil(this.onDestroyEvent)
             .subscribe((settings: ClientSettingsTuple[]) => {
-                if (settings.length != 1)
-                    return
-                
-                let setting: ClientSettingsTuple = settings[0]
-                
-                if (this.tupleService.hardwareInfo.isOffice()
-                    && !setting.officeEnrollmentEnabled) {
-                    this.autoEnroll()
-                    
+                if (settings.length != 1) return;
+
+                let setting: ClientSettingsTuple = settings[0];
+
+                if (
+                    this.tupleService.hardwareInfo.isOffice() &&
+                    !setting.officeEnrollmentEnabled
+                ) {
+                    this.autoEnroll();
+                } else if (
+                    this.tupleService.hardwareInfo.isField() &&
+                    !setting.fieldEnrollmentEnabled
+                ) {
+                    this.autoEnroll();
                 }
-                else if (this.tupleService.hardwareInfo.isField()
-                    && !setting.fieldEnrollmentEnabled) {
-                    this.autoEnroll()
-                }
-                
-            })
+            });
     }
-    
+
     private autoEnroll(): void {
-        this.data.description = this.data.deviceId
-        this.enrollClicked()
+        this.data.description = this.data.deviceId;
+        this.enrollClicked();
     }
 }

@@ -1,4 +1,4 @@
-import { Component } from "@angular/core"
+import { Component } from "@angular/core";
 
 /* This file is here to make the admin site compile, since there is a public
  angular module that depends on it.
@@ -6,12 +6,8 @@ import { Component } from "@angular/core"
 
 @Component({
     selector: "core-device-loading",
-    template: "<p>nothing</p>"
+    template: "<p>nothing</p>",
 })
 export class LoadingComponent {
-    
-    constructor() {
-    
-    }
-    
+    constructor() {}
 }

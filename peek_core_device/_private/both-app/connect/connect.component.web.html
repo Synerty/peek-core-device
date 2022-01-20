@@ -1,5 +1,4 @@
 <div class="peek-details-section">
-
     <div class="container-fluid">
         <div class="row">
             <div class="col-xs-12">
@@ -10,16 +9,14 @@
 
         <div *ngIf="platform !== 'web'" class="row">
             <div class="col-lg-1">
-                <div class="details-section-title">
-                    IP Address
-                </div>
+                <div class="details-section-title">IP Address</div>
                 <div class="details-section-value">
                     <input
-                            [(ngModel)]="server.host"
-                            autocomplete="off"
-                            class="form-control editable"
-                            type="text"
-                    >
+                        [(ngModel)]="server.host"
+                        autocomplete="off"
+                        class="form-control editable"
+                        type="text"
+                    />
                 </div>
             </div>
         </div>
@@ -28,56 +25,49 @@
         <div class="row">
             <!-- Col 0 -->
             <div class="col-xs-4">
-                <div class="details-section-title">
-                    HTTP Port
-                </div>
+                <div class="details-section-title">HTTP Port</div>
                 <div class="details-section-value">
                     <input
-                            [(ngModel)]="httpPortStr"
-                            class="form-control editable"
-                            type="text"
-                    >
+                        [(ngModel)]="httpPortStr"
+                        class="form-control editable"
+                        type="text"
+                    />
                 </div>
             </div>
 
             <!-- Col 1 -->
             <div class="col-xs-4">
-                <div class="details-section-title">
-                    WebSocket Port
-                </div>
+                <div class="details-section-title">WebSocket Port</div>
                 <div class="details-section-value">
                     <input
-                            [(ngModel)]="websocketPortStr"
-                            class="form-control editable"
-                            type="text"
-                    >
+                        [(ngModel)]="websocketPortStr"
+                        class="form-control editable"
+                        type="text"
+                    />
                 </div>
             </div>
 
             <!-- Col 2 -->
             <div class="col-xs-4">
-                <div class="details-section-title">
-                    Use SSL
-                </div>
+                <div class="details-section-title">Use SSL</div>
                 <div class="details-section-value">
                     <input
-                            [(ngModel)]="server.useSsl"
-                            class="form-control editable"
-                            type="checkbox"
-                    >
+                        [(ngModel)]="server.useSsl"
+                        class="form-control editable"
+                        type="checkbox"
+                    />
                 </div>
             </div>
         </div>
 
         <!--  -->
-        <hr>
+        <hr />
         <div class="row">
             <div class="col-xs-12">
-                <Button (click)="connectClicked()" class="btn btn-block">
+                <button (click)="connectClicked()" class="btn btn-block">
                     Connect
-                </Button>
+                </button>
             </div>
         </div>
-
     </div>
 </div>

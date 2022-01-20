@@ -1,5 +1,4 @@
 <div class="peek-details-section">
-
     <div class="container-fluid">
         <div class="row">
             <div class="col-xs-12">
@@ -16,27 +15,27 @@
                 </div>
                 <div class="details-section-value">
                     <input
-                            [(ngModel)]="data.description"
-                            class="form-control editable"
-                            type="text"
-                    >
+                        [(ngModel)]="data.description"
+                        class="form-control editable"
+                        type="text"
+                    />
                 </div>
             </div>
         </div>
 
         <!--  -->
-        <hr>
+        <hr />
         <div class="row">
             <div class="col-xs-12">
-                <Button (click)="enrollClicked()" class="btn btn-block">
+                <button (click)="enrollClicked()" class="btn btn-block">
                     Enroll
-                </Button>
+                </button>
             </div>
         </div>
 
         <div class="row">
             <div class="col-xs-12">
-                <br>
+                <br />
                 <p>This devices id is {{ data.deviceId }}</p>
             </div>
         </div>
