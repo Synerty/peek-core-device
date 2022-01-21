@@ -1,3 +1,4 @@
+import { takeUntil } from "rxjs/operators";
 import { Component, OnInit } from "@angular/core";
 import { BalloonMsgService, HeaderService } from "@synerty/peek-plugin-base-js";
 import { NgLifeCycleEvents } from "@synerty/vortexjs";
@@ -26,7 +27,7 @@ export class EnrollingComponent extends NgLifeCycleEvents implements OnInit {
 
         // Make sure we're not on this page when things are fine.
         let sub = this.doCheckEvent
-            .takeUntil(this.onDestroyEvent)
+            .pipe(takeUntil(this.onDestroyEvent))
             .subscribe(() => {
                 if (this.enrolmentService.isEnrolled()) {
                     this.nav.toHome();

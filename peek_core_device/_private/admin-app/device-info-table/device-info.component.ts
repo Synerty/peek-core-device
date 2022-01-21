@@ -1,3 +1,4 @@
+import { BehaviorSubject } from "rxjs";
 import { Component } from "@angular/core";
 import {
     BalloonMsgLevel,
@@ -16,7 +17,6 @@ import { UpdateEnrollmentAction } from "@peek/peek_core_device/_private";
 import { takeUntil } from "rxjs/operators";
 import { DatePipe } from "@angular/common";
 import { UpdateOfflineCacheSettingAction } from "../tuples/UpdateOfflineCacheSettingAction";
-import { BehaviorSubject } from "rxjs";
 
 @Component({
     selector: "core-device-device-info",

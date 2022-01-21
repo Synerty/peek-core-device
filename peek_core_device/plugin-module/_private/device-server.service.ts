@@ -1,3 +1,5 @@
+import { Observable, Subject } from "rxjs";
+import { filter, first } from "rxjs/operators";
 import { Injectable } from "@angular/core";
 import { BalloonMsgService } from "@synerty/peek-plugin-base-js";
 import {
@@ -11,7 +13,6 @@ import {
 import { deviceFilt, deviceTuplePrefix } from "./PluginNames";
 import { DeviceTupleService } from "./device-tuple.service";
 import { DeviceNavService } from "./device-nav.service";
-import { Observable, Subject } from "rxjs";
 import { Capacitor } from "@capacitor/core";
 
 @addTupleType
@@ -116,8 +117,8 @@ export class DeviceServerService {
         this.serverInfo = serverInfo;
 
         this.vortexStatusService.isOnline
-            .filter((online) => online == true)
-            .first()
+            .pipe(filter((online) => online == true))
+            .pipe(first())
             .subscribe(() => {
                 this.weHaveConnected();
                 this.balloonMsg.showSuccess("Reconnection Successful");
@@ -240,7 +241,7 @@ export class DeviceServerService {
             let filt = extend({ deviceId: deviceId }, this.deviceOnlineFilt);
 
             this.lastOnlineSub = this.vortexStatusService.isOnline
-                .filter((online) => online) // Filter for online only
+                .pipe(filter((online) => online)) // Filter for online only
                 .subscribe(() => {
                     this.vortexService.sendFilt(filt);
                 });

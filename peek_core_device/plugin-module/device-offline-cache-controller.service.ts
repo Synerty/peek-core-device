@@ -1,5 +1,5 @@
+import { BehaviorSubject, interval, Observable, Subject } from "rxjs";
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable, Subject, interval } from "rxjs";
 import { takeUntil, throttle } from "rxjs/operators";
 
 import {
@@ -114,7 +114,7 @@ export class DeviceOfflineCacheControllerService extends NgLifeCycleEvents {
         /*
          // Check for updates every so often
          Observable.interval(this.OFFLINE_CHECK_PERIOD_MS)
-         .takeUntil(this.onDestroyEvent)
+         .pipe(takeUntil(this.onDestroyEvent))
          .subscribe(() => this.askServerForUpdates())
          */
     }

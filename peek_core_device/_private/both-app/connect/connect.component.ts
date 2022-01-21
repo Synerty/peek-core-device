@@ -1,3 +1,4 @@
+import { takeUntil } from "rxjs/operators";
 import { Component, OnInit } from "@angular/core";
 import { BalloonMsgService, HeaderService } from "@synerty/peek-plugin-base-js";
 import { NgLifeCycleEvents } from "@synerty/vortexjs";
@@ -35,14 +36,14 @@ export class ConnectComponent extends NgLifeCycleEvents implements OnInit {
         this.isWeb = this.tupleService.hardwareInfo.isWeb();
 
         this.deviceServerService.connInfoObserver
-            .takeUntil(this.onDestroyEvent)
+            .pipe(takeUntil(this.onDestroyEvent))
             .subscribe((info: ServerInfoTuple) => {
                 this.server = info;
             });
 
         // Make sure we're not on this page when things are fine.
         let sub = this.doCheckEvent
-            .takeUntil(this.onDestroyEvent)
+            .pipe(takeUntil(this.onDestroyEvent))
             .subscribe(() => {
                 if (this.deviceServerService.isConnected) {
                     this.nav.toEnroll();

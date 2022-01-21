@@ -1,7 +1,7 @@
+import { first, takeUntil } from "rxjs/operators";
 import { Component, OnInit } from "@angular/core";
 import { BalloonMsgService, HeaderService } from "@synerty/peek-plugin-base-js";
 import { NgLifeCycleEvents, TupleSelector } from "@synerty/vortexjs";
-import { first } from "rxjs/operators";
 import {
     ClientSettingsTuple,
     DeviceNavService,
@@ -35,7 +35,7 @@ export class EnrollComponent extends NgLifeCycleEvents implements OnInit {
 
         // Make sure we're not on this page when things are fine.
         let sub = this.doCheckEvent
-            .takeUntil(this.onDestroyEvent)
+            .pipe(takeUntil(this.onDestroyEvent))
             .subscribe(() => {
                 if (this.enrolmentService.isEnrolled()) {
                     this.nav.toHome();
@@ -94,7 +94,7 @@ export class EnrollComponent extends NgLifeCycleEvents implements OnInit {
         this.tupleService.offlineObserver
             .subscribeToTupleSelector(ts)
             .pipe(first())
-            .takeUntil(this.onDestroyEvent)
+            .pipe(takeUntil(this.onDestroyEvent))
             .subscribe((settings: ClientSettingsTuple[]) => {
                 if (settings.length != 1) return;
 
