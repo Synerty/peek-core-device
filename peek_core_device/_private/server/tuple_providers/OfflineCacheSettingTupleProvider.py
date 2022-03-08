@@ -1,6 +1,8 @@
 import logging
 from typing import Union
 
+import sqlalchemy
+
 from peek_core_device._private.storage.DeviceInfoTable import DeviceInfoTable
 from peek_core_device._private.storage.GpsLocationTable import GpsLocationTable
 from twisted.internet.defer import Deferred
@@ -33,11 +35,15 @@ class OfflineCacheSettingTupleProvider(TuplesProviderABC):
 
         ormSession = self._ormSessionCreator()
         try:
-            deviceTuple = (
-                ormSession.query(DeviceInfoTable)
-                .filter(DeviceInfoTable.deviceToken == deviceToken)
-                .one()
-            )
+            try:
+                deviceTuple = (
+                    ormSession.query(DeviceInfoTable)
+                    .filter(DeviceInfoTable.deviceToken == deviceToken)
+                    .one()
+                )
+
+            except sqlalchemy.orm.exc.NoResultFound:
+                deviceTuple = DeviceInfoTable(isOfflineCacheEnabled=False)
 
             syncSeconds = globalSetting(
                 ormSession, OFFLINE_CACHE_REFRESH_SECONDS
