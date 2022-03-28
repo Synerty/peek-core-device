@@ -17,6 +17,7 @@ from peek_core_device._private.PluginNames import deviceObservableName
 from peek_core_device._private.tuples.UpdateDeviceOnlineAction import (
     UpdateDeviceOnlineAction,
 )
+from peek_plugin_base.LoopingCallUtil import peekCatchErrbackWithLogger
 from peek_plugin_base.PeekVortexUtil import peekServerName
 
 from peek_core_device.tuples.DeviceInfoTuple import DeviceInfoTuple
@@ -66,12 +67,15 @@ class DeviceOnlineHandler:
         # self._sendOfflineForDeviceIds(self._onlineDeviceIdsByUuid.values())
         self._onlineDeviceIdsByUuid = {}
 
+    @peekCatchErrbackWithLogger(logger)
     def _poll(self):
         try:
             onlineVortexUuids = set(VortexFactory.getRemoteVortexUuids())
             onlineDeviceVortexUuids = set(self._onlineDeviceIdsByUuid)
 
-            devicesThatHaveGoneOffline = onlineDeviceVortexUuids - onlineVortexUuids
+            devicesThatHaveGoneOffline = (
+                onlineDeviceVortexUuids - onlineVortexUuids
+            )
 
             deviceIds = []
             for vortexUuid in devicesThatHaveGoneOffline:
@@ -79,15 +83,17 @@ class DeviceOnlineHandler:
 
             # Make sure the device hasn't come back online as a difference vortex UUID
             deviceIds = list(
-                set(deviceIds) - set(self._onlineDeviceIdsByUuid.values()))
+                set(deviceIds) - set(self._onlineDeviceIdsByUuid.values())
+            )
 
             self._sendOfflineForDeviceIds(deviceIds)
 
         except Exception as e:
             logger.exception(e)
 
-    def _process(self, payloadEnvelope: PayloadEnvelope, vortexUuid: str,
-                 **kwargs):
+    def _process(
+        self, payloadEnvelope: PayloadEnvelope, vortexUuid: str, **kwargs
+    ):
         deviceId = payloadEnvelope.filt["deviceId"]
 
         if vortexUuid in self._onlineDeviceIdsByUuid:
