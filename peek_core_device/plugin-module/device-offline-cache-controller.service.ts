@@ -1,6 +1,6 @@
 import { BehaviorSubject, interval, Observable, Subject } from "rxjs";
 import { Injectable } from "@angular/core";
-import { takeUntil, throttle } from "rxjs/operators";
+import { filter, takeUntil, throttle } from "rxjs/operators";
 
 import {
     NgLifeCycleEvents,
@@ -16,6 +16,7 @@ import { OfflineCacheStatusAction } from "./_private/tuples/OfflineCacheStatusAc
 
 @Injectable()
 export class DeviceOfflineCacheControllerService extends NgLifeCycleEvents {
+    private _offlineModeEnabled$ = new BehaviorSubject<boolean>(false);
     private _triggerCachingSubject = new BehaviorSubject<boolean>(false);
     private _cachingStatus$ = new BehaviorSubject<OfflineCacheStatusTuple[]>(
         []
@@ -68,6 +69,15 @@ export class DeviceOfflineCacheControllerService extends NgLifeCycleEvents {
                             )
                                 this._resetTimer();
                         }
+
+                        if (
+                            this.settings.offlineEnabled !==
+                            this._offlineModeEnabled$.getValue()
+                        ) {
+                            this._offlineModeEnabled$.next(
+                                this.settings.offlineEnabled
+                            );
+                        }
                     });
             });
 
@@ -78,7 +88,10 @@ export class DeviceOfflineCacheControllerService extends NgLifeCycleEvents {
             });
 
         this.cacheStatus$ //
-            .pipe(throttle((val) => interval(60000)))
+            .pipe(
+                throttle((val) => interval(60000)),
+                filter(() => this.vortexStatusService.snapshot.isOnline)
+            )
             .subscribe(() => {
                 const action = new OfflineCacheStatusAction();
                 action.deviceToken = this.deviceInfo.deviceToken;
@@ -120,7 +133,12 @@ export class DeviceOfflineCacheControllerService extends NgLifeCycleEvents {
     }
 
     private _triggerUpdate(): void {
-        if (!this.vortexStatusService.snapshot.isOnline) return;
+        // Force an update if the trigger has changed state
+        // This condition occurs when the services are starting
+        // and offline mode is enabled.
+        const force =
+            this._triggerCachingSubject.getValue() != this.offlineModeEnabled;
+        if (!force && !this.vortexStatusService.snapshot.isOnline) return;
         const timeSinceLastRun =
             new Date().getTime() / 1000 - this._lastTimeRun;
         if (timeSinceLastRun < this.settings.offlineCacheSyncSeconds) {
@@ -147,6 +165,14 @@ export class DeviceOfflineCacheControllerService extends NgLifeCycleEvents {
 
     get cacheStatus$(): BehaviorSubject<OfflineCacheStatusTuple[]> {
         return this._cachingStatus$;
+    }
+
+    get offlineModeEnabled(): boolean {
+        return this.settings.offlineEnabled;
+    }
+
+    get offlineModeEnabled$(): Observable<boolean> {
+        return this._offlineModeEnabled$;
     }
 
     get cachingEnabled(): boolean {
