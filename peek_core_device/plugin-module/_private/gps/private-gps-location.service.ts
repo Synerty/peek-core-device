@@ -11,6 +11,7 @@ import { GpsLocationUpdateTupleAction } from "./GpsLocationUpdateTupleAction";
 import { DeviceEnrolmentService } from "../../device-enrolment.service";
 import { DeviceBackgroundService } from "../device-background.service";
 import { BackgroundGeolocationPlugin } from "@capacitor-community/background-geolocation";
+import { isField } from "@peek/peek_core_device/_private/hardware-info/is-field.mweb";
 
 const BackgroundGeolocation =
     Plugins.BackgroundGeolocation as BackgroundGeolocationPlugin;
@@ -33,20 +34,22 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
     ) {
         super();
 
-        combineLatest(
-            this.userService.loggedInStatus,
-            this.deviceService.deviceInfoObservable()
-        ).subscribe(async ([isLoggedIn, deviceInfo]) => {
-            if (isLoggedIn && deviceInfo.isEnrolled) {
-                if (!this.gpsWatchId) {
-                    this.startLocationListener();
+        if (isField) {
+            combineLatest([
+                this.userService.loggedInStatus,
+                this.deviceService.deviceInfoObservable(),
+            ]).subscribe(async ([isLoggedIn, deviceInfo]) => {
+                if (isLoggedIn && deviceInfo.isEnrolled) {
+                    if (!this.gpsWatchId) {
+                        this.startLocationListener();
+                    }
+                } else {
+                    if (this.gpsWatchId) {
+                        this.stopLocationListener();
+                    }
                 }
-            } else {
-                if (this.gpsWatchId) {
-                    this.stopLocationListener();
-                }
-            }
-        });
+            });
+        }
     }
 
     get location$(): Observable<DeviceGpsLocationTuple | null> {
