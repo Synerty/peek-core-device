@@ -19,14 +19,19 @@ import { Capacitor } from "@capacitor/core";
 export class ServerInfoTuple extends Tuple {
     public static readonly tupleName = deviceTuplePrefix + "ServerInfoTuple";
 
+    static readonly DEFAULT_HTTP_PORT = 8000;
+    static readonly DEFAULT_WEBSOCKET_PORT = 8000;
+
     host: string;
     useSsl: boolean = false;
-    httpPort: number = 8000;
-    websocketPort: number = 8001;
+    httpPort: number;
+    websocketPort: number;
     hasConnected: boolean = false;
 
     constructor() {
         super(ServerInfoTuple.tupleName);
+        this.httpPort = ServerInfoTuple.DEFAULT_HTTP_PORT;
+        this.websocketPort = ServerInfoTuple.DEFAULT_WEBSOCKET_PORT;
     }
 }
 

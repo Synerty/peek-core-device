@@ -15,8 +15,9 @@ import { DeviceTypeEnum } from "@peek/peek_core_device/_private/hardware-info/ha
 })
 export class ConnectComponent extends NgLifeCycleEvents implements OnInit {
     server: ServerInfoTuple = new ServerInfoTuple();
-    httpPortStr: string = "8000";
-    websocketPortStr: string = "8001";
+    httpPortStr: string = ServerInfoTuple.DEFAULT_HTTP_PORT.toString();
+    websocketPortStr: string =
+        ServerInfoTuple.DEFAULT_WEBSOCKET_PORT.toString();
     deviceType: DeviceTypeEnum;
     isWeb: boolean;
 
