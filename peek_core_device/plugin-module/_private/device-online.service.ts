@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { DeviceTupleService } from "./device-tuple.service";
-import { UpdateDeviceOnlineAction } from "./";
+import { UpdateDeviceOnlineAction } from "./tuples/UpdateDeviceOnlineAction";
 
 @Injectable()
 export class DeviceOnlineService {
