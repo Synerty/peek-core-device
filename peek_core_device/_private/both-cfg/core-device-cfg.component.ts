@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { HeaderService } from "@synerty/peek-plugin-base-js";
 import { NgLifeCycleEvents } from "@synerty/vortexjs";
 import {
-    DeviceOfflineCacheControllerService,
+    DeviceOfflineCacheService,
     OfflineCacheStatusTuple,
 } from "@peek/peek_core_device";
 import { DeviceTupleService } from "@peek/peek_core_device/_private";
@@ -18,7 +18,7 @@ export class CoreDeviceCfgComponent extends NgLifeCycleEvents {
     constructor(
         private headerService: HeaderService,
         private tupleService: DeviceTupleService,
-        private cacheController: DeviceOfflineCacheControllerService
+        private cacheController: DeviceOfflineCacheService
     ) {
         super();
         this.statusList$ = cacheController.cacheStatus$;

@@ -55,8 +55,8 @@
         ],
         "rootServices": [
             {
-                "file": "device-offline-cache-controller.service",
-                "class": "DeviceOfflineCacheControllerService",
+                "file": "device-offline-cache.service",
+                "class": "DeviceOfflineCacheService",
                 "persistent": true
             },
             {
@@ -130,8 +130,8 @@
         ],
         "rootServices": [
             {
-                "file": "device-offline-cache-controller.service",
-                "class": "DeviceOfflineCacheControllerService",
+                "file": "device-offline-cache.service",
+                "class": "DeviceOfflineCacheService",
                 "persistent": true
             },
             {

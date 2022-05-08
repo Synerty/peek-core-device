@@ -1,6 +1,6 @@
 import { BehaviorSubject, interval, Observable, Subject } from "rxjs";
 import { Injectable } from "@angular/core";
-import { filter, takeUntil, throttle } from "rxjs/operators";
+import { filter, takeUntil, throttle, first } from "rxjs/operators";
 
 import {
     NgLifeCycleEvents,
@@ -15,7 +15,7 @@ import { DeviceInfoTuple } from "./DeviceInfoTuple";
 import { OfflineCacheStatusAction } from "./_private/tuples/OfflineCacheStatusAction";
 
 @Injectable()
-export class DeviceOfflineCacheControllerService extends NgLifeCycleEvents {
+export class DeviceOfflineCacheService extends NgLifeCycleEvents {
     private _offlineModeEnabled$ = new BehaviorSubject<boolean>(false);
     private _triggerCachingSubject = new BehaviorSubject<boolean>(false);
     private _cachingStatus$ = new BehaviorSubject<OfflineCacheStatusTuple[]>(
@@ -31,12 +31,36 @@ export class DeviceOfflineCacheControllerService extends NgLifeCycleEvents {
 
     private unsub = new Subject<void>();
 
+    private pauseCacheForGarbageCollectorInterval$: Observable<number>;
+    private cachingPausedForGarbageCollector$ = new BehaviorSubject<boolean>(
+        false
+    );
+
     constructor(
         private vortexStatusService: VortexStatusService,
         private tupleService: DeviceTupleService,
         private enrolmentService: DeviceEnrolmentService
     ) {
         super();
+        const CACHE_RUN_SECONDS = 60;
+        const CACHE_PAUSE_SECONDS = 15;
+
+        this.pauseCacheForGarbageCollectorInterval$ = interval(
+            (CACHE_RUN_SECONDS + CACHE_PAUSE_SECONDS) * 1000
+        );
+        this.pauseCacheForGarbageCollectorInterval$
+            .pipe(takeUntil(this.onDestroyEvent))
+            .subscribe(() => {
+                console.log(`${new Date()} Pausing load for garbage collector`);
+                this.cachingPausedForGarbageCollector$.next(true);
+                setTimeout(() => {
+                    console.log(
+                        `${new Date()} Resuming load` +
+                            " after we hope the garbage collector ran"
+                    );
+                    this.cachingPausedForGarbageCollector$.next(false);
+                }, CACHE_PAUSE_SECONDS * 1000);
+            });
 
         // Why should we care if we're enrolled or not to check for updates?
         // Devices that are not enrolled should not be able to access any thing on
@@ -155,6 +179,19 @@ export class DeviceOfflineCacheControllerService extends NgLifeCycleEvents {
     updateCachingStatus(status: OfflineCacheStatusTuple): void {
         this._cacheStatus[status.key] = status;
         this._cachingStatus$.next(this._cacheStatusList);
+    }
+
+    async waitForGarbageCollector(): Promise<void> {
+        if (this.cachingPausedForGarbageCollector$.getValue()) {
+            await new Promise<void>((resolve, reject) => {
+                this.cachingPausedForGarbageCollector$
+                    .pipe(
+                        filter((paused) => paused === false),
+                        first()
+                    )
+                    .subscribe(() => resolve());
+            });
+        }
     }
 
     private get _cacheStatusList(): OfflineCacheStatusTuple[] {
