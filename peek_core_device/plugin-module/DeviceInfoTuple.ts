@@ -1,6 +1,6 @@
 import { addTupleType, Tuple } from "@synerty/vortexjs";
 import { deviceTuplePrefix } from "./_private/PluginNames";
-import { DeviceTypeEnum } from "./_private/hardware-info/hardware-info.abstract";
+import { DeviceTypeEnum } from "./_private/hardware-info/hardware-info";
 import { DeviceGpsLocationTuple } from "./DeviceGpsLocationTuple";
 import { Capacitor } from "@capacitor/core";
 
@@ -37,7 +37,7 @@ export class DeviceInfoTuple extends Tuple {
     }
 
     get isWeb(): boolean {
-        return !Capacitor.isNative;
+        return !Capacitor.isNativePlatform();
     }
 
     get isBackgrounded(): boolean {

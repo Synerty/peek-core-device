@@ -1,9 +1,7 @@
 import { Injectable } from "@angular/core";
 import { DeviceTupleService } from "./device-tuple.service";
-import { Plugins } from "@capacitor/core";
+import { App } from "@capacitor/app";
 import { DeviceBackgroundStateTupleAction } from "./";
-
-const { App } = Plugins;
 
 @Injectable()
 export class DeviceBackgroundService {

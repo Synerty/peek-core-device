@@ -58,7 +58,7 @@ export class DeviceServerService {
     ) {
         // Web doesn't need connection details,
         // The websocket now connects to the same port as the http server.
-        if (!Capacitor.isNative) {
+        if (!Capacitor.isNativePlatform()) {
             this._isLoading = false;
             this.serverInfo = this.extractHttpDetails();
             this.serverInfo.hasConnected = true;
@@ -136,19 +136,20 @@ export class DeviceServerService {
     }
 
     private _loadNsWebsocket() {
-        this.loadConnInfo().then(() => {
-            // If there is a host set, set the vortex
-            if (this.isSetup) {
-                this.updateVortex();
-                return;
-            }
+        this.loadConnInfo() //
+            .then(() => {
+                // If there is a host set, set the vortex
+                if (this.isSetup) {
+                    this.updateVortex();
+                    return;
+                }
 
-            this.nav.toConnect();
-        });
+                this.nav.toConnect();
+            });
     }
 
     private extractHttpDetails(): ServerInfoTuple {
-        if (Capacitor.isNative) {
+        if (Capacitor.isNativePlatform()) {
             throw new Error(
                 "This method is only for the web version of the app"
             );
