@@ -6,17 +6,19 @@ import {
 } from "@peek/peek_core_device";
 import { UserService } from "@peek/peek_core_user";
 import { Capacitor, Plugins } from "@capacitor/core";
+import { Dialog } from "@capacitor/dialog";
+import { Geolocation } from "@capacitor/geolocation";
 import { DeviceTupleService } from "../device-tuple.service";
 import { GpsLocationUpdateTupleAction } from "./GpsLocationUpdateTupleAction";
 import { DeviceEnrolmentService } from "../../device-enrolment.service";
 import { DeviceBackgroundService } from "../device-background.service";
-import { BackgroundGeolocationPlugin } from "@capacitor-community/background-geolocation";
 import { isField } from "@peek/peek_core_device/_private/hardware-info/is-field.mweb";
 
-const BackgroundGeolocation =
-    Plugins.BackgroundGeolocation as BackgroundGeolocationPlugin;
-
-const { Geolocation, Modals } = Plugins;
+import { registerPlugin } from "@capacitor/core";
+import { BackgroundGeolocationPlugin } from "@capacitor-community/background-geolocation";
+const BackgroundGeolocation = registerPlugin<BackgroundGeolocationPlugin>(
+    "BackgroundGeolocation"
+);
 
 @Injectable()
 export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
@@ -69,8 +71,8 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
     }
 
     private startLocationListener(): void {
-        if (Capacitor.isNative) {
-            this.gpsWatchId = BackgroundGeolocation.addWatcher(
+        if (Capacitor.isNativePlatform()) {
+            BackgroundGeolocation.addWatcher(
                 {
                     backgroundMessage:
                         "Allow Peek track this devices GPS location.",
@@ -102,19 +104,20 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
                     console.log("Cannot get current GPS position.");
                 });
 
-            this.gpsWatchId = Geolocation.watchPosition(
+            Geolocation.watchPosition(
                 { enableHighAccuracy: true },
                 (position, err) => {
                     if (position) {
                         this.updateLocation(position);
                     }
                 }
-            );
+            ) //
+                .then((gpsWatchId) => (this.gpsWatchId = gpsWatchId));
         }
     }
 
     private handleLocationPermission(): void {
-        Modals.confirm({
+        Dialog.confirm({
             title: "Location Required",
             message:
                 "This app needs your location, " +
@@ -128,12 +131,17 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
     }
 
     private stopLocationListener(): void {
-        if (Capacitor.isNative) {
-            BackgroundGeolocation.removeWatcher({ id: this.gpsWatchId });
+        if (Capacitor.isNativePlatform()) {
+            BackgroundGeolocation.removeWatcher({
+                //
+                id: this.gpsWatchId,
+            });
+            this.gpsWatchId = null;
         } else {
-            Geolocation.clearWatch({ id: this.gpsWatchId });
+            Geolocation.clearWatch({ id: this.gpsWatchId }).then(
+                () => (this.gpsWatchId = null)
+            );
         }
-        this.gpsWatchId = null;
     }
 
     private updateLocation(position): void {

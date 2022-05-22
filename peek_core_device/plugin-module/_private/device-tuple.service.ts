@@ -20,7 +20,7 @@ import {
     deviceObservableName,
     deviceTupleOfflineServiceName,
 } from "./PluginNames";
-import { HardwareInfo } from "./hardware-info/hardware-info.web";
+import { HardwareInfo } from "./hardware-info/hardware-info";
 
 /** Device Tuple Service
  *

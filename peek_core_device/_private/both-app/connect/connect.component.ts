@@ -8,7 +8,7 @@ import {
     DeviceTupleService,
     ServerInfoTuple,
 } from "@peek/peek_core_device/_private";
-import { DeviceTypeEnum } from "@peek/peek_core_device/_private/hardware-info/hardware-info.abstract";
+import { DeviceTypeEnum } from "@peek/peek_core_device/_private/hardware-info/hardware-info";
 import { Capacitor } from "@capacitor/core";
 
 @Component({

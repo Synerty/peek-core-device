@@ -12,8 +12,8 @@ export { UpdateDeviceOnlineAction } from "./tuples/UpdateDeviceOnlineAction";
 export { AlterDeviceUpdateAction } from "./tuples/admin/AlterDeviceUpdateAction";
 export { CreateDeviceUpdateAction } from "./tuples/admin/CreateDeviceUpdateAction";
 
-export { HardwareInfo } from "./hardware-info/hardware-info.web";
-export { DeviceTypeEnum } from "./hardware-info/hardware-info.abstract";
+export { HardwareInfo } from "./hardware-info/hardware-info";
+export { DeviceTypeEnum } from "./hardware-info/hardware-info";
 
 export { DeviceNavService } from "./device-nav.service";
 export { DeviceServerService, ServerInfoTuple } from "./device-server.service";

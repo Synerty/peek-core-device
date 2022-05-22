@@ -12,7 +12,7 @@ import {
     DeviceEnrolmentService,
     DeviceInfoTuple,
 } from "@peek/peek_core_device";
-import { DeviceTypeEnum } from "@peek/peek_core_device/_private/hardware-info/hardware-info.abstract";
+import { DeviceTypeEnum } from "@peek/peek_core_device/_private/hardware-info/hardware-info";
 
 @Component({
     selector: "core-device-enroll",
@@ -82,7 +82,7 @@ export class EnrollComponent extends NgLifeCycleEvents implements OnInit {
         this.tupleService.tupleAction
             .pushAction(this.data)
             .then((tuples: DeviceInfoTuple[]) => {
-                this.balloonMsg.showSuccess("Enrollement successful");
+                this.balloonMsg.showSuccess("Enrollment successful");
             })
             .catch((err) => {
                 this.balloonMsg.showError(err);

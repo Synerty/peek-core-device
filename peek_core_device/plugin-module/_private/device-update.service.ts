@@ -11,7 +11,7 @@ import { DeviceTupleService } from "./device-tuple.service";
 import { DeviceInfoTuple } from "../DeviceInfoTuple";
 import { DeviceUpdateTuple } from "./tuples/DeviceUpdateTuple";
 import { DeviceUpdateLocalValuesTuple } from "./tuples/DeviceUpdateLocalValuesTuple";
-import { DeviceTypeEnum } from "./hardware-info/hardware-info.abstract";
+import { DeviceTypeEnum } from "./hardware-info/hardware-info";
 import { DeviceUpdateServiceDelegate } from "./device-update.service.web";
 import { DeviceServerService } from "./device-server.service";
 import { UpdateAppliedAction } from "./tuples/UpdateAppliedAction";
