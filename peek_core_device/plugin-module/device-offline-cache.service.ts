@@ -31,7 +31,7 @@ export class DeviceOfflineCacheService extends NgLifeCycleEvents {
 
     private unsub = new Subject<void>();
 
-    private pauseCacheForGarbageCollectorInterval$: Observable<number>;
+    // private pauseCacheForGarbageCollectorInterval$: Observable<number>;
     private cachingPausedForGarbageCollector$ = new BehaviorSubject<boolean>(
         false
     );
@@ -43,24 +43,26 @@ export class DeviceOfflineCacheService extends NgLifeCycleEvents {
     ) {
         super();
         const CACHE_RUN_SECONDS = 60;
-        const CACHE_PAUSE_SECONDS = 15;
+        const CACHE_PAUSE_SECONDS = 0;
 
-        this.pauseCacheForGarbageCollectorInterval$ = interval(
-            (CACHE_RUN_SECONDS + CACHE_PAUSE_SECONDS) * 1000
-        );
-        this.pauseCacheForGarbageCollectorInterval$
-            .pipe(takeUntil(this.onDestroyEvent))
-            .subscribe(() => {
-                console.log(`${new Date()} Pausing load for garbage collector`);
-                this.cachingPausedForGarbageCollector$.next(true);
-                setTimeout(() => {
-                    console.log(
-                        `${new Date()} Resuming load` +
-                            " after we hope the garbage collector ran"
-                    );
-                    this.cachingPausedForGarbageCollector$.next(false);
-                }, CACHE_PAUSE_SECONDS * 1000);
-            });
+        // JJC, This is no longer required for garbage collection
+        // but i'd like to keep the integrated APIs.
+        // this.pauseCacheForGarbageCollectorInterval$ = interval(
+        //     (CACHE_RUN_SECONDS + CACHE_PAUSE_SECONDS) * 1000
+        // );
+        // this.pauseCacheForGarbageCollectorInterval$
+        //     .pipe(takeUntil(this.onDestroyEvent))
+        //     .subscribe(() => {
+        //         console.log(`${new Date()} Pausing load for garbage collector`);
+        //         this.cachingPausedForGarbageCollector$.next(true);
+        //         setTimeout(() => {
+        //             console.log(
+        //                 `${new Date()} Resuming load` +
+        //                     " after we hope the garbage collector ran"
+        //             );
+        //             this.cachingPausedForGarbageCollector$.next(false);
+        //         }, CACHE_PAUSE_SECONDS * 1000);
+        //     });
 
         // Why should we care if we're enrolled or not to check for updates?
         // Devices that are not enrolled should not be able to access any thing on
