@@ -92,7 +92,8 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
                         this.updateLocation({ coords });
                     }
                 }
-            );
+            ) //
+                .then((gpsWatchId) => (this.gpsWatchId = gpsWatchId));
         } else {
             Geolocation.getCurrentPosition()
                 .then((position) => {
@@ -133,14 +134,12 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
     private stopLocationListener(): void {
         if (Capacitor.isNativePlatform()) {
             BackgroundGeolocation.removeWatcher({
-                //
                 id: this.gpsWatchId,
             });
             this.gpsWatchId = null;
         } else {
-            Geolocation.clearWatch({ id: this.gpsWatchId }).then(
-                () => (this.gpsWatchId = null)
-            );
+            Geolocation.clearWatch({ id: this.gpsWatchId }) //
+                .then(() => (this.gpsWatchId = null));
         }
     }
 
