@@ -53,9 +53,6 @@ class DeviceUuidTuple extends Tuple {
 }
 
 export class HardwareInfo {
-    private gettingWebUuidPromise: Promise<string> | null = null;
-    private _webUuid: string | null = null;
-
     constructor(private tupleStorage: TupleOfflineStorageService) {}
 
     isWeb(): boolean {
@@ -71,13 +68,6 @@ export class HardwareInfo {
     }
 
     async uuid(): Promise<string> {
-        // Wait for the platform to initialise
-        const info = await Device.getInfo();
-
-        if (info.platform === "web")
-            return await this.webUuid(this.tupleStorage);
-
-        // Wait for the platform to initialise
         return (await Device.getId()).uuid;
     }
 
@@ -102,52 +92,5 @@ export class HardwareInfo {
         else {
             return DeviceTypeEnum.DESKTOP_WEB;
         }
-    }
-
-    private async webUuid(
-        tupleStorage: TupleOfflineStorageService
-    ): Promise<string> {
-        if (this._webUuid != null) return this._webUuid;
-
-        if (this.gettingWebUuidPromise != null) {
-            return this.gettingWebUuidPromise;
-        }
-
-        this.gettingWebUuidPromise = new Promise<string>(
-            async (resolve, reject) => {
-                const tupleSelector = new TupleSelector(
-                    DeviceUuidTuple.tupleName,
-                    {}
-                );
-                const tuples: DeviceUuidTuple[] = <DeviceUuidTuple[]>(
-                    await tupleStorage //
-                        .loadTuples(tupleSelector)
-                );
-
-                // If we have a UUID already, then use that.
-                if (tuples.length != 0) resolve(tuples[0].uuid);
-
-                // We don't need a real good way of getting the UUID, Peek just assigns it a token
-                const browser = navigator.userAgent.substr(
-                    0,
-                    navigator.userAgent.indexOf(" ")
-                );
-                const uuid = <string>(
-                    Md5.hashStr(`${browser} ${new Date().toString()}`)
-                );
-
-                // Create a new tuple to store
-                const newTuple = new DeviceUuidTuple();
-                newTuple.uuid = uuid;
-
-                // Store the UUID, and upon successful storage, return the generated uuid
-                await tupleStorage.saveTuples(tupleSelector, [newTuple]);
-                resolve(uuid);
-            }
-        );
-
-        this._webUuid = await this.gettingWebUuidPromise;
-        this.gettingWebUuidPromise = null;
-        return this._webUuid;
     }
 }
