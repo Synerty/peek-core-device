@@ -1,15 +1,16 @@
 import logging
 
 from twisted.internet.defer import inlineCallbacks
-from txhttputil.downloader.HttpResourceProxy import HttpResourceProxy
 
-from peek_core_device._private.client.DeviceOnlineHandler import \
-    DeviceOnlineHandler
+from peek_core_device._private.client.DeviceOnlineHandler import (
+    DeviceOnlineHandler,
+)
 from peek_core_device._private.storage.DeclarativeBase import loadStorageTuples
 from peek_core_device._private.tuples import loadPrivateTuples
 from peek_core_device.tuples import loadPublicTuples
-from peek_plugin_base.client.PluginClientEntryHookABC import \
-    PluginClientEntryHookABC
+from peek_plugin_base.client.PluginClientEntryHookABC import (
+    PluginClientEntryHookABC,
+)
 from .DeviceTupleDataObservableProxy import makeDeviceTupleDataObservableProxy
 from .DeviceTupleProcessorActionProxy import makeTupleActionProcessorProxy
 
@@ -18,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 class ClientEntryHook(PluginClientEntryHookABC):
     def __init__(self, *args, **kwargs):
-        """" Constructor """
+        """ " Constructor"""
         # Call the base classes constructor
         PluginClientEntryHookABC.__init__(self, *args, **kwargs)
 
@@ -52,9 +53,7 @@ class ClientEntryHook(PluginClientEntryHookABC):
         # Setup Photo Resource Proxy
         # Support file downloads for device updates
         # noinspection PyTypeChecker
-        proxyResource = HttpResourceProxy(
-            self.platform.peekServerHost, self.platform.peekServerHttpPort
-        )
+        proxyResource = self.createProxy()
         # Matches resource path on server
         # noinspection PyTypeChecker
         self.platform.addOfficeResource(b"device_update", proxyResource)
