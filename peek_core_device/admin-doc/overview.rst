@@ -1,3 +1,5 @@
+.. _core_device_overview:
+
 Overview
 --------
 
@@ -6,11 +8,11 @@ The following sections describe the parts of the Device plugin.
 Enrolment
 `````````
 
-The device plugin provides enrollment for user devices or browsers connecting to the
-peek client service.
+The device plugin provides enrollment for user devices or browsers connecting to
+the Peek client service.
 
-If a device is not enrolled in the admin interface, the device won't be able to the
-peek UI.
+If a device is not enrolled, the device will not be able to access the Peek
+Services.
 
 Online Status
 `````````````

@@ -9,7 +9,7 @@ This performs these primary functions :
 
 #.  Pairs the apps/devices to the Peek Client
 
-#.  Assignees deice ids, used for user login and logging
+#.  Assignees device ids, used for user login and logging.
 
 
 .. toctree::
