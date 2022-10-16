@@ -49,7 +49,7 @@ export class DeviceInfoComponent extends NgLifeCycleEvents {
             .pipe(takeUntil(this.onDestroyEvent))
             .subscribe((tuples: DeviceInfoTable[]) => {
                 this.items = tuples;
-                this.items$.next(tuples);
+                this.refilter();
             });
     }
 
@@ -59,6 +59,10 @@ export class DeviceInfoComponent extends NgLifeCycleEvents {
 
     set searchValue(value: string) {
         this._searchValue = (value || "").toLocaleLowerCase();
+        this.refilter();
+    }
+
+    private refilter(): void {
         if (!this._searchValue) {
             this.searchVisible = false;
             this.items$.next(this.items);
