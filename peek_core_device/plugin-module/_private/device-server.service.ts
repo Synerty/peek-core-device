@@ -3,37 +3,16 @@ import { filter, first } from "rxjs/operators";
 import { Injectable } from "@angular/core";
 import { BalloonMsgService } from "@synerty/peek-plugin-base-js";
 import {
-    addTupleType,
     extend,
-    Tuple,
     TupleSelector,
     VortexService,
     VortexStatusService,
 } from "@synerty/vortexjs";
-import { deviceFilt, deviceTuplePrefix } from "./PluginNames";
+import { deviceFilt } from "./PluginNames";
 import { DeviceTupleService } from "./device-tuple.service";
 import { DeviceNavService } from "./device-nav.service";
 import { Capacitor } from "@capacitor/core";
-
-@addTupleType
-export class ServerInfoTuple extends Tuple {
-    public static readonly tupleName = deviceTuplePrefix + "ServerInfoTuple";
-
-    static readonly DEFAULT_HTTP_PORT = 8000;
-    static readonly DEFAULT_WEBSOCKET_PORT = 8000;
-
-    host: string;
-    useSsl: boolean = false;
-    httpPort: number;
-    websocketPort: number;
-    hasConnected: boolean = false;
-
-    constructor() {
-        super(ServerInfoTuple.tupleName);
-        this.httpPort = ServerInfoTuple.DEFAULT_HTTP_PORT;
-        this.websocketPort = ServerInfoTuple.DEFAULT_WEBSOCKET_PORT;
-    }
-}
+import { ServerInfoTuple } from "@peek/peek_core_device/_private/tuples/server-info-tuple";
 
 @Injectable()
 export class DeviceServerService {

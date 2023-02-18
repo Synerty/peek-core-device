@@ -16,6 +16,7 @@ export { HardwareInfo } from "./hardware-info/hardware-info";
 export { DeviceTypeEnum } from "./hardware-info/hardware-info";
 
 export { DeviceNavService } from "./device-nav.service";
-export { DeviceServerService, ServerInfoTuple } from "./device-server.service";
+export { DeviceServerService } from "./device-server.service";
 export { DeviceTupleService } from "./device-tuple.service";
 export { DeviceOnlineService } from "./device-online.service";
+export { ServerInfoTuple } from "@peek/peek_core_device/_private/tuples/server-info-tuple";
