@@ -1,5 +1,13 @@
 import logging
 from collections import namedtuple
+from typing import Optional
+
+from psycopg2.errors import ForeignKeyViolation
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import NoForeignKeysError
+from vortex.DeferUtil import callMethodLater
+from vortex.DeferUtil import deferToThreadWrapWithLogger
+from vortex.DeferUtil import vortexLogFailure
 
 from peek_core_device._private.server.controller.NotifierController import (
     NotifierController,
@@ -42,14 +50,17 @@ class GpsController(TupleActionProcessorDelegateABC):
         pass
 
     def processTupleAction(self, tupleAction: TupleActionABC) -> Deferred:
+        self._dbSessionCreator()
         if isinstance(tupleAction, UpdateDeviceGpsLocationTupleAction):
-            return self._processGpsLocationUpdateTupleAction(tupleAction)
+            # We don't need to make the client wait for this request
+            d = self._processGpsLocationUpdateTupleAction(tupleAction)
+            d.addErrback(vortexLogFailure, logger, consumeError=True)
+            return []
 
     @inlineCallbacks
     def _processGpsLocationUpdateTupleAction(
         self, action: UpdateDeviceGpsLocationTupleAction
     ):
-        yield
         # capturedDate = datetime.now()
         currentLocation = DeviceLocationTuple(
             deviceToken=action.deviceToken,
@@ -57,19 +68,18 @@ class GpsController(TupleActionProcessorDelegateABC):
             longitude=action.longitude,
             updatedDate=action.datetime,
         )
-        updatedGpsLocationTableRow = self._updateCurrentLocation(
+        updatedGpsLocationTableRow = yield self._insertGpsLocation(
             currentLocation
         )
-        self._logToHistory(currentLocation)
-        self._notifyTuple(updatedGpsLocationTableRow)
-        return []
+        if updatedGpsLocationTableRow:
+            self._notifyTuple(updatedGpsLocationTableRow)
 
+    @callMethodLater
     def _notifyTuple(self, gpsLocationTable: GpsLocationTable):
         tuple_ = gpsLocationTable.toTuple()
         self._tupleObservable.notifyOfTupleUpdate(
             TupleSelector(
-                tuple_.tupleName(),
-                dict(deviceToken=tuple_.deviceToken),
+                tuple_.tupleName(), dict(deviceToken=tuple_.deviceToken)
             )
         )
 
@@ -80,9 +90,10 @@ class GpsController(TupleActionProcessorDelegateABC):
             updatedDate=gpsLocationTable.updatedDate,
         )
 
-    def _updateCurrentLocation(
+    @deferToThreadWrapWithLogger(logger)
+    def _insertGpsLocation(
         self, currentLocation: DeviceLocationTuple
-    ) -> GpsLocationTable:
+    ) -> Optional[GpsLocationTable]:
         statement = insert(GpsLocationTable).values(currentLocation._asdict())
         statement = statement.on_conflict_do_update(
             index_elements=[GpsLocationTable.deviceToken],
@@ -93,6 +104,15 @@ class GpsController(TupleActionProcessorDelegateABC):
             # upsert updates
             r = session.execute(statement)
             insertedPrimaryKey = r.inserted_primary_key[0]
+
+            record = GpsLocationHistoryTable(
+                deviceToken=currentLocation.deviceToken,
+                latitude=currentLocation.latitude,
+                longitude=currentLocation.longitude,
+                loggedDate=currentLocation.updatedDate,
+            )
+            session.add(record)
+
             session.commit()
 
             if not insertedPrimaryKey:
@@ -105,20 +125,13 @@ class GpsController(TupleActionProcessorDelegateABC):
             result = updatedRows.one()
             session.expunge_all()
             return result
-        finally:
-            session.rollback()
-            session.close()
 
-    def _logToHistory(self, currentLocation: DeviceLocationTuple):
-        session = self._dbSessionCreator()
-        record = GpsLocationHistoryTable(
-            deviceToken=currentLocation.deviceToken,
-            latitude=currentLocation.latitude,
-            longitude=currentLocation.longitude,
-            loggedDate=currentLocation.updatedDate,
-        )
-        try:
-            session.add(record)
-            session.commit()
+        except IntegrityError:
+            # This is most likely because
+            # the device token does not yet exist in database
+            # Most likely because the device enrollment hasn't finished
+            session.rollback()
+            pass
+
         finally:
             session.close()

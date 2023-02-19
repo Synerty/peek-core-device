@@ -65,6 +65,10 @@ class MainController(TupleActionProcessorDelegateABC):
     def deviceUpdateController(self):
         return self._updateController
 
+    @inlineCallbacks
+    def start(self):
+        yield self._onlineController.start()
+
     def shutdown(self):
         self._enrollmentController.shutdown()
         self._onlineController.shutdown()

@@ -3,6 +3,7 @@ from typing import List
 
 from sqlalchemy.orm.exc import NoResultFound
 from twisted.internet.defer import Deferred
+from twisted.internet.defer import inlineCallbacks
 from vortex.DeferUtil import deferToThreadWrapWithLogger
 from vortex.Tuple import Tuple
 from vortex.TupleAction import TupleActionABC
@@ -23,11 +24,15 @@ logger = logging.getLogger(__name__)
 
 
 class DeviceStatusController:
-    def __init__(self, dbSessionCreator, notifierController: NotifierController):
+    def __init__(
+        self, dbSessionCreator, notifierController: NotifierController
+    ):
         self._dbSessionCreator = dbSessionCreator
         self._notifierController = notifierController
 
-        self._setAllDevicesOfflineBlocking()
+    @inlineCallbacks
+    def start(self):
+        yield self._setAllDevicesOffline()
 
     def shutdown(self):
         pass
@@ -71,7 +76,9 @@ class DeviceStatusController:
 
             self._notifierController.notifyDeviceInfo(deviceId=deviceId)
             self._notifierController.notifyDeviceOnline(
-                deviceInfo.deviceId, deviceInfo.deviceToken, deviceInfo.deviceStatus
+                deviceInfo.deviceId,
+                deviceInfo.deviceToken,
+                deviceInfo.deviceStatus,
             )
 
             return []
@@ -83,7 +90,9 @@ class DeviceStatusController:
             session.close()
 
     @deferToThreadWrapWithLogger(logger)
-    def _processUpdateOnline(self, action: UpdateDeviceOnlineAction) -> List[Tuple]:
+    def _processUpdateOnline(
+        self, action: UpdateDeviceOnlineAction
+    ) -> List[Tuple]:
         """Process Online Status Update
 
         :rtype: Deferred
@@ -105,7 +114,9 @@ class DeviceStatusController:
 
             self._notifierController.notifyDeviceInfo(deviceId=deviceId)
             self._notifierController.notifyDeviceOnline(
-                deviceInfo.deviceId, deviceInfo.deviceToken, deviceInfo.deviceStatus
+                deviceInfo.deviceId,
+                deviceInfo.deviceToken,
+                deviceInfo.deviceStatus,
             )
 
             return []
@@ -116,7 +127,8 @@ class DeviceStatusController:
         finally:
             session.close()
 
-    def _setAllDevicesOfflineBlocking(self):
+    @deferToThreadWrapWithLogger(logger)
+    def _setAllDevicesOffline(self):
         """Set All Devices to Offline"""
         session = self._dbSessionCreator()
         try:
