@@ -10,7 +10,7 @@ export class ServerInfoTuple extends Tuple {
     useSsl: boolean = SERVER_INFO_TUPLE_DEFAULTS.useSsl;
     httpPort: number = SERVER_INFO_TUPLE_DEFAULTS.httpPort;
     websocketPort: number = SERVER_INFO_TUPLE_DEFAULTS.websocketPort;
-    hasConnected: boolean = false;
+    hasConnected: boolean = SERVER_INFO_TUPLE_DEFAULTS.hasConnected;
 
     constructor() {
         super(ServerInfoTuple.tupleName);

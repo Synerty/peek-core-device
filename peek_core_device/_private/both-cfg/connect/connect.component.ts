@@ -8,6 +8,7 @@ import {
     ServerInfoTuple,
 } from "@peek/peek_core_device/_private";
 import { DeviceTypeEnum } from "@peek/peek_core_device/_private/hardware-info/hardware-info";
+import { SERVER_INFO_TUPLE_DEFAULTS } from "@peek/peek_core_device/_private/tuples/server-info-tuple-defaults";
 
 @Component({
     selector: "peek-core-device-cfg-connect",
@@ -15,9 +16,9 @@ import { DeviceTypeEnum } from "@peek/peek_core_device/_private/hardware-info/ha
 })
 export class ConnectComponent extends NgLifeCycleEvents implements OnInit {
     server: ServerInfoTuple = new ServerInfoTuple();
-    httpPortStr: string = ServerInfoTuple.DEFAULT_HTTP_PORT.toString();
+    httpPortStr: string = SERVER_INFO_TUPLE_DEFAULTS.httpPort.toString();
     websocketPortStr: string =
-        ServerInfoTuple.DEFAULT_WEBSOCKET_PORT.toString();
+        SERVER_INFO_TUPLE_DEFAULTS.websocketPort.toString();
     deviceType: DeviceTypeEnum;
     isWeb: boolean;
 
