@@ -6,6 +6,7 @@ from typing import Optional
 
 from twisted.internet.defer import Deferred
 from vortex.DeferUtil import deferToThreadWrapWithLogger
+from vortex.DeferUtil import vortexLogFailure
 from vortex.Tuple import Tuple
 from vortex.TupleAction import TupleActionABC
 
@@ -51,10 +52,14 @@ class OfflineCacheController:
     def processTupleAction(self, tupleAction: TupleActionABC) -> List[Tuple]:
 
         if isinstance(tupleAction, UpdateOfflineCacheSettingAction):
-            return self._processOfflineCacheSettingUpdate(tupleAction)
+            d = self._processOfflineCacheSettingUpdate(tupleAction)
+            d.addErrback(vortexLogFailure, logger)
+            return []
 
         if isinstance(tupleAction, OfflineCacheStatusAction):
-            return self._processOfflineCacheStatusUpdate(tupleAction)
+            d = self._processOfflineCacheStatusUpdate(tupleAction)
+            d.addErrback(vortexLogFailure, logger)
+            return []
 
     @deferToThreadWrapWithLogger(logger)
     def _processOfflineCacheSettingUpdate(
@@ -82,8 +87,6 @@ class OfflineCacheController:
                 deviceToken=deviceInfo.deviceToken
             )
 
-            return []
-
         finally:
             # Always close the session after we create it
             ormSession.close()
@@ -97,4 +100,3 @@ class OfflineCacheController:
         self._lastStatusByDeviceToken[
             action.deviceToken
         ] = action.cacheStatusList
-        return []

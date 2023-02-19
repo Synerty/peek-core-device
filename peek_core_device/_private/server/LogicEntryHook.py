@@ -69,7 +69,7 @@ class LogicEntryHook(PluginLogicEntryHookABC, PluginServerStorageEntryHookABC):
 
         """
         offlineCacheController = OfflineCacheController(
-            dbSessionCreator=self.dbSessionCreator,
+            dbSessionCreator=self.dbSessionCreator
         )
         self._loadedObjects.append(offlineCacheController)
 
@@ -121,6 +121,8 @@ class LogicEntryHook(PluginLogicEntryHookABC, PluginServerStorageEntryHookABC):
         self._loadedObjects.append(self._api)
 
         notifierController.setApi(self._api)
+
+        yield mainController.start()
 
         logger.debug("Started")
 
