@@ -1,5 +1,5 @@
 import { addTupleType, Tuple } from "@synerty/vortexjs";
-import { deviceTuplePrefix } from "@peek/peek_core_device/_private";
+import { deviceTuplePrefix } from "@peek/peek_core_device/_private/PluginNames";
 import { SERVER_INFO_TUPLE_DEFAULTS } from "./server-info-tuple-defaults";
 
 @addTupleType

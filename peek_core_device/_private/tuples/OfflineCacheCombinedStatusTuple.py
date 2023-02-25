@@ -1,9 +1,6 @@
-from datetime import datetime
-from typing import Optional
-
+from vortex.Tuple import Tuple
 from vortex.Tuple import TupleField
 from vortex.Tuple import addTupleType
-from vortex.TupleAction import TupleActionABC
 
 from peek_core_device._private.PluginNames import deviceTuplePrefix
 from peek_core_device._private.tuples.OfflineCacheLoaderStatusTuple import (
@@ -15,7 +12,7 @@ from peek_core_device._private.tuples.OfflineCacheStatusTuple import (
 
 
 @addTupleType
-class OfflineCacheStatusAction(TupleActionABC):
+class OfflineCacheCombinedStatusTuple(Tuple):
     """Offline Cache Status Action
 
     This tuple is sent from the client to the server periodically when
@@ -23,8 +20,8 @@ class OfflineCacheStatusAction(TupleActionABC):
 
     """
 
-    __tupleType__ = deviceTuplePrefix + "OfflineCacheStatusAction"
+    __tupleType__ = deviceTuplePrefix + "OfflineCacheCombinedStatusTuple"
 
     deviceToken: str = TupleField()
-    encodedCombinedTuplePayload: str = TupleField()
-    lastCachingStartDate: Optional[datetime] = TupleField()
+    loaderStatusList: list[OfflineCacheLoaderStatusTuple] = TupleField([])
+    offlineCacheStatus: OfflineCacheStatusTuple = TupleField()

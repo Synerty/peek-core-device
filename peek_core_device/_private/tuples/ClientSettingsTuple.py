@@ -17,3 +17,5 @@ class ClientSettingsTuple(Tuple):
 
     fieldEnrollmentEnabled: bool = TupleField(defaultValue=False)
     officeEnrollmentEnabled: bool = TupleField(defaultValue=False)
+    slowNetworkBandwidthMetricThreshold: int = TupleField()
+    offlineCacheSyncSeconds: int = TupleField(defaultValue=15 * 60)

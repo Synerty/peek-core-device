@@ -1,13 +1,13 @@
 import { addTupleType, Tuple } from "@synerty/vortexjs";
 import { deviceTuplePrefix } from "@peek/peek_core_device/_private";
-import { OfflineCacheStatusTuple } from "@peek/peek_core_device/tuples/OfflineCacheStatusTuple";
+import { OfflineCacheLoaderStatusTuple } from "@peek/peek_core_device/tuples/OfflineCacheLoaderStatusTuple";
 
 @addTupleType
 export class DeviceCacheStatusTuple extends Tuple {
     public static readonly tupleName =
         deviceTuplePrefix + "DeviceCacheStatusTuple";
 
-    statusList: OfflineCacheStatusTuple[] = [];
+    statusList: OfflineCacheLoaderStatusTuple[] = [];
 
     constructor() {
         super(DeviceCacheStatusTuple.tupleName);

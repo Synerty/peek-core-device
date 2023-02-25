@@ -1,11 +1,12 @@
 import { Injectable } from "@angular/core";
 import { HeaderService } from "@synerty/peek-plugin-base-js";
-import { Observable, Subject } from "rxjs";
+import { BehaviorSubject, Observable, Subject } from "rxjs";
 import { TupleSelector, VortexStatusService } from "@synerty/vortexjs";
 import { DeviceInfoTuple } from "./DeviceInfoTuple";
 import { DeviceNavService } from "./_private/device-nav.service";
 import { DeviceTupleService } from "./_private/device-tuple.service";
 import { DeviceServerService } from "./_private/device-server.service";
+import { filter } from "rxjs/operators";
 
 @Injectable()
 export class DeviceEnrolmentService {
@@ -13,7 +14,9 @@ export class DeviceEnrolmentService {
 
     // There is no point having multiple services observing the same thing
     // So lets create a nice observable for the device info.
-    private deviceInfoSubject = new Subject<DeviceInfoTuple>();
+    private deviceInfoSubject = new BehaviorSubject<DeviceInfoTuple | null>(
+        null
+    );
 
     private _isLoading = true;
 
@@ -84,7 +87,9 @@ export class DeviceEnrolmentService {
     }
 
     deviceInfoObservable(): Observable<DeviceInfoTuple> {
-        return this.deviceInfoSubject;
+        return this.deviceInfoSubject.pipe(
+            filter((deviceInfo) => deviceInfo != null)
+        );
     }
 
     isFieldService(): boolean {

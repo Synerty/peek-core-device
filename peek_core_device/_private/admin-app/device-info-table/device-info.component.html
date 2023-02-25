@@ -7,9 +7,19 @@
                     <th>
                         Description
                         <nz-filter-trigger
-                            [(nzVisible)]="searchVisible"
-                            [nzActive]="searchValue.length > 0"
-                            [nzDropdownMenu]="menu"
+                            [(nzVisible)]="deviceSearchVisible"
+                            [nzActive]="deviceSearchValue.length > 0"
+                            [nzDropdownMenu]="deviceSearchMenu"
+                        >
+                            <i nz-icon nzType="search"></i>
+                        </nz-filter-trigger>
+                    </th>
+                    <th>
+                        Logged In User
+                        <nz-filter-trigger
+                            [(nzVisible)]="userSearchVisible"
+                            [nzActive]="userSearchValue.length > 0"
+                            [nzDropdownMenu]="userSearchMenu"
                         >
                             <i nz-icon nzType="search"></i>
                         </nz-filter-trigger>
@@ -17,6 +27,13 @@
                     <th>Last Online</th>
                     <th>Enrollment</th>
                     <th>Offline Cache</th>
+                    <th>Last Cache Check</th>
+                    <th
+                        nz-tooltip
+                        nzTooltipTitle="The round trip time in milliseconds for the device to request and download 100kb from Peek services."
+                    >
+                        Bandwidth Metric
+                    </th>
                     <th>Current Location</th>
                     <th></th>
                 </tr>
@@ -28,6 +45,9 @@
                     </td>
                     <td>
                         {{ item.description }}
+                    </td>
+                    <td>
+                        {{ item.loggedInUser }}
                     </td>
                     <td>
                         <p>{{ deviceStatus(item) }}</p>
@@ -57,7 +77,12 @@
                     </td>
                     <td>
                         <div *ngIf="item.lastCacheCheck != null">
-                            {{ item.lastCacheCheck | date: "medium" }}
+                            {{ item.lastCacheCheck | date : "medium" }}
+                        </div>
+                    </td>
+                    <td>
+                        <div *ngIf="item.lastBandwidthMetric != null">
+                            {{ item.lastBandwidthMetric }}
                         </div>
                     </td>
                     <td>
@@ -87,14 +112,27 @@
     </div>
 </div>
 
-<nz-dropdown-menu #menu="nzDropdownMenu">
+<nz-dropdown-menu #deviceSearchMenu="nzDropdownMenu">
     <div class="ant-table-filter-dropdown">
         <div class="search-box">
             <input
                 type="text"
                 nz-input
-                placeholder="Search name"
-                [(ngModel)]="searchValue"
+                placeholder="Search device name"
+                [(ngModel)]="deviceSearchValue"
+            />
+        </div>
+    </div>
+</nz-dropdown-menu>
+
+<nz-dropdown-menu #userSearchMenu="nzDropdownMenu">
+    <div class="ant-table-filter-dropdown">
+        <div class="search-box">
+            <input
+                type="text"
+                nz-input
+                placeholder="Search user name"
+                [(ngModel)]="userSearchValue"
             />
         </div>
     </div>

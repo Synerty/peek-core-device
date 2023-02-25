@@ -45,39 +45,22 @@ class ProxiedDictMixin(object):
 
     _proxied = None
 
-    def __len__(
-        self
-        ):
+    def __len__(self):
         return len(self._proxied)
 
-    def __iter__(
-        self
-        ):
+    def __iter__(self):
         return iter(self._proxied)
 
-    def __getitem__(
-        self,
-        key
-        ):
+    def __getitem__(self, key):
         return self._proxied[str(key)]
 
-    def __contains__(
-        self,
-        key
-        ):
+    def __contains__(self, key):
         return str(key) in self._proxied
 
-    def __setitem__(
-        self,
-        key,
-        value
-        ):
+    def __setitem__(self, key, value):
         self._proxied[str(key)] = value
 
-    def __delitem__(
-        self,
-        key
-        ):
+    def __delitem__(self, key):
         del self._proxied[str(key)]
 
 
@@ -90,18 +73,12 @@ class PolymorphicVerticalProperty(object):
 
     """
 
-    def __init__(
-        self,
-        key,
-        value=None
-        ):
+    def __init__(self, key, value=None):
         self.key = key
         self.value = value
 
     @hybrid_property
-    def value(
-        self
-        ):
+    def value(self):
         fieldname, discriminator = self.type_map[self.type]
         if fieldname is None:
             return None
@@ -109,10 +86,7 @@ class PolymorphicVerticalProperty(object):
             return getattr(self, fieldname)
 
     @value.setter
-    def value(
-        self,
-        value
-        ):
+    def value(self, value):
         py_type = type(value)
         fieldname, discriminator = self.type_map[py_type]
 
@@ -121,24 +95,17 @@ class PolymorphicVerticalProperty(object):
             setattr(self, fieldname, value)
 
     @value.deleter
-    def value(
-        self
-        ):
+    def value(self):
         self._set_value(None)
 
     @value.comparator
     class value(PropComparator):
         """A comparator for .value, builds a polymorphic comparison via CASE."""
 
-        def __init__(
-            self,
-            cls
-            ):
+        def __init__(self, cls):
             self.cls = cls
 
-        def _case(
-            self
-            ):
+        def _case(self):
             pairs = set(self.cls.type_map.values())
             whens = [
                 (
@@ -150,21 +117,13 @@ class PolymorphicVerticalProperty(object):
             ]
             return case(whens, self.cls.type, null())
 
-        def __eq__(
-            self,
-            other
-            ):
+        def __eq__(self, other):
             return self._case() == cast(other, String)
 
-        def __ne__(
-            self,
-            other
-            ):
+        def __ne__(self, other):
             return self._case() != cast(other, String)
 
-    def __repr__(
-        self
-        ):
+    def __repr__(self):
         return "<%s %r=%r>" % (self.__class__.__name__, self.key, self.value)
 
 
@@ -186,11 +145,7 @@ class SettingProperty(PolymorphicVerticalProperty, Tuple, DeclarativeBase):
     char_value = Column(String, info={"type": (str, "string")})
     boolean_value = Column(Boolean, info={"type": (bool, "boolean")})
 
-    def __init__(
-        self,
-        key=None,
-        value=None
-        ):
+    def __init__(self, key=None, value=None):
         PolymorphicVerticalProperty.__init__(self, key=key, value=value)
         Tuple.__init__(self)
 
@@ -216,36 +171,22 @@ class Setting(ProxiedDictMixin, Tuple, DeclarativeBase):
     _proxied = association_proxy(
         "properties",
         "value",
-        creator=lambda
-            key,
-            value: SettingProperty(key=key, value=value),
+        creator=lambda key, value: SettingProperty(key=key, value=value),
     )
 
-    def __init__(
-        self,
-        name=None
-        ):
+    def __init__(self, name=None):
         self.name = name
 
-    def __repr__(
-        self
-        ):
+    def __repr__(self):
         return "Setting(%r)" % self.name
 
     @classmethod
-    def with_characteristic(
-        self,
-        key,
-        value
-        ):
+    def with_characteristic(self, key, value):
         return self.properties.any(key=key, value=value)
 
 
 @event.listens_for(SettingProperty, "mapper_configured", propagate=True)
-def on_new_class(
-    mapper,
-    cls_
-    ):
+def on_new_class(mapper, cls_):
     """Look for Column objects with type info in them, and work up
     a lookup table."""
 
@@ -263,29 +204,16 @@ def on_new_class(
 
 
 class PropertyKey(object):
-    def __init__(
-        self,
-        name,
-        defaultValue,
-        propertyDict
-        ):
+    def __init__(self, name, defaultValue, propertyDict):
         self.name = name
         self.defaultValue = defaultValue
         propertyDict[name] = self
 
-    def __repr__(
-        self
-        ):
+    def __repr__(self):
         return self.name
 
 
-def _getSetting(
-    ormSession,
-    name,
-    propertyDict,
-    key=None,
-    value=None
-    ):
+def _getSetting(ormSession, name, propertyDict, key=None, value=None):
     all = ormSession.query(Setting).filter(Setting.name == name).all()
 
     if all:
@@ -311,7 +239,9 @@ def _getSetting(
 
     # Make sure the propery is defined for this setting
     assert str(key) in propertyDict, "Key %s is not defined in setting %s" % (
-        key, name)
+        key,
+        name,
+    )
 
     if value is None:
         return setting[key]
@@ -330,13 +260,10 @@ def _getSetting(
 globalProperties = {}
 
 
-def globalSetting(
-    ormSession,
-    key=None,
-    value=None
-    ):
-    return _getSetting(ormSession, "Global", globalProperties, key=key,
-        value=value)
+def globalSetting(ormSession, key=None, value=None):
+    return _getSetting(
+        ormSession, "Global", globalProperties, key=key, value=value
+    )
 
 
 AUTO_ENROLLMENT = PropertyKey(
@@ -357,5 +284,12 @@ OFFICE_ENROLLMENT_ENABLED = PropertyKey(
 )
 
 OFFLINE_CACHE_REFRESH_SECONDS = PropertyKey(
-    "Offline Cache Refresh Seconds", 15 * 60, propertyDict=globalProperties
+    "Offline Cache Refresh Seconds", 24 * 60 * 60, propertyDict=globalProperties
+)
+
+
+SLOW_NETWORK_BANDWIDTH_METRIC_THRESHOLD = PropertyKey(
+    "Slow Network Bandwidth Metric Threshold",
+    1200,
+    propertyDict=globalProperties,
 )

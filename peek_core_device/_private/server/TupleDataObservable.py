@@ -8,9 +8,6 @@ from peek_core_device._private.server.controller.OfflineCacheController import (
 from peek_core_device._private.server.tuple_providers.ClientSettingsTupleProvider import (
     ClientSettingsTupleProvider,
 )
-from peek_core_device._private.server.tuple_providers.DeviceCacheStatusTupleProvider import (
-    DeviceCacheStatusTupleProvider,
-)
 from peek_core_device._private.server.tuple_providers.DeviceGpsLocationTupleProvider import (
     DeviceGpsLocationTupleProvider,
 )
@@ -22,6 +19,9 @@ from peek_core_device._private.server.tuple_providers.DeviceInfoTupleProvider im
 )
 from peek_core_device._private.server.tuple_providers.DeviceUpdateTupleProvider import (
     DeviceUpdateTupleProvider,
+)
+from peek_core_device._private.server.tuple_providers.OfflineCacheCombinedStatusTupleProvider import (
+    OfflineCacheCombinedStatusTupleProvider,
 )
 from peek_core_device._private.server.tuple_providers.OfflineCacheSettingTupleProvider import (
     OfflineCacheSettingTupleProvider,
@@ -36,6 +36,9 @@ from peek_core_device._private.tuples.ClientSettingsTuple import (
 from peek_core_device._private.tuples.DeviceCacheStatusTuple import (
     DeviceCacheStatusTuple,
 )
+from peek_core_device._private.tuples.OfflineCacheCombinedStatusTuple import (
+    OfflineCacheCombinedStatusTuple,
+)
 from peek_core_device._private.tuples.OfflineCacheSettingTuple import (
     OfflineCacheSettingTuple,
 )
@@ -46,13 +49,14 @@ from peek_core_device.tuples.DeviceInfoTuple import DeviceInfoTuple
 
 
 def makeTupleDataObservableHandler(
-    ormSessionCreator, offlineCacheController: OfflineCacheController
+    ormSessionCreator, offlineCacheController: OfflineCacheController, userApi
 ):
     """ " Make Tuple Data Observable Handler
 
     This method creates the observable object, registers the tuple providers and then
     returns it.
 
+    :param userApi:
     :param ormSessionCreator: A function that returns a SQLAlchemy session when called
     :param offlineCacheController:
 
@@ -71,17 +75,21 @@ def makeTupleDataObservableHandler(
 
     tupleObservable.addTupleProvider(
         DeviceInfoTuple.tupleName(),
-        DeviceInfoTupleProvider(ormSessionCreator, offlineCacheController),
+        DeviceInfoTupleProvider(
+            ormSessionCreator, offlineCacheController, userApi
+        ),
     )
 
     tupleObservable.addTupleProvider(
-        DeviceCacheStatusTuple.tupleName(),
-        DeviceCacheStatusTupleProvider(offlineCacheController),
+        OfflineCacheCombinedStatusTuple.tupleName(),
+        OfflineCacheCombinedStatusTupleProvider(offlineCacheController),
     )
 
     tupleObservable.addTupleProvider(
         DeviceInfoTable.tupleName(),
-        DeviceInfoTableTupleProvider(ormSessionCreator),
+        DeviceInfoTableTupleProvider(
+            ormSessionCreator, offlineCacheController, userApi
+        ),
     )
 
     tupleObservable.addTupleProvider(

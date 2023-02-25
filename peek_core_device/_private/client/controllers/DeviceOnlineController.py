@@ -41,7 +41,7 @@ deviceOnlineFilt.update(deviceFilt)
 # peek_core_device/plugin-module/_private/device-server.service.ts
 
 
-class DeviceOnlineHandler:
+class DeviceOnlineController:
     CHECK_TIME = 5.0
 
     def __init__(self):

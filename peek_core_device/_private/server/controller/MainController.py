@@ -7,6 +7,9 @@ from vortex.TupleAction import TupleActionABC
 from vortex.handler.TupleActionProcessor import TupleActionProcessorDelegateABC
 from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
 
+from peek_core_device._private.server.controller.BandwidthResultController import (
+    BandwidthResultController,
+)
 from peek_core_device._private.server.controller.EnrollmentController import (
     EnrollmentController,
 )
@@ -53,6 +56,10 @@ class MainController(TupleActionProcessorDelegateABC):
             dbSessionCreator, notifierController, deviceUpdateFilePath
         )
 
+        self._bandwidthResultController = BandwidthResultController(
+            dbSessionCreator, notifierController
+        )
+
         self._gpsController = GpsController(
             dbSessionCreator=dbSessionCreator,
             tupleObservable=tupleObservable,
@@ -68,12 +75,14 @@ class MainController(TupleActionProcessorDelegateABC):
     @inlineCallbacks
     def start(self):
         yield self._onlineController.start()
+        yield self._bandwidthResultController.start()
 
     def shutdown(self):
         self._enrollmentController.shutdown()
         self._onlineController.shutdown()
         self._updateController.shutdown()
         self._gpsController.shutdown()
+        self._bandwidthResultController.shutdown()
 
     @inlineCallbacks
     def processTupleAction(self, tupleAction: TupleActionABC) -> Deferred:
@@ -96,6 +105,14 @@ class MainController(TupleActionProcessorDelegateABC):
             return result
 
         result = yield self._offlineCacheController.processTupleAction(
+            tupleAction
+        )
+        if result is not None:
+            return result
+
+        # At this point, someone needs to create an array and iterate over
+        # the controllers.
+        result = yield self._bandwidthResultController.processTupleAction(
             tupleAction
         )
         if result is not None:

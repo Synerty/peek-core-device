@@ -55,21 +55,27 @@ class DeviceInfoTable(Tuple, DeclarativeBase):
     deviceStatus = Column(Integer, nullable=False, server_default="0")
     isEnrolled = Column(Boolean, nullable=False, server_default="0")
     isOfflineCacheEnabled = Column(Boolean, nullable=False, server_default="0")
+    lastBandwidthMetric = Column(Integer, nullable=True)
     currentLocation: DeviceGpsLocationTuple = TupleField()
     lastCacheUpdate: Optional[datetime] = TupleField()
+    loggedInUser: Optional[str] = TupleField()
 
     def toTuple(
         self,
         currentLocationTuple: DeviceGpsLocationTuple = None,
         lastCacheCheck: Optional[datetime] = None,
+        loggedInUser: Optional[str] = None,
     ):
-        return self.toTupleStatic(self, currentLocationTuple, lastCacheCheck)
+        return self.toTupleStatic(
+            self, currentLocationTuple, lastCacheCheck, loggedInUser
+        )
 
     @staticmethod
     def toTupleStatic(
         table: "DeviceInfoTable",
         currentLocationTuple: Optional[DeviceGpsLocationTuple] = None,
         lastCacheCheck: Optional[datetime] = None,
+        loggedInUser: Optional[str] = None,
     ):
         return DeviceInfoTuple(
             description=table.description,
@@ -83,6 +89,9 @@ class DeviceInfoTable(Tuple, DeclarativeBase):
             createdDate=table.createdDate,
             deviceStatus=table.deviceStatus,
             isEnrolled=table.isEnrolled,
+            isOfflineCacheEnabled=table.isOfflineCacheEnabled,
+            lastBandwidthMetric=table.lastBandwidthMetric,
             currentLocation=currentLocationTuple,
             lastCacheCheck=lastCacheCheck,
+            loggedInUser=loggedInUser,
         )

@@ -3,6 +3,7 @@ from datetime import datetime
 
 from vortex.DeferUtil import callMethodLater
 from vortex.TupleSelector import TupleSelector
+from vortex.VortexUtil import debounceCall
 from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
 
 from peek_core_device._private.storage.DeviceInfoTable import DeviceInfoTable
@@ -38,6 +39,10 @@ class NotifierController:
             TupleSelector(DeviceInfoTuple.tupleName(), dict(deviceId=deviceId))
         )
 
+        self.notifyAllDeviceInfos()
+
+    @debounceCall(30)
+    def notifyAllDeviceInfos(self):
         self._tupleObservable.notifyOfTupleUpdate(
             TupleSelector(DeviceInfoTuple.tupleName(), dict())
         )
@@ -54,6 +59,10 @@ class NotifierController:
             )
         )
 
+        self.notifyAllDeviceUpdate()
+
+    @debounceCall(30)
+    def notifyAllDeviceUpdate(self):
         self._tupleObservable.notifyOfTupleUpdate(
             TupleSelector(DeviceUpdateTuple.tupleName(), dict())
         )
@@ -75,7 +84,14 @@ class NotifierController:
         longitude: float,
         updatedDate: datetime,
     ):
+        self._api.notifyCurrentGpsLocation(
+            deviceToken, latitude, longitude, updatedDate
+        )
 
+        self.notifyAllDeviceGpsLocation()
+
+    @debounceCall(30)
+    def notifyAllDeviceGpsLocation(self):
         from peek_core_device._private.storage.GpsLocationTable import (
             GpsLocationTable,
         )
@@ -84,18 +100,8 @@ class NotifierController:
             TupleSelector(GpsLocationTable.tupleName(), dict())
         )
 
-        self._api.notifyCurrentGpsLocation(
-            deviceToken,
-            latitude,
-            longitude,
-            updatedDate,
-        )
-
     @callMethodLater
-    def notifyDeviceOfflineCacheSetting(
-        self,
-        deviceToken: str,
-    ):
+    def notifyDeviceOfflineCacheSetting(self, deviceToken: str):
         self._tupleObservable.notifyOfTupleUpdate(
             TupleSelector(
                 OfflineCacheSettingTuple.tupleName(),

@@ -10,7 +10,8 @@ import {
 import { takeUntil } from "rxjs/operators";
 import { DatePipe } from "@angular/common";
 import { DeviceCacheStatusTuple } from "../tuples/DeviceCacheStatusTuple";
-import { OfflineCacheStatusTuple } from "@peek/peek_core_device/tuples/OfflineCacheStatusTuple";
+import { OfflineCacheLoaderStatusTuple } from "@peek/peek_core_device/tuples/OfflineCacheLoaderStatusTuple";
+import { OfflineCacheCombinedStatusTuple } from "@peek/peek_core_device/_private/tuples/OfflineCacheCombinedStatusTuple";
 
 @Component({
     selector: "core-device-device-cache-status",
@@ -22,7 +23,8 @@ export class DeviceCacheStatusComponent
     extends NgLifeCycleEvents
     implements OnInit
 {
-    readonly statusList$ = new BehaviorSubject<OfflineCacheStatusTuple[]>([]);
+    readonly combinedStatus$ =
+        new BehaviorSubject<OfflineCacheCombinedStatusTuple | null>(null);
 
     @Input()
     deviceToken$: BehaviorSubject<string>;
@@ -42,17 +44,23 @@ export class DeviceCacheStatusComponent
             .pipe(takeUntil(this.onDestroyEvent))
             .subscribe((deviceToken: string) => {
                 this.unsub.next();
+                this.combinedStatus$.next(null);
 
                 this.tupleDataObserver // Setup a subscription for the device info data
                     .subscribeToTupleSelector(
-                        new TupleSelector(DeviceCacheStatusTuple.tupleName, {
-                            deviceToken: deviceToken,
-                        })
+                        new TupleSelector(
+                            OfflineCacheCombinedStatusTuple.tupleName,
+                            {
+                                deviceToken: deviceToken,
+                            }
+                        )
                     )
                     .pipe(takeUntil(this.onDestroyEvent))
                     .pipe(takeUntil(this.unsub))
-                    .subscribe((tuples: DeviceCacheStatusTuple[]) => {
-                        this.statusList$.next(tuples[0].statusList || []);
+                    .subscribe((tuples: OfflineCacheCombinedStatusTuple[]) => {
+                        if (tuples.length !== 0) {
+                            this.combinedStatus$.next(tuples[0]);
+                        }
                     });
             });
     }

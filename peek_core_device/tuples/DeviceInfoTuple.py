@@ -47,5 +47,8 @@ class DeviceInfoTuple(Tuple):
     createdDate = TupleField()
     deviceStatus = TupleField()
     isEnrolled = TupleField()
+    lastBandwidthMetric: Optional[int] = TupleField()
+    isOfflineCacheEnabled: Optional[bool] = TupleField()
     currentLocation: DeviceGpsLocationTuple = TupleField()
     lastCacheCheck: Optional[datetime] = TupleField()
+    loggedInUser: Optional[str] = TupleField()

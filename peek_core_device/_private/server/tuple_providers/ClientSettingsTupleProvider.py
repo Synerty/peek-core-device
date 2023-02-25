@@ -9,9 +9,16 @@ from vortex.handler.TupleDataObservableHandler import TuplesProviderABC
 
 from peek_core_device._private.storage.Setting import FIELD_ENROLLMENT_ENABLED
 from peek_core_device._private.storage.Setting import OFFICE_ENROLLMENT_ENABLED
+from peek_core_device._private.storage.Setting import (
+    OFFLINE_CACHE_REFRESH_SECONDS,
+)
+from peek_core_device._private.storage.Setting import (
+    SLOW_NETWORK_BANDWIDTH_METRIC_THRESHOLD,
+)
 from peek_core_device._private.storage.Setting import globalSetting
-from peek_core_device._private.tuples.ClientSettingsTuple import \
-    ClientSettingsTuple
+from peek_core_device._private.tuples.ClientSettingsTuple import (
+    ClientSettingsTuple,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -37,11 +44,19 @@ class ClientSettingsTupleProvider(TuplesProviderABC):
                 ormSession, OFFICE_ENROLLMENT_ENABLED
             )
 
+            clientSetting.slowNetworkBandwidthMetricThreshold = globalSetting(
+                ormSession, SLOW_NETWORK_BANDWIDTH_METRIC_THRESHOLD
+            )
+
+            clientSetting.offlineCacheSyncSeconds = globalSetting(
+                ormSession, OFFLINE_CACHE_REFRESH_SECONDS
+            )
+
             # Create the vortex message
             return (
                 Payload(filt, tuples=[clientSetting])
-                    .makePayloadEnvelope()
-                    .toVortexMsg()
+                .makePayloadEnvelope()
+                .toVortexMsg()
             )
 
         finally:

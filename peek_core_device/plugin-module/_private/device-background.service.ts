@@ -20,7 +20,13 @@ export class DeviceBackgroundService {
             action.deviceId = this.deviceId;
             action.deviceBackgrounded = this.deviceBackgrounded;
 
-            this.tupleService.tupleAction.pushAction(action);
+            this.tupleService.tupleAction
+                .pushAction(action)
+                .catch((e) =>
+                    console.log(
+                        `Failed to send device background update, Error: ${e}`
+                    )
+                );
         });
     }
 }

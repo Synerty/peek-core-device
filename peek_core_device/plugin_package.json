@@ -90,6 +90,10 @@
                 "persistent": true
             },
             {
+                "file": "_private/device-bandwidth-test.service",
+                "class": "DeviceBandwidthTestService"
+            },
+            {
                 "file": "device-status.service",
                 "class": "DeviceStatusService",
                 "persistent": true
@@ -124,7 +128,7 @@
         "cfgModule": "core-device-cfg.module#CoreDeviceCfgModule",
         "rootModules": [
             {
-                "file": "device-loading.module",
+                "file": "_private/device-loading.module",
                 "class": "DeviceLoadingModule"
             }
         ],
@@ -163,6 +167,10 @@
                 "file": "_private/device-tuple.service",
                 "class": "DeviceTupleService",
                 "persistent": true
+            },
+            {
+                "file": "_private/device-bandwidth-test.service",
+                "class": "DeviceBandwidthTestService"
             },
             {
                 "file": "device-status.service",

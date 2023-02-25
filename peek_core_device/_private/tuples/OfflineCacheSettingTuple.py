@@ -16,4 +16,3 @@ class OfflineCacheSettingTuple(Tuple):
     __tupleType__ = deviceTuplePrefix + "OfflineCacheSettingTuple"
 
     offlineEnabled: bool = TupleField(defaultValue=False)
-    offlineCacheSyncSeconds: int = TupleField(defaultValue=15 * 60)

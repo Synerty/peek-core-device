@@ -1,213 +1,637 @@
-import { BehaviorSubject, interval, Observable, Subject } from "rxjs";
+import { BehaviorSubject, Observable, Subject } from "rxjs";
 import { Injectable } from "@angular/core";
-import { filter, takeUntil, throttle, first } from "rxjs/operators";
+import { filter, first, takeUntil } from "rxjs/operators";
+import { Network } from "@capacitor/network";
 
 import {
     NgLifeCycleEvents,
     TupleSelector,
+    VortexService,
     VortexStatusService,
+    Payload,
 } from "@synerty/vortexjs";
-import { DeviceTupleService } from "./_private";
+import { ClientSettingsTuple, DeviceTupleService } from "./_private";
 import { OfflineCacheSettingTuple } from "./_private/tuples/OfflineCacheSettingTuple";
-import { OfflineCacheStatusTuple } from "./tuples/OfflineCacheStatusTuple";
+import { OfflineCacheLoaderStatusTuple } from "./tuples/OfflineCacheLoaderStatusTuple";
 import { DeviceEnrolmentService } from "./device-enrolment.service";
 import { DeviceInfoTuple } from "./DeviceInfoTuple";
+import { DeviceBandwidthTestService } from "./_private/device-bandwidth-test.service";
+import {
+    OfflineCacheStatusTuple,
+    StateMachineE,
+} from "./_private/tuples/OfflineCacheStatusTuple";
 import { OfflineCacheStatusAction } from "./_private/tuples/OfflineCacheStatusAction";
+import { OfflineCacheCombinedStatusTuple } from "@peek/peek_core_device/_private/tuples/OfflineCacheCombinedStatusTuple";
+
+class Timer {
+    private _startTime: Date;
+
+    constructor(private timeoutSeconds: number) {
+        this.reset();
+    }
+
+    get expired(): boolean {
+        return (
+            this._startTime.getTime() + this.timeoutSeconds * 1000 <
+            new Date().getTime()
+        );
+    }
+
+    get startTime(): Date {
+        return this._startTime;
+    }
+
+    get expireTime(): Date {
+        return new Date(this._startTime.getTime() + this.timeoutSeconds * 1000);
+    }
+
+    setTimeout(timeoutSeconds: number): void {
+        this.timeoutSeconds = timeoutSeconds;
+    }
+
+    reset(startTime: null | Date = null): void {
+        if (startTime != null) {
+            this._startTime = startTime;
+        } else {
+            this._startTime = new Date();
+        }
+    }
+
+    expire() {
+        this._startTime = new Date(0);
+    }
+}
+
+class RunLocker {
+    private _locked: boolean = false;
+
+    constructor() {}
+
+    lock() {
+        this._locked = true;
+    }
+
+    unlock() {
+        this._locked = false;
+    }
+
+    get isLocked(): boolean {
+        return this._locked;
+    }
+}
 
 @Injectable()
 export class DeviceOfflineCacheService extends NgLifeCycleEvents {
     private _offlineModeEnabled$ = new BehaviorSubject<boolean>(false);
-    private _triggerCachingSubject = new BehaviorSubject<boolean>(false);
-    private _cachingStatus$ = new BehaviorSubject<OfflineCacheStatusTuple[]>(
-        []
+
+    private _triggerCacheStart$ = new BehaviorSubject<boolean>(false);
+
+    // This is not a behavior subject, because we want to be very controlled
+    // about when we trigger pausing, we also don't need the BehaviorSubjects
+    // emit on subscribe feature we never emit this during intialisation.
+    private _isPaused = true;
+    private _triggerCacheResume$ = new Subject<void>();
+
+    private _loaderCachingStatus = {};
+    private _loaderCachingStatus$ = new BehaviorSubject<
+        OfflineCacheLoaderStatusTuple[]
+    >([]);
+
+    private readonly STATE_MACHINE_INTERVAL_SECONDS = 5.0;
+    private readonly stateMachineLock = new RunLocker();
+
+    private status: OfflineCacheStatusTuple | null = null;
+    private _status$ = new BehaviorSubject<OfflineCacheStatusTuple>(
+        new OfflineCacheStatusTuple()
     );
-
-    private _cacheStatus = {};
-    private _lastTimerId: any = null;
-    private _lastTimeRun: number = 0;
-
-    private settings = new OfflineCacheSettingTuple();
+    private settings: OfflineCacheSettingTuple | null = null;
+    private offlineCacheSyncSeconds: number | null = null;
     private deviceInfo: DeviceInfoTuple = new DeviceInfoTuple();
 
     private unsub = new Subject<void>();
 
-    // private pauseCacheForGarbageCollectorInterval$: Observable<number>;
-    private cachingPausedForGarbageCollector$ = new BehaviorSubject<boolean>(
-        false
+    // Check the bandwidth every 5 minutes
+    private readonly checkBandwidthTimer = new Timer(5 * 60);
+
+    // Check the bandwidth every 15 minutes
+    // This assumes the field device is transitioning through bad internet
+    // If they turn on their wifi, we're in for a predicament.
+    private readonly abortRetryTimer = new Timer(15 * 60);
+
+    // Give loaders 60 seconds to pause
+    private readonly pauseTimeoutTimer = new Timer(60);
+
+    // This will be reinitialised when the settings come from the server
+    private readonly scheduledNextCacheStartTimer = new Timer(24 * 60 * 60);
+
+    // Run every 2 to 5 minutes, so we don't overload the server
+    private readonly sendStateToServerTimer = new Timer(
+        2 * 60 + Math.floor(Math.random() * 3 * 60)
     );
 
+    // Make note of the last network type
+    private lastNetworkType = "";
+
     constructor(
+        private vortexService: VortexService,
         private vortexStatusService: VortexStatusService,
         private tupleService: DeviceTupleService,
-        private enrolmentService: DeviceEnrolmentService
+        private enrolmentService: DeviceEnrolmentService,
+        private deviceBandwidthTestService: DeviceBandwidthTestService
     ) {
         super();
-        const CACHE_RUN_SECONDS = 60;
-        const CACHE_PAUSE_SECONDS = 0;
 
-        // JJC, This is no longer required for garbage collection
-        // but i'd like to keep the integrated APIs.
-        // this.pauseCacheForGarbageCollectorInterval$ = interval(
-        //     (CACHE_RUN_SECONDS + CACHE_PAUSE_SECONDS) * 1000
-        // );
-        // this.pauseCacheForGarbageCollectorInterval$
-        //     .pipe(takeUntil(this.onDestroyEvent))
-        //     .subscribe(() => {
-        //         console.log(`${new Date()} Pausing load for garbage collector`);
-        //         this.cachingPausedForGarbageCollector$.next(true);
-        //         setTimeout(() => {
-        //             console.log(
-        //                 `${new Date()} Resuming load` +
-        //                     " after we hope the garbage collector ran"
-        //             );
-        //             this.cachingPausedForGarbageCollector$.next(false);
-        //         }, CACHE_PAUSE_SECONDS * 1000);
-        //     });
+        // Restore our state
+        this.loadStatusTuple();
+        this.setupAllDevicesSettingsSubscription();
 
         // Why should we care if we're enrolled or not to check for updates?
-        // Devices that are not enrolled should not be able to access any thing on
+        // Devices that are not enrolled should not be able to access anything on
         // the servers.
         this.enrolmentService
             .deviceInfoObservable()
             .subscribe((deviceInfo: DeviceInfoTuple) => {
                 this.deviceInfo = deviceInfo;
-                this.unsub.next();
-                const tupleSelector = new TupleSelector(
-                    OfflineCacheSettingTuple.tupleName,
-                    { deviceToken: deviceInfo.deviceToken }
-                );
-
-                // This is an application permanent subscription
-                this.tupleService.offlineObserver
-                    .subscribeToTupleSelector(tupleSelector)
-                    .pipe(takeUntil(this.unsub))
-                    .subscribe((tuples: OfflineCacheSettingTuple[]) => {
-                        if (tuples.length === 0) return;
-
-                        const oldSettings = this.settings;
-                        this.settings = tuples[0];
-
-                        if (this.settings.offlineEnabled) {
-                            if (
-                                !oldSettings.offlineEnabled ||
-                                this.settings.offlineCacheSyncSeconds !==
-                                    oldSettings.offlineCacheSyncSeconds
-                            )
-                                this._resetTimer();
-                        }
-
-                        if (
-                            this.settings.offlineEnabled !==
-                            this._offlineModeEnabled$.getValue()
-                        ) {
-                            this._offlineModeEnabled$.next(
-                                this.settings.offlineEnabled
-                            );
-                        }
-                    });
+                this.setupThisDeviceOfflineSettingsSubscription();
             });
 
-        vortexStatusService.isOnline
+        // If the user switches network types, then reset the abort timer
+
+        Network.addListener("networkStatusChange", (status) => {
+            if (!["wifi", "cellular"].includes(status.connectionType)) return;
+
+            if (this.lastNetworkType !== status.connectionType) {
+                this.lastNetworkType = status.connectionType;
+                this.abortRetryTimer.expire();
+            }
+        });
+    }
+
+    private setupAllDevicesSettingsSubscription() {
+        const ts = new TupleSelector(ClientSettingsTuple.tupleName, {});
+        // noinspection TypeScriptValidateJSTypes
+        this.tupleService.offlineObserver
+            .subscribeToTupleSelector(ts)
             .pipe(takeUntil(this.onDestroyEvent))
-            .subscribe(() => {
-                this._resetTimer();
-            });
-
-        this.cacheStatus$ //
-            .pipe(
-                throttle((val) => interval(60000)),
-                filter(() => this.vortexStatusService.snapshot.isOnline)
-            )
-            .subscribe(() => {
-                const action = new OfflineCacheStatusAction();
-                action.deviceToken = this.deviceInfo.deviceToken;
-                action.cacheStatusList = this._cacheStatusList;
-                this.tupleService.tupleAction
-                    .pushAction(action)
-                    .then(() =>
-                        console.log("Offine cache status sent successfully")
-                    )
-                    .catch((e) => console.log(`ERROR: ${e}`));
+            .subscribe((settings: ClientSettingsTuple[]) => {
+                if (settings.length !== 0) {
+                    this.offlineCacheSyncSeconds =
+                        settings[0].offlineCacheSyncSeconds;
+                    this.processStateLoaded();
+                }
             });
     }
 
-    private _resetTimer(): void {
-        if (this._lastTimerId != null) {
-            clearInterval(this._lastTimerId);
-            this._lastTimerId = null;
-        }
+    private setupThisDeviceOfflineSettingsSubscription() {
+        this.unsub.next();
 
-        if (!this.settings.offlineEnabled) return;
+        const offlineSettingTs = new TupleSelector(
+            OfflineCacheSettingTuple.tupleName,
+            { deviceToken: this.deviceInfo.deviceToken }
+        );
+
+        this.tupleService.offlineObserver
+            .subscribeToTupleSelector(offlineSettingTs)
+            .pipe(takeUntil(this.onDestroyEvent))
+            .pipe(takeUntil(this.unsub))
+            .pipe(filter((t) => t.length === 1))
+            .subscribe((tuples: OfflineCacheSettingTuple[]) => {
+                const oldSettings = this.settings;
+                this.settings = tuples[0];
+                this.processStateLoaded(oldSettings);
+            });
+    }
+
+    private loadStatusTuple() {
+        const offlineStateTs = new TupleSelector(
+            OfflineCacheStatusTuple.tupleName,
+            {}
+        );
+
+        this.tupleService.offlineObserver
+            .subscribeToTupleSelector(offlineStateTs, false, false, true)
+            .pipe(first())
+            .subscribe((tuples: OfflineCacheStatusTuple[]) => {
+                if (tuples.length === 1) {
+                    this.status = tuples[0];
+                } else {
+                    this.status = new OfflineCacheStatusTuple();
+                }
+                this.processStateLoaded();
+            });
+    }
+
+    private processStateLoaded(
+        lastSettings: OfflineCacheSettingTuple | null = null
+    ) {
+        if (
+            this.settings == null ||
+            this.status == null ||
+            this.offlineCacheSyncSeconds == null
+        )
+            return;
 
         console.assert(
-            this.settings.offlineCacheSyncSeconds > 30,
+            this.offlineCacheSyncSeconds >= 15 * 60,
             "Cache time is too small"
         );
 
-        this._lastTimerId = setInterval(
-            () => this._triggerUpdate(),
-            this.settings.offlineCacheSyncSeconds * 1000
-        );
-        this._triggerUpdate();
-
-        /*
-         // Check for updates every so often
-         Observable.interval(this.OFFLINE_CHECK_PERIOD_MS)
-         .pipe(takeUntil(this.onDestroyEvent))
-         .subscribe(() => this.askServerForUpdates())
-         */
-    }
-
-    private _triggerUpdate(): void {
-        // Force an update if the trigger has changed state
-        // This condition occurs when the services are starting
-        // and offline mode is enabled.
-        const force =
-            this._triggerCachingSubject.getValue() != this.offlineModeEnabled;
-        if (!force && !this.vortexStatusService.snapshot.isOnline) return;
-        const timeSinceLastRun =
-            new Date().getTime() / 1000 - this._lastTimeRun;
-        if (timeSinceLastRun < this.settings.offlineCacheSyncSeconds) {
-            console.log("Skipping this cache cycle, it's too soon");
+        // If there are no changes, then do nothing
+        // Also, we get called everytime the Status tuple is stored.
+        if (this.settings.offlineEnabled === lastSettings?.offlineEnabled) {
             return;
         }
-        this._triggerCachingSubject.next(true);
-    }
 
-    get triggerCachingObservable(): Observable<boolean> {
-        return this._triggerCachingSubject.asObservable();
-    }
+        this._offlineModeEnabled$.next(this.settings.offlineEnabled);
 
-    updateCachingStatus(status: OfflineCacheStatusTuple): void {
-        this._cacheStatus[status.key] = status;
-        this._cachingStatus$.next(this._cacheStatusList);
-    }
+        if (this.settings.offlineEnabled === true) {
+            if (lastSettings?.offlineEnabled === false) {
+                // This occurs when the peek admin has turned offline caching on
+                // force a start now.
+                this.status.state = StateMachineE.StartBandwidthTest;
+            } else {
+                // Caching is enabled
+                // Update the cache timer and enable the offline caching
+                this.status.state = StateMachineE.ScheduleNextRun;
+            }
+        } else {
+            // Caching is disabled
+            // If it's already disabled, do nothing
+            if (this.status.state === StateMachineE.Disabled) {
+                return;
+            }
 
-    async waitForGarbageCollector(): Promise<void> {
-        if (this.cachingPausedForGarbageCollector$.getValue()) {
-            await new Promise<void>((resolve, reject) => {
-                this.cachingPausedForGarbageCollector$
-                    .pipe(
-                        filter((paused) => paused === false),
-                        first()
-                    )
-                    .subscribe(() => resolve());
-            });
+            this.status.state = StateMachineE.StartAborting;
+            this.status.nextState = StateMachineE.Disabled;
         }
+        // code change
+        this.runStateMachine();
     }
 
-    private get _cacheStatusList(): OfflineCacheStatusTuple[] {
-        return Object.keys(this._cacheStatus)
+    private sendStateToServer(force: boolean = false) {
+        this._status$.next(this.status);
+
+        if (!force && !this.sendStateToServerTimer.expired) return;
+        if (!this.vortexStatusService.snapshot.isOnline) return;
+
+        this.sendStateToServerTimer.reset();
+
+        const combinedTuple = new OfflineCacheCombinedStatusTuple();
+        combinedTuple.deviceToken = this.deviceInfo.deviceToken;
+        combinedTuple.loaderStatusList = this._loaderCachingStatusList;
+        combinedTuple.offlineCacheStatus = this.status;
+
+        new Payload({}, [combinedTuple]) //
+            .toEncodedPayload()
+            .then((encodedPayload) => {
+                const action = new OfflineCacheStatusAction();
+                action.deviceToken = this.deviceInfo.deviceToken;
+                action.encodedCombinedTuplePayload = encodedPayload;
+                action.lastCachingStartDate = this.status.lastCachingStartDate;
+                return this.tupleService.tupleAction.pushAction(action);
+            })
+            .then(() => console.log("Offline cache status sent successfully"))
+            .catch((e) => console.log(`ERROR: ${e}`));
+    }
+
+    private runStateMachine(): void {
+        if (this.stateMachineLock.isLocked) return;
+
+        this.stateMachineLock.lock();
+        console.log(`StateMachine Start = ${this.status.stateString}`);
+        this.tryRunStateMachine() //
+            .catch((e) => console.log(`ERROR asyncStateMachine: ${e}`))
+            .then(() => {
+                console.log(`StateMachine End = ${this.status.stateString}`);
+
+                setTimeout(() => {
+                    try {
+                        // Don't unlock it until we're going to run next
+                        this.stateMachineLock.unlock();
+                        if (this.status.state === StateMachineE.Disabled)
+                            return;
+                        this.runStateMachine();
+                    } catch (e) {
+                        console.log(`ERROR runStateMachine timer: ${e}`);
+                    }
+                }, this.STATE_MACHINE_INTERVAL_SECONDS * 1000);
+            });
+    }
+
+    private async tryRunStateMachine(): Promise<void> {
+        this.status.nextStateCheckDate = null;
+        // If a cache is in progress, then
+        if (
+            this.status.isCacheInProgress &&
+            !this.vortexStatusService.snapshot.isOnline
+        ) {
+            this.status.state = StateMachineE.StartAborting;
+            this.status.nextState = StateMachineE.AbortedDueToVortexOffline;
+        }
+
+        switch (this.status.state) {
+            case StateMachineE.LoadingSettings: {
+                // Do nothing, The state machine shouldn't be running
+                return;
+            }
+            case StateMachineE.Disabled: {
+                // Do nothing, The state machine shouldn't be running
+                return;
+            }
+            case StateMachineE.ScheduleNextRun: {
+                this.scheduledNextCacheStartTimer.setTimeout(
+                    this.offlineCacheSyncSeconds
+                );
+                // Ensure the caching does not start before it's due to.
+                if (this.status.lastCachingStartDate != null) {
+                    this.scheduledNextCacheStartTimer.reset(
+                        this.status.lastCachingStartDate
+                    );
+                }
+                this.status.state = StateMachineE.Enabled;
+                break;
+            }
+            case StateMachineE.Enabled: {
+                // If the cache was in progress, then restart it.
+                // It must finish first, before we start
+                // doing it to the schedule
+                if (!this.status.hasCachingCompleted) {
+                    this.status.state = StateMachineE.StartBandwidthTest;
+                    break;
+                }
+
+                // Check if we should start the caching.
+                if (this.scheduledNextCacheStartTimer.expired) {
+                    this.status.state = StateMachineE.StartBandwidthTest;
+                    break;
+                }
+
+                // Update status display
+                this.status.nextStateCheckDate =
+                    this.scheduledNextCacheStartTimer.expireTime;
+
+                // Otherwise do nothing
+                return;
+            }
+            case StateMachineE.StartRunning: {
+                if (!this.isOfflineCachingRunning) {
+                    // If caching is not running, start it
+                    console.log(
+                        "StateMachineE.StartRunning, Starting Offline Caching"
+                    );
+                    this.triggerCachingStart();
+                } else if (this.isOfflineCachingPaused) {
+                    // If it's paused then resume it
+                    console.log(
+                        "StateMachineE.StartRunning, Resuming Offline Caching"
+                    );
+                    this.triggerCachingResume();
+                } else {
+                    // If the caching should be running, and it's not paused
+                    // then why are we here?
+                    // Start it again
+                    console.log(
+                        "StateMachineE.StartRunning," +
+                            " except we're already running"
+                    );
+                    this.triggerCachingStart();
+                }
+
+                this.status.setStarted();
+                this.checkBandwidthTimer.reset();
+                this.status.state = StateMachineE.Running;
+                break;
+            }
+            case StateMachineE.Running: {
+                // Check if the caching is finished, if so, mark it.
+                if (this.areAllLoadersComplete()) {
+                    this.status.state = StateMachineE.ScheduleNextRun;
+                    this.status.setCompleted();
+                    break;
+                }
+
+                // Are we due for a pause? If so, pause it and check
+                if (this.checkBandwidthTimer.expired) {
+                    this.status.state = StateMachineE.StartPausing;
+                    this.status.nextState = StateMachineE.StartBandwidthTest;
+                    break;
+                }
+
+                // Update status display
+                this.status.nextStateCheckDate =
+                    this.checkBandwidthTimer.expireTime;
+
+                // Otherwise do nothing
+                return;
+            }
+            case StateMachineE.StartPausing: {
+                console.assert(this.status.nextState != null);
+
+                if (
+                    !this.isOfflineCachingPaused &&
+                    this.isOfflineCachingRunning
+                ) {
+                    this.triggerCachingPause();
+                } else {
+                    console.log(
+                        "StateMachineE.StartPausing," +
+                            " except we're already paused"
+                    );
+                }
+
+                this.status.state = StateMachineE.Pausing;
+                this.pauseTimeoutTimer.reset();
+                break;
+            }
+            case StateMachineE.Pausing: {
+                console.assert(this.status.nextState != null);
+
+                // Ensure we don't wait forever for things to pause.
+                // Sometimes loaders don't receive a response
+                //  from the server and stop
+                if (!this.pauseTimeoutTimer.expired) {
+                    // Update status display
+                    this.status.nextStateCheckDate =
+                        this.pauseTimeoutTimer.expireTime;
+
+                    // While some loaders are running, do nothing
+                    if (!this.areAllLoadersPaused()) {
+                        return;
+                    }
+                }
+
+                this.status.state = this.status.nextState;
+                this.status.nextState = null;
+                break;
+            }
+            case StateMachineE.StartBandwidthTest: {
+                // Trigger the start and move on.
+                this.deviceBandwidthTestService.startTest();
+                this.status.state = StateMachineE.PausedForBandwidthTest;
+                break;
+            }
+            case StateMachineE.PausedForBandwidthTest: {
+                // While the test is running, Do nothing
+                // It has code to time its self out.
+                if (this.deviceBandwidthTestService.isTestRunning) {
+                    return;
+                }
+
+                // This is assigned for the admin interface to use
+                this.status.isSlowNetwork =
+                    this.deviceBandwidthTestService.isSlowNetwork;
+                this.status.lastMetric =
+                    this.deviceBandwidthTestService.lastMetric;
+
+                // If the results are in, and the network is slow, then stop
+                if (this.deviceBandwidthTestService.isSlowNetwork) {
+                    this.status.state = StateMachineE.StartAborting;
+                    this.status.nextState =
+                        StateMachineE.AbortedDueToSlowNetwork;
+                    break;
+                }
+
+                // Otherwise, continue on.
+                this.status.state = StateMachineE.StartRunning;
+                break;
+            }
+            case StateMachineE.StartAborting: {
+                console.assert(this.status.nextState != null);
+                this.triggerCachingStop();
+                this.status.setAborted();
+                this.status.state = this.status.nextState;
+                this.status.nextState = null;
+                this.abortRetryTimer.reset();
+                break;
+            }
+            case StateMachineE.AbortedDueToSlowNetwork: {
+                // Have we finished waiting for the abort retry timer
+                // NOTE: See the constructor of this class, if the users switches
+                // between WI-FI and Cellular, it will expire the abort timer
+                if (this.abortRetryTimer.expired) {
+                    // Resuming from a slow network stop is the same process
+                    // as starting the caching from scratch
+                    // It will first test the network again,
+                    //  then end up back here if the network is too slow
+                    this.status.state = StateMachineE.Enabled;
+                    break;
+                }
+
+                // Update status display
+                this.status.nextStateCheckDate =
+                    this.abortRetryTimer.expireTime;
+
+                // Otherwise, do nothing
+                return;
+            }
+            case StateMachineE.AbortedDueToVortexOffline: {
+                if (this.vortexStatusService.snapshot.isOnline) {
+                    this.status.state = StateMachineE.Enabled;
+                    break;
+                }
+
+                // Otherwise, do nothing
+                return;
+            }
+            default: {
+                throw new Error(
+                    `State ${this.status.state} is not implemented`
+                );
+            }
+        }
+
+        // Store our state.
+        // Storing this every 5 seconds should be fine.
+        await this.tupleService.offlineObserver.updateOfflineState(
+            new TupleSelector(OfflineCacheStatusTuple.tupleName, {}),
+            [this.status]
+        );
+
+        this.sendStateToServer();
+    }
+
+    private areAllLoadersPaused(): boolean {
+        const list = this._loaderCachingStatusList;
+        if (list.length === 0) {
+            return false;
+        }
+
+        for (const loader of list) {
+            if (!loader.paused) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private areAllLoadersComplete(): boolean {
+        const list = this._loaderCachingStatusList;
+        if (list.length === 0) {
+            return false;
+        }
+
+        for (const loader of list) {
+            if (loader.loadingIncomplete) return false;
+        }
+        return true;
+    }
+
+    private triggerCachingStart(): void {
+        this._isPaused = false;
+        this._triggerCacheStart$.next(true);
+    }
+
+    private triggerCachingStop(): void {
+        this._isPaused = true;
+        this._triggerCacheStart$.next(false);
+    }
+
+    private triggerCachingPause(): void {
+        this._isPaused = true;
+    }
+
+    private triggerCachingResume(): void {
+        this._isPaused = false;
+        this._triggerCacheResume$.next();
+    }
+
+    get triggerCachingStartObservable(): Observable<boolean> {
+        return this._triggerCacheStart$.asObservable();
+    }
+
+    get triggerCachingResumeObservable(): Observable<void> {
+        return this._triggerCacheResume$;
+    }
+
+    get isOfflineCachingPaused(): boolean {
+        return this._isPaused;
+    }
+
+    get isOfflineCachingRunning(): boolean {
+        return this._triggerCacheStart$.getValue();
+    }
+
+    updateLoaderCachingStatus(status: OfflineCacheLoaderStatusTuple): void {
+        this._loaderCachingStatus[status.key] = status;
+        this._loaderCachingStatus$.next(this._loaderCachingStatusList);
+    }
+
+    private get _loaderCachingStatusList(): OfflineCacheLoaderStatusTuple[] {
+        return Object.keys(this._loaderCachingStatus)
             .sort((one, two) => (one > two ? -1 : 1))
-            .map((k) => this._cacheStatus[k]);
+            .map((k) => this._loaderCachingStatus[k]);
     }
 
-    get cacheStatus$(): BehaviorSubject<OfflineCacheStatusTuple[]> {
-        return this._cachingStatus$;
+    get loaderStatus$(): BehaviorSubject<OfflineCacheLoaderStatusTuple[]> {
+        return this._loaderCachingStatus$;
+    }
+
+    get status$(): BehaviorSubject<OfflineCacheStatusTuple | null> {
+        return this._status$;
     }
 
     get offlineModeEnabled(): boolean {
-        return this.settings.offlineEnabled;
+        return this.settings?.offlineEnabled || false;
     }
 
     get offlineModeEnabled$(): Observable<boolean> {
@@ -216,7 +640,7 @@ export class DeviceOfflineCacheService extends NgLifeCycleEvents {
 
     get cachingEnabled(): boolean {
         return (
-            this.settings.offlineEnabled &&
+            this.settings?.offlineEnabled &&
             this.vortexStatusService.snapshot.isOnline
         );
     }

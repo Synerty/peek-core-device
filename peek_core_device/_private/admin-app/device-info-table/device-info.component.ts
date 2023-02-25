@@ -30,8 +30,11 @@ export class DeviceInfoComponent extends NgLifeCycleEvents {
     readonly deviceToken$ = new BehaviorSubject<string | null>(null);
     isOfflineCacheModalShown: boolean = false;
 
-    private _searchValue: string = "";
-    searchVisible: boolean = false;
+    private _deviceSearchValue: string = "";
+    deviceSearchVisible: boolean = false;
+
+    private _userSearchValue: string = "";
+    userSearchVisible: boolean = false;
 
     constructor(
         private balloonMsg: BalloonMsgService,
@@ -53,27 +56,37 @@ export class DeviceInfoComponent extends NgLifeCycleEvents {
             });
     }
 
-    get searchValue(): string {
-        return this._searchValue;
+    get deviceSearchValue(): string {
+        return this._deviceSearchValue;
     }
 
-    set searchValue(value: string) {
-        this._searchValue = (value || "").toLocaleLowerCase();
+    set deviceSearchValue(value: string) {
+        this._deviceSearchValue = (value || "").toLocaleLowerCase();
+        this.refilter();
+    }
+
+    get userSearchValue(): string {
+        return this._userSearchValue;
+    }
+
+    set userSearchValue(value: string) {
+        this._userSearchValue = (value || "").toLocaleLowerCase();
         this.refilter();
     }
 
     private refilter(): void {
-        if (!this._searchValue) {
-            this.searchVisible = false;
-            this.items$.next(this.items);
-            return;
-        }
-        const items = this.items.filter(
-            (item: DeviceInfoTable) =>
-                item.description
-                    .toLocaleLowerCase()
-                    .indexOf(this._searchValue) !== -1
-        );
+        const filter = (item: DeviceInfoTable) => {
+            if (this.deviceSearchValue.length !== 0) {
+                const val = (item.description || "").toLocaleLowerCase();
+                if (val.indexOf(this.deviceSearchValue) === -1) return false;
+            }
+            if (this.userSearchValue.length !== 0) {
+                const val = (item.loggedInUser || "").toLocaleLowerCase();
+                if (val.indexOf(this.userSearchValue) === -1) return false;
+            }
+            return true;
+        };
+        const items = this.items.filter(filter);
         this.items$.next(items);
     }
 

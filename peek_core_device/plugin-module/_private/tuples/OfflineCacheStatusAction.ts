@@ -1,6 +1,5 @@
 import { addTupleType, TupleActionABC } from "@synerty/vortexjs";
 import { deviceTuplePrefix } from "../PluginNames";
-import { OfflineCacheStatusTuple } from "../../tuples/OfflineCacheStatusTuple";
 
 @addTupleType
 export class OfflineCacheStatusAction extends TupleActionABC {
@@ -8,7 +7,8 @@ export class OfflineCacheStatusAction extends TupleActionABC {
         deviceTuplePrefix + "OfflineCacheStatusAction";
 
     deviceToken: string;
-    cacheStatusList: OfflineCacheStatusTuple[] = [];
+    encodedCombinedTuplePayload: string;
+    lastCachingStartDate: Date | null;
 
     constructor() {
         super(OfflineCacheStatusAction.tupleName);

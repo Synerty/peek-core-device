@@ -1,5 +1,6 @@
 import logging
 
+from twisted.internet.defer import inlineCallbacks
 from txhttputil.site.FileUnderlayResource import FileUnderlayResource
 
 from peek_core_device._private.server.controller.NotifierController import (
@@ -61,6 +62,7 @@ class LogicEntryHook(PluginLogicEntryHookABC, PluginServerStorageEntryHookABC):
         loadPublicTuples()
         logger.debug("Loaded")
 
+    @inlineCallbacks
     def start(self):
         """Start
 
@@ -68,13 +70,15 @@ class LogicEntryHook(PluginLogicEntryHookABC, PluginServerStorageEntryHookABC):
         Place any custom initialiastion steps here.
 
         """
+        userApi = self.platform.getOtherPluginApi("peek_core_user")
+
         offlineCacheController = OfflineCacheController(
             dbSessionCreator=self.dbSessionCreator
         )
         self._loadedObjects.append(offlineCacheController)
 
         tupleObservable = makeTupleDataObservableHandler(
-            self.dbSessionCreator, offlineCacheController
+            self.dbSessionCreator, offlineCacheController, userApi
         )
         self._loadedObjects.append(tupleObservable)
 

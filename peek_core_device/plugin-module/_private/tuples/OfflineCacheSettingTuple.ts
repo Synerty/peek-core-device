@@ -7,7 +7,6 @@ export class OfflineCacheSettingTuple extends Tuple {
         deviceTuplePrefix + "OfflineCacheSettingTuple";
 
     offlineEnabled: boolean = false;
-    offlineCacheSyncSeconds: number = 0;
 
     constructor() {
         super(OfflineCacheSettingTuple.tupleName);

@@ -161,23 +161,18 @@ export class DeviceServerService {
      *
      * Load the connection info from the websql db and set set the vortex.
      */
-    private async loadConnInfo(): Promise<void> {
-        // We only load the tuple if we have not already connected
-        // This allows the SERVER_INFO_TUPLE_DEFAULTS to prevent any loading
-        if (!this.serverInfo.hasConnected) {
-            const tuples = <ServerInfoTuple[]>(
-                await this.tupleService.offlineStorage.loadTuples(
-                    this.tupleSelector
-                )
-            );
-            if (tuples.length) {
-                this.serverInfo = tuples[0];
-            }
-        }
+    private loadConnInfo(): Promise<void> {
+        return this.tupleService.offlineStorage
+            .loadTuples(this.tupleSelector)
+            .then((tuples: ServerInfoTuple[]) => {
+                this._isLoading = false;
 
-        this._isLoading = false;
+                if (tuples.length) {
+                    this.serverInfo = tuples[0];
+                }
 
-        this.serverInfoSubject.next(this.serverInfo);
+                this.serverInfoSubject.next(this.serverInfo);
+            });
     }
 
     private saveConnInfo(): Promise<void> {

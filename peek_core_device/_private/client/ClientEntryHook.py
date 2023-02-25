@@ -2,8 +2,8 @@ import logging
 
 from twisted.internet.defer import inlineCallbacks
 
-from peek_core_device._private.client.DeviceOnlineHandler import (
-    DeviceOnlineHandler,
+from peek_core_device._private.client.controllers.DeviceOnlineController import (
+    DeviceOnlineController,
 )
 from peek_core_device._private.storage.DeclarativeBase import loadStorageTuples
 from peek_core_device._private.tuples import loadPrivateTuples
@@ -13,6 +13,7 @@ from peek_plugin_base.client.PluginClientEntryHookABC import (
 )
 from .DeviceTupleDataObservableProxy import makeDeviceTupleDataObservableProxy
 from .DeviceTupleProcessorActionProxy import makeTupleActionProcessorProxy
+from .controllers.BandwidthTestController import BandwidthTestController
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +42,7 @@ class ClientEntryHook(PluginClientEntryHookABC):
 
         logger.debug("Loaded")
 
+    @inlineCallbacks
     def start(self):
         """Load
 
@@ -71,7 +73,13 @@ class ClientEntryHook(PluginClientEntryHookABC):
 
         # ----------------
         # Online Handler
-        self._loadedObjects.append(DeviceOnlineHandler())
+        self._loadedObjects.append(DeviceOnlineController())
+
+        # ----------------
+        # Bandwidth Test Controller
+        bandwidthController = BandwidthTestController()
+        self._loadedObjects.append(bandwidthController)
+        yield bandwidthController.start()
 
         # # ----------------
         # # Update Download Handler

@@ -39,6 +39,8 @@ export class DeviceInfoTable extends Tuple {
     isOfflineCacheEnabled: boolean;
     currentLocation: DeviceGpsLocationTuple;
     lastCacheUpdate: Date;
+    lastBandwidthMetric: number;
+    loggedInUser: string;
 
     constructor() {
         super(DeviceInfoTable.tupleName);

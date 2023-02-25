@@ -14,11 +14,14 @@ from peek_core_device._private.server.controller.NotifierController import (
     NotifierController,
 )
 from peek_core_device._private.storage.DeviceInfoTable import DeviceInfoTable
+from peek_core_device._private.tuples.OfflineCacheCombinedStatusTuple import (
+    OfflineCacheCombinedStatusTuple,
+)
 from peek_core_device._private.tuples.OfflineCacheStatusAction import (
     OfflineCacheStatusAction,
 )
-from peek_core_device._private.tuples.OfflineCacheStatusTuple import (
-    OfflineCacheStatusTuple,
+from peek_core_device._private.tuples.OfflineCacheLoaderStatusTuple import (
+    OfflineCacheLoaderStatusTuple,
 )
 from peek_core_device._private.tuples.UpdateOfflineCacheSettingAction import (
     UpdateOfflineCacheSettingAction,
@@ -33,7 +36,7 @@ class OfflineCacheController:
         self._notifierController = None
 
         self._lastUpdateByDeviceToken = {}
-        self._lastStatusByDeviceToken = defaultdict(list)
+        self._lastStatusEncodedPayloadByDeviceToken: dict[str, str] = {}
 
     def setNotificationController(self, notifierController: NotifierController):
         self._notifierController = notifierController
@@ -41,10 +44,8 @@ class OfflineCacheController:
     def lastCacheUpdate(self, deviceToken: str) -> Optional[datetime]:
         return self._lastUpdateByDeviceToken.get(deviceToken)
 
-    def lastCacheStatus(
-        self, deviceToken: str
-    ) -> dict[str : list[OfflineCacheStatusTuple]]:
-        return self._lastStatusByDeviceToken.get(deviceToken)
+    def lastCacheStatusEncodedPayload(self, deviceToken: str) -> str:
+        return self._lastStatusEncodedPayloadByDeviceToken.get(deviceToken)
 
     def shutdown(self):
         self._lastUpdateByDeviceToken = {}
@@ -95,8 +96,11 @@ class OfflineCacheController:
     def _processOfflineCacheStatusUpdate(
         self, action: OfflineCacheStatusAction
     ) -> List[Tuple]:
-        lastDate = min([s.lastCheckDate for s in action.cacheStatusList])
-        self._lastUpdateByDeviceToken[action.deviceToken] = lastDate
-        self._lastStatusByDeviceToken[
+        # lastDate = min([s.lastCheckDate for s in action.loaderStatusList])
+        self._lastUpdateByDeviceToken[
             action.deviceToken
-        ] = action.cacheStatusList
+        ] = action.offlineCacheStatus.lastCachingStartDate
+
+        self._lastStatusEncodedPayloadByDeviceToken[
+            action.deviceToken
+        ] = action.encodedCombinedTuplePayload

@@ -5,4 +5,4 @@ export { DeviceEnrolledGuard } from "./device-enrolled.guard";
 export { DeviceGpsLocationService } from "./gps-location.service";
 export { DeviceGpsLocationTuple } from "./DeviceGpsLocationTuple";
 export { DeviceOfflineCacheService } from "./device-offline-cache.service";
-export { OfflineCacheStatusTuple } from "./tuples/OfflineCacheStatusTuple";
+export { OfflineCacheLoaderStatusTuple } from "./tuples/OfflineCacheLoaderStatusTuple";

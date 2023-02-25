@@ -3,8 +3,8 @@ from vortex.Tuple import TupleField
 from vortex.Tuple import addTupleType
 
 from peek_core_device._private.PluginNames import deviceTuplePrefix
-from peek_core_device._private.tuples.OfflineCacheStatusTuple import (
-    OfflineCacheStatusTuple,
+from peek_core_device._private.tuples.OfflineCacheLoaderStatusTuple import (
+    OfflineCacheLoaderStatusTuple,
 )
 
 
@@ -18,4 +18,4 @@ class DeviceCacheStatusTuple(Tuple):
 
     __tupleType__ = deviceTuplePrefix + "DeviceCacheStatusTuple"
 
-    statusList: list[OfflineCacheStatusTuple] = TupleField()
+    statusList: list[OfflineCacheLoaderStatusTuple] = TupleField()
