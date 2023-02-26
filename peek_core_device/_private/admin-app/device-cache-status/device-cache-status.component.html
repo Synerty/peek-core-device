@@ -23,14 +23,10 @@
     <div *ngFor="let status of combinedStatus.loaderStatusList">
         <h4>{{ status.pluginName }} - {{ status.indexName }}</h4>
         <p>
-            Load Progress : <b>{{ status.percentCompleteString }}</b> loading
-            <b>{{ status.loadingQueueCount }}</b> chunks, server count is
-            <b>{{ status.totalLoadedCount || "Stopped" }}</b> chunks<br />
-            Last Check Finished :
-            <b>{{ status.lastCheckDate | date : "medium" }}</b
-            >, Has Completed Once : <b>{{ status.initialFullLoadComplete }}</b
-            >, Last Load Complete : <b>{{ !status.loadingIncomplete }}</b
-            ><br />
+            Load Progress : <b>{{ status.percentCompleteString }}</b
+            >, loading <b>{{ status.loadingQueueCount }}</b> chunks, server has
+            <b>{{ status.totalLoadedCount || "?" }}</b> chunks, Has Completed
+            Once : <b>{{ status.initialFullLoadComplete }}</b> ><br />
         </p>
     </div>
 </div>

@@ -287,6 +287,10 @@ OFFLINE_CACHE_REFRESH_SECONDS = PropertyKey(
     "Offline Cache Refresh Seconds", 24 * 60 * 60, propertyDict=globalProperties
 )
 
+OFFLINE_MASTER_SWITCH_ENABLED = PropertyKey(
+    "Offline Master Switch Enabled", True, propertyDict=globalProperties
+)
+
 
 SLOW_NETWORK_BANDWIDTH_METRIC_THRESHOLD = PropertyKey(
     "Slow Network Bandwidth Metric Threshold",

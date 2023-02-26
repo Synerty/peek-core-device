@@ -105,7 +105,7 @@ export class DeviceOfflineCacheService extends NgLifeCycleEvents {
         new OfflineCacheStatusTuple()
     );
     private settings: OfflineCacheSettingTuple | null = null;
-    private offlineCacheSyncSeconds: number | null = null;
+    private allCientsSettingsTuple: ClientSettingsTuple | null = null;
     private deviceInfo: DeviceInfoTuple = new DeviceInfoTuple();
 
     private unsub = new Subject<void>();
@@ -130,7 +130,7 @@ export class DeviceOfflineCacheService extends NgLifeCycleEvents {
     );
 
     // Make note of the last network type
-    private lastNetworkType = "";
+    private _lastNetworkType = "";
 
     constructor(
         private vortexService: VortexService,
@@ -155,13 +155,17 @@ export class DeviceOfflineCacheService extends NgLifeCycleEvents {
                 this.setupThisDeviceOfflineSettingsSubscription();
             });
 
-        // If the user switches network types, then reset the abort timer
+        // Set the current network status
+        Network.getStatus().then(
+            (status) => (this._lastNetworkType = status.connectionType)
+        );
 
+        // If the user switches network types, then reset the abort timer
         Network.addListener("networkStatusChange", (status) => {
             if (!["wifi", "cellular"].includes(status.connectionType)) return;
 
-            if (this.lastNetworkType !== status.connectionType) {
-                this.lastNetworkType = status.connectionType;
+            if (this._lastNetworkType !== status.connectionType) {
+                this._lastNetworkType = status.connectionType;
                 this.abortRetryTimer.expire();
             }
         });
@@ -175,8 +179,7 @@ export class DeviceOfflineCacheService extends NgLifeCycleEvents {
             .pipe(takeUntil(this.onDestroyEvent))
             .subscribe((settings: ClientSettingsTuple[]) => {
                 if (settings.length !== 0) {
-                    this.offlineCacheSyncSeconds =
-                        settings[0].offlineCacheSyncSeconds;
+                    this.allCientsSettingsTuple = settings[0];
                     this.processStateLoaded();
                 }
             });
@@ -227,24 +230,28 @@ export class DeviceOfflineCacheService extends NgLifeCycleEvents {
         if (
             this.settings == null ||
             this.status == null ||
-            this.offlineCacheSyncSeconds == null
+            this.allCientsSettingsTuple == null
         )
             return;
 
         console.assert(
-            this.offlineCacheSyncSeconds >= 15 * 60,
+            this.allCientsSettingsTuple.offlineCacheSyncSeconds >= 15 * 60,
             "Cache time is too small"
         );
 
+        const calculatedEnabled =
+            this.allCientsSettingsTuple.offlineMasterSwitchEnabled &&
+            this.settings.offlineEnabled;
+
         // If there are no changes, then do nothing
         // Also, we get called everytime the Status tuple is stored.
-        if (this.settings.offlineEnabled === lastSettings?.offlineEnabled) {
+        if (calculatedEnabled === lastSettings?.offlineEnabled) {
             return;
         }
 
-        this._offlineModeEnabled$.next(this.settings.offlineEnabled);
+        this._offlineModeEnabled$.next(calculatedEnabled);
 
-        if (this.settings.offlineEnabled === true) {
+        if (calculatedEnabled === true) {
             if (lastSettings?.offlineEnabled === false) {
                 // This occurs when the peek admin has turned offline caching on
                 // force a start now.
@@ -298,11 +305,11 @@ export class DeviceOfflineCacheService extends NgLifeCycleEvents {
         if (this.stateMachineLock.isLocked) return;
 
         this.stateMachineLock.lock();
-        console.log(`StateMachine Start = ${this.status.stateString}`);
+        // console.log(`StateMachine Start = ${this.status.stateString}`);
         this.tryRunStateMachine() //
             .catch((e) => console.log(`ERROR asyncStateMachine: ${e}`))
             .then(() => {
-                console.log(`StateMachine End = ${this.status.stateString}`);
+                // console.log(`StateMachine End = ${this.status.stateString}`);
 
                 setTimeout(() => {
                     try {
@@ -340,7 +347,7 @@ export class DeviceOfflineCacheService extends NgLifeCycleEvents {
             }
             case StateMachineE.ScheduleNextRun: {
                 this.scheduledNextCacheStartTimer.setTimeout(
-                    this.offlineCacheSyncSeconds
+                    this.allCientsSettingsTuple.offlineCacheSyncSeconds
                 );
                 // Ensure the caching does not start before it's due to.
                 if (this.status.lastCachingStartDate != null) {

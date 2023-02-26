@@ -1,12 +1,14 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, Subject } from "rxjs";
-import { first, takeUntil } from "rxjs/operators";
+import { BehaviorSubject, Subject, interval } from "rxjs";
+import { filter, first, takeUntil } from "rxjs/operators";
+import { Network } from "@capacitor/network";
 
 import {
     NgLifeCycleEvents,
     PayloadEndpoint,
     TupleSelector,
     VortexService,
+    VortexStatusService,
 } from "@synerty/vortexjs";
 import { deviceFilt } from "./PluginNames";
 import { DeviceTupleService } from "./device-tuple.service";
@@ -31,11 +33,13 @@ export class DeviceBandwidthTestService extends NgLifeCycleEvents {
 
     readonly RESPONSE_TIMEOUT_SECONDS = 30.0;
     private slowNetworkBandwidthMetricThreshold: number = 1200;
+    private readonly CHECK_PERIOD_SECONDS = 15 * 60;
 
     private _isSlowNetwork: boolean = true;
     private _lastMetric: number = 1300;
 
     private _testRunning: boolean = false;
+    private _lastNetworkType: string | null = null;
 
     readonly status$ = new BehaviorSubject<BandwidthStatusI>({
         isSlowNetwork: null,
@@ -44,6 +48,7 @@ export class DeviceBandwidthTestService extends NgLifeCycleEvents {
 
     constructor(
         private vortexService: VortexService,
+        private vortexStatusService: VortexStatusService,
         private tupleService: DeviceTupleService,
         private enrolmentService: DeviceEnrolmentService
     ) {
@@ -65,6 +70,45 @@ export class DeviceBandwidthTestService extends NgLifeCycleEvents {
                         settings[0].slowNetworkBandwidthMetricThreshold;
                 }
             });
+
+        interval(this.CHECK_PERIOD_SECONDS * 1000)
+            .pipe(takeUntil(this.onDestroyEvent))
+            .pipe(
+                filter(
+                    () =>
+                        this.vortexStatusService.snapshot.isOnline &&
+                        !this._testRunning
+                )
+            )
+            .subscribe(() => this.startTest());
+
+        const startTestShortly = () => {
+            setTimeout(() => this.startTest(), 30 * 1000);
+        };
+
+        // ?? seconds after coming online, start a test
+        this.vortexStatusService.isOnline
+            .pipe(takeUntil(this.onDestroyEvent))
+            .pipe(filter((online) => online))
+            .subscribe(startTestShortly);
+
+        // Set the current network status
+        Network.getStatus().then(
+            (status) => (this._lastNetworkType = status.connectionType)
+        );
+
+        Network.addListener("networkStatusChange", (status) => {
+            if (!["wifi", "cellular"].includes(status.connectionType)) return;
+
+            if (this._lastNetworkType !== status.connectionType) {
+                this._lastNetworkType = status.connectionType;
+                startTestShortly();
+            }
+        });
+
+        // this service is constructed when the app starts,
+        // check what our network is like, after all the subscriptions complete
+        startTestShortly();
     }
 
     get isSlowNetwork(): boolean {
@@ -80,7 +124,11 @@ export class DeviceBandwidthTestService extends NgLifeCycleEvents {
     }
 
     startTest(): void {
-        if (this._testRunning) throw new Error("Test is already running");
+        if (this._testRunning) {
+            console.log("Subsequent call to start bandwidth test ignored");
+            return;
+        }
+        console.log("Starting bandwidth test ignored");
 
         this._testRunning = true;
 

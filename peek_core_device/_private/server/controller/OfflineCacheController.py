@@ -99,7 +99,7 @@ class OfflineCacheController:
         # lastDate = min([s.lastCheckDate for s in action.loaderStatusList])
         self._lastUpdateByDeviceToken[
             action.deviceToken
-        ] = action.offlineCacheStatus.lastCachingStartDate
+        ] = action.lastCachingStartDate
 
         self._lastStatusEncodedPayloadByDeviceToken[
             action.deviceToken

@@ -13,6 +13,9 @@ from peek_core_device._private.storage.Setting import (
     OFFLINE_CACHE_REFRESH_SECONDS,
 )
 from peek_core_device._private.storage.Setting import (
+    OFFLINE_MASTER_SWITCH_ENABLED,
+)
+from peek_core_device._private.storage.Setting import (
     SLOW_NETWORK_BANDWIDTH_METRIC_THRESHOLD,
 )
 from peek_core_device._private.storage.Setting import globalSetting
@@ -50,6 +53,10 @@ class ClientSettingsTupleProvider(TuplesProviderABC):
 
             clientSetting.offlineCacheSyncSeconds = globalSetting(
                 ormSession, OFFLINE_CACHE_REFRESH_SECONDS
+            )
+
+            clientSetting.offlineMasterSwitchEnabled = globalSetting(
+                ormSession, OFFLINE_MASTER_SWITCH_ENABLED
             )
 
             # Create the vortex message
