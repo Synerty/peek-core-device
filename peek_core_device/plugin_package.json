@@ -49,7 +49,7 @@
         "cfgModule": "core-device-cfg.module#CoreDeviceCfgModule",
         "rootModules": [
             {
-                "file": "device-loading.module",
+                "file": "_private/device-loading.module",
                 "class": "DeviceLoadingModule"
             }
         ],
