@@ -1,7 +1,9 @@
 import logging
+from datetime import datetime
 from typing import List
 from typing import Optional
 
+import pytz
 from twisted.internet.defer import Deferred
 from twisted.internet.defer import inlineCallbacks
 from twisted.internet.task import LoopingCall
@@ -46,7 +48,6 @@ class BandwidthResultController:
         self._metricUpdateQueue = {}
 
     def processTupleAction(self, tupleAction: TupleActionABC) -> List[Tuple]:
-
         if isinstance(tupleAction, BandwidthTestResultTuple):
             self._metricUpdateQueue[
                 tupleAction.deviceToken
@@ -60,9 +61,14 @@ class BandwidthResultController:
 
         toProcess, self._metricUpdateQueue = self._metricUpdateQueue, {}
 
-        logger.debug("Inserting %s bandwidth metrics", len(toProcess))
+        startTime = datetime.now(pytz.UTC)
         yield runPyInPg(
             logger, self._dbSessionCreator, self._updateMetric, None, toProcess
+        )
+        logger.debug(
+            "Inserted %s bandwidth metrics in %s",
+            len(toProcess),
+            datetime.now(pytz.UTC) - startTime,
         )
 
         self._notifierController.notifyAllDeviceInfos()

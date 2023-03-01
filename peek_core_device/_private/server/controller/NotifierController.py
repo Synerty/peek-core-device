@@ -41,7 +41,7 @@ class NotifierController:
 
         self.notifyAllDeviceInfos()
 
-    @debounceCall(30)
+    @debounceCall(55)
     def notifyAllDeviceInfos(self):
         self._tupleObservable.notifyOfTupleUpdate(
             TupleSelector(DeviceInfoTuple.tupleName(), dict())
@@ -88,9 +88,7 @@ class NotifierController:
             deviceToken, latitude, longitude, updatedDate
         )
 
-        self.notifyAllDeviceGpsLocation()
-
-    @debounceCall(30)
+    @debounceCall(120)
     def notifyAllDeviceGpsLocation(self):
         from peek_core_device._private.storage.GpsLocationTable import (
             GpsLocationTable,

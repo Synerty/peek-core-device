@@ -76,6 +76,7 @@ class MainController(TupleActionProcessorDelegateABC):
     def start(self):
         yield self._onlineController.start()
         yield self._bandwidthResultController.start()
+        yield self._gpsController.start()
 
     def shutdown(self):
         self._enrollmentController.shutdown()

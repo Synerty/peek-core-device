@@ -1,11 +1,19 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, combineLatest, Observable } from "rxjs";
+import {
+    BehaviorSubject,
+    combineLatest,
+    fromEvent,
+    interval,
+    Observable,
+    Subject,
+} from "rxjs";
+import { takeUntil, throttle } from "rxjs/operators";
 import {
     DeviceGpsLocationService,
     DeviceGpsLocationTuple,
 } from "@peek/peek_core_device";
 import { UserService } from "@peek/peek_core_user";
-import { Capacitor, Plugins } from "@capacitor/core";
+import { Capacitor, registerPlugin } from "@capacitor/core";
 import { Dialog } from "@capacitor/dialog";
 import { Geolocation } from "@capacitor/geolocation";
 import { DeviceTupleService } from "../device-tuple.service";
@@ -13,9 +21,8 @@ import { GpsLocationUpdateTupleAction } from "./GpsLocationUpdateTupleAction";
 import { DeviceEnrolmentService } from "../../device-enrolment.service";
 import { DeviceBackgroundService } from "../device-background.service";
 import { isField } from "@peek/peek_core_device/_private/hardware-info/is-field.mweb";
-
-import { registerPlugin } from "@capacitor/core";
 import { BackgroundGeolocationPlugin } from "@capacitor-community/background-geolocation";
+
 const BackgroundGeolocation = registerPlugin<BackgroundGeolocationPlugin>(
     "BackgroundGeolocation"
 );
@@ -28,6 +35,10 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
     private gpsWatchId: string | null;
     private lastSeenPositionTupleAction: GpsLocationUpdateTupleAction;
 
+    private readonly GPS_UPDATE_SECONDS = 120;
+
+    private readonly position$ = new Subject<any>();
+
     constructor(
         private tupleService: DeviceTupleService,
         private deviceService: DeviceEnrolmentService,
@@ -37,10 +48,23 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
         super();
 
         if (isField) {
-            combineLatest([
-                this.userService.loggedInStatus,
-                this.deviceService.deviceInfoObservable(),
-            ]).subscribe(async ([isLoggedIn, deviceInfo]) => {
+            this.setupWatch();
+        }
+    }
+
+    private setupWatch(): void {
+        // Reduce the frequency of updates
+        this.position$
+            .pipe(throttle(() => interval(this.GPS_UPDATE_SECONDS * 1000)))
+            .pipe(takeUntil(this.onDestroyEvent))
+            .subscribe((position) => this.updateLocationThrottled(position));
+
+        combineLatest([
+            this.userService.loggedInStatus,
+            this.deviceService.deviceInfoObservable(),
+        ])
+            .pipe(takeUntil(this.onDestroyEvent))
+            .subscribe(async ([isLoggedIn, deviceInfo]) => {
                 if (isLoggedIn && deviceInfo.isEnrolled) {
                     if (!this.gpsWatchId) {
                         this.startLocationListener();
@@ -51,7 +75,6 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
                     }
                 }
             });
-        }
     }
 
     get location$(): Observable<DeviceGpsLocationTuple | null> {
@@ -144,9 +167,14 @@ export class PrivateDeviceGpsLocationService extends DeviceGpsLocationService {
     }
 
     private updateLocation(position): void {
+        this.position$.next(position);
+    }
+
+    private updateLocationThrottled(position): void {
         const now = new Date(); // In datetime with timezone
 
         // Send to Peek Logic
+        console.log("Sending GPS Location");
         const action = new GpsLocationUpdateTupleAction();
         action.latitude = position.coords.latitude;
         action.longitude = position.coords.longitude;
