@@ -137,7 +137,7 @@ export class DeviceServerService {
         let conn = new ServerInfoTuple();
 
         conn.host = location.host.split(":")[0];
-        conn.useSsl = location.protocol.toLowerCase() == "https";
+        conn.useSsl = location.protocol.toLowerCase().startsWith("https");
 
         if (location.host.split(":").length > 1) {
             conn.httpPort = parseInt(location.host.split(":")[1]);
