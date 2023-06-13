@@ -26,14 +26,12 @@ import { OfflineCacheCombinedStatusTuple } from "@peek/peek_core_device/_private
 class Timer {
     private _startTime: Date;
 
-    constructor(private timeoutSeconds: number | null = null) {
-        this.reset();
+    // Default to a year, it will never time out
+    constructor(private timeoutSeconds: number = 365 * 24 * 60 * 68) {
+        this._startTime = new Date();
     }
 
     get expired(): boolean {
-        if (this.timeoutSeconds == null) {
-            return true;
-        }
         return (
             this._startTime.getTime() + this.timeoutSeconds * 1000 <
             new Date().getTime()
@@ -45,9 +43,6 @@ class Timer {
     }
 
     get expireTime(): Date {
-        if (this.timeoutSeconds == null) {
-            return new Date(this._startTime.getTime());
-        }
         return new Date(this._startTime.getTime() + this.timeoutSeconds * 1000);
     }
 
@@ -56,11 +51,6 @@ class Timer {
     }
 
     reset(startTime: null | Date = null): void {
-        if (this.timeoutSeconds == null) {
-            throw new Error(
-                "Can not reset timer, it does not have a timeout set"
-            );
-        }
         if (startTime != null) {
             this._startTime = startTime;
         } else {
