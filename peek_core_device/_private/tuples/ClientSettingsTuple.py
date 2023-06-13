@@ -15,8 +15,13 @@ class ClientSettingsTuple(Tuple):
 
     __tupleType__ = deviceTuplePrefix + "ClientSettingsTuple"
 
-    fieldEnrollmentEnabled: bool = TupleField(defaultValue=False)
-    officeEnrollmentEnabled: bool = TupleField(defaultValue=False)
+    fieldEnrollmentEnabled: bool = TupleField()
+    officeEnrollmentEnabled: bool = TupleField()
     slowNetworkBandwidthMetricThreshold: int = TupleField()
-    offlineCacheSyncSeconds: int = TupleField(defaultValue=15 * 60)
     offlineMasterSwitchEnabled: bool = TupleField()
+
+    offlineCacheSyncSeconds: int = TupleField()
+    checkBandwidthSeconds: int = TupleField()
+    abortRetrySeconds: int = TupleField()
+    pauseTimeoutSeconds: int = TupleField()
+    sendStateToServerSeconds: int = TupleField()

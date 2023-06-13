@@ -1,5 +1,3 @@
-from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
-
 from peek_core_device._private.PluginNames import deviceFilt
 from peek_core_device._private.PluginNames import deviceObservableName
 from peek_core_device._private.server.controller.OfflineCacheController import (
@@ -33,9 +31,6 @@ from peek_core_device._private.storage.DeviceUpdateTuple import (
 from peek_core_device._private.tuples.ClientSettingsTuple import (
     ClientSettingsTuple,
 )
-from peek_core_device._private.tuples.DeviceCacheStatusTuple import (
-    DeviceCacheStatusTuple,
-)
 from peek_core_device._private.tuples.OfflineCacheCombinedStatusTuple import (
     OfflineCacheCombinedStatusTuple,
 )
@@ -46,6 +41,7 @@ from peek_core_device.tuples.DeviceGpsLocationTuple import (
     DeviceGpsLocationTuple,
 )
 from peek_core_device.tuples.DeviceInfoTuple import DeviceInfoTuple
+from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
 
 
 def makeTupleDataObservableHandler(

@@ -14,6 +14,10 @@ from peek_core_device._private.storage.Setting import (
 )
 from peek_core_device._private.storage.Setting import (
     OFFLINE_MASTER_SWITCH_ENABLED,
+    CHECK_BANDWIDTH_SECONDS,
+    ABORT_RETRY_SECONDS,
+    PAUSE_TIMEOUT_SECONDS,
+    SEND_STATS_TO_SERVER_SECONDS,
 )
 from peek_core_device._private.storage.Setting import (
     SLOW_NETWORK_BANDWIDTH_METRIC_THRESHOLD,
@@ -34,7 +38,6 @@ class ClientSettingsTupleProvider(TuplesProviderABC):
     def makeVortexMsg(
         self, filt: dict, tupleSelector: TupleSelector
     ) -> Union[Deferred, bytes]:
-
         ormSession = self._ormSessionCreator()
         try:
             clientSetting = ClientSettingsTuple()
@@ -51,12 +54,30 @@ class ClientSettingsTupleProvider(TuplesProviderABC):
                 ormSession, SLOW_NETWORK_BANDWIDTH_METRIC_THRESHOLD
             )
 
+            clientSetting.offlineMasterSwitchEnabled = globalSetting(
+                ormSession, OFFLINE_MASTER_SWITCH_ENABLED
+            )
+
+            # Timers
+
             clientSetting.offlineCacheSyncSeconds = globalSetting(
                 ormSession, OFFLINE_CACHE_REFRESH_SECONDS
             )
 
-            clientSetting.offlineMasterSwitchEnabled = globalSetting(
-                ormSession, OFFLINE_MASTER_SWITCH_ENABLED
+            clientSetting.checkBandwidthSeconds = globalSetting(
+                ormSession, CHECK_BANDWIDTH_SECONDS
+            )
+
+            clientSetting.abortRetrySeconds = globalSetting(
+                ormSession, ABORT_RETRY_SECONDS
+            )
+
+            clientSetting.pauseTimeoutSeconds = globalSetting(
+                ormSession, PAUSE_TIMEOUT_SECONDS
+            )
+
+            clientSetting.sendStateToServerSeconds = globalSetting(
+                ormSession, SEND_STATS_TO_SERVER_SECONDS
             )
 
             # Create the vortex message

@@ -283,10 +283,6 @@ OFFICE_ENROLLMENT_ENABLED = PropertyKey(
     "Office Enrollment Enabled", False, propertyDict=globalProperties
 )
 
-OFFLINE_CACHE_REFRESH_SECONDS = PropertyKey(
-    "Offline Cache Refresh Seconds", 24 * 60 * 60, propertyDict=globalProperties
-)
-
 OFFLINE_MASTER_SWITCH_ENABLED = PropertyKey(
     "Offline Master Switch Enabled", True, propertyDict=globalProperties
 )
@@ -296,4 +292,26 @@ SLOW_NETWORK_BANDWIDTH_METRIC_THRESHOLD = PropertyKey(
     "Slow Network Bandwidth Metric Threshold",
     1200,
     propertyDict=globalProperties,
+)
+
+# Timers
+
+OFFLINE_CACHE_REFRESH_SECONDS = PropertyKey(
+    "Offline Cache Refresh Seconds", 24 * 60 * 60, propertyDict=globalProperties
+)
+
+CHECK_BANDWIDTH_SECONDS = PropertyKey(
+    "Check Bandwidth Seconds", 5 * 60, propertyDict=globalProperties
+)
+
+ABORT_RETRY_SECONDS = PropertyKey(
+    "Abort Retry Seconds", 15 * 60, propertyDict=globalProperties
+)
+
+PAUSE_TIMEOUT_SECONDS = PropertyKey(
+    "Pause Timeout Seconds", 60, propertyDict=globalProperties
+)
+
+SEND_STATS_TO_SERVER_SECONDS = PropertyKey(
+    "Send Stats To Server Seconds", 5 * 60, propertyDict=globalProperties
 )

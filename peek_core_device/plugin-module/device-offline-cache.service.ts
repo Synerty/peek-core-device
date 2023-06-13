@@ -26,11 +26,14 @@ import { OfflineCacheCombinedStatusTuple } from "@peek/peek_core_device/_private
 class Timer {
     private _startTime: Date;
 
-    constructor(private timeoutSeconds: number) {
+    constructor(private timeoutSeconds: number | null = null) {
         this.reset();
     }
 
     get expired(): boolean {
+        if (this.timeoutSeconds == null) {
+            return true;
+        }
         return (
             this._startTime.getTime() + this.timeoutSeconds * 1000 <
             new Date().getTime()
@@ -42,6 +45,9 @@ class Timer {
     }
 
     get expireTime(): Date {
+        if (this.timeoutSeconds == null) {
+            return new Date(this._startTime.getTime());
+        }
         return new Date(this._startTime.getTime() + this.timeoutSeconds * 1000);
     }
 
@@ -50,6 +56,11 @@ class Timer {
     }
 
     reset(startTime: null | Date = null): void {
+        if (this.timeoutSeconds == null) {
+            throw new Error(
+                "Can not reset timer, it does not have a timeout set"
+            );
+        }
         if (startTime != null) {
             this._startTime = startTime;
         } else {
@@ -111,23 +122,21 @@ export class DeviceOfflineCacheService extends NgLifeCycleEvents {
     private unsub = new Subject<void>();
 
     // Check the bandwidth every 5 minutes
-    private readonly checkBandwidthTimer = new Timer(5 * 60);
+    private readonly checkBandwidthTimer = new Timer();
 
     // Check the bandwidth every 15 minutes
     // This assumes the field device is transitioning through bad internet
     // If they turn on their wifi, we're in for a predicament.
-    private readonly abortRetryTimer = new Timer(15 * 60);
+    private readonly abortRetryTimer = new Timer();
 
     // Give loaders 60 seconds to pause
-    private readonly pauseTimeoutTimer = new Timer(60);
+    private readonly pauseTimeoutTimer = new Timer();
 
     // This will be reinitialised when the settings come from the server
-    private readonly scheduledNextCacheStartTimer = new Timer(24 * 60 * 60);
+    private readonly scheduledNextCacheStartTimer = new Timer();
 
     // Run every 2 to 5 minutes, so we don't overload the server
-    private readonly sendStateToServerTimer = new Timer(
-        2 * 60 + Math.floor(Math.random() * 3 * 60)
-    );
+    private readonly sendStateToServerTimer = new Timer();
 
     // Make note of the last network type
     private _lastNetworkType = "";
@@ -180,9 +189,29 @@ export class DeviceOfflineCacheService extends NgLifeCycleEvents {
             .subscribe((settings: ClientSettingsTuple[]) => {
                 if (settings.length !== 0) {
                     this.allCientsSettingsTuple = settings[0];
+                    this.setupTimersFromSettings();
                     this.processStateLoaded();
                 }
             });
+    }
+
+    private setupTimersFromSettings(): void {
+        this.sendStateToServerTimer.setTimeout(
+            this.allCientsSettingsTuple.sendStateToServerSeconds +
+                Math.floor(Math.random() * 5 * 60) // Add some randomness
+        );
+        this.scheduledNextCacheStartTimer.setTimeout(
+            this.allCientsSettingsTuple.offlineCacheSyncSeconds
+        );
+        this.checkBandwidthTimer.setTimeout(
+            this.allCientsSettingsTuple.checkBandwidthSeconds
+        );
+        this.pauseTimeoutTimer.setTimeout(
+            this.allCientsSettingsTuple.pauseTimeoutSeconds
+        );
+        this.abortRetryTimer.setTimeout(
+            this.allCientsSettingsTuple.abortRetrySeconds
+        );
     }
 
     private setupThisDeviceOfflineSettingsSubscription() {
@@ -280,7 +309,6 @@ export class DeviceOfflineCacheService extends NgLifeCycleEvents {
 
         if (!force && !this.sendStateToServerTimer.expired) return;
         if (!this.vortexStatusService.snapshot.isOnline) return;
-
         this.sendStateToServerTimer.reset();
 
         const combinedTuple = new OfflineCacheCombinedStatusTuple();
@@ -301,6 +329,15 @@ export class DeviceOfflineCacheService extends NgLifeCycleEvents {
             .catch((e) => console.log(`ERROR: ${e}`));
     }
 
+    private get isRunning(): boolean {
+        return (
+            this.status.state === StateMachineE.StartRunning ||
+            this.status.state === StateMachineE.Running ||
+            this.status.state === StateMachineE.StartPausing ||
+            this.status.state === StateMachineE.Pausing
+        );
+    }
+
     private runStateMachine(): void {
         if (this.stateMachineLock.isLocked) return;
 
@@ -309,6 +346,9 @@ export class DeviceOfflineCacheService extends NgLifeCycleEvents {
         this.tryRunStateMachine() //
             .catch((e) => console.log(`ERROR asyncStateMachine: ${e}`))
             .then(() => {
+                this.deviceBandwidthTestService.setOfflineCachingRunning(
+                    this.isRunning
+                );
                 // console.log(`StateMachine End = ${this.status.stateString}`);
 
                 setTimeout(() => {
@@ -346,9 +386,6 @@ export class DeviceOfflineCacheService extends NgLifeCycleEvents {
                 return;
             }
             case StateMachineE.ScheduleNextRun: {
-                this.scheduledNextCacheStartTimer.setTimeout(
-                    this.allCientsSettingsTuple.offlineCacheSyncSeconds
-                );
                 // Ensure the caching does not start before it's due to.
                 if (this.status.lastCachingStartDate != null) {
                     this.scheduledNextCacheStartTimer.reset(

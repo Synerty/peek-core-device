@@ -41,6 +41,8 @@ export class DeviceBandwidthTestService extends NgLifeCycleEvents {
     private _testRunning: boolean = false;
     private _lastNetworkType: string | null = null;
 
+    private _offlineCachingRunning: boolean = false;
+
     readonly status$ = new BehaviorSubject<BandwidthStatusI>({
         isSlowNetwork: null,
         lastMetric: null,
@@ -77,7 +79,8 @@ export class DeviceBandwidthTestService extends NgLifeCycleEvents {
                 filter(
                     () =>
                         this.vortexStatusService.snapshot.isOnline &&
-                        !this._testRunning
+                        !this._testRunning &&
+                        !this._offlineCachingRunning
                 )
             )
             .subscribe(() => this.startTest());
@@ -111,6 +114,10 @@ export class DeviceBandwidthTestService extends NgLifeCycleEvents {
         startTestShortly();
     }
 
+    setOfflineCachingRunning(value: boolean): void {
+        this._offlineCachingRunning = value;
+    }
+
     get isSlowNetwork(): boolean {
         return this._isSlowNetwork;
     }
@@ -128,7 +135,14 @@ export class DeviceBandwidthTestService extends NgLifeCycleEvents {
             console.log("Subsequent call to start bandwidth test ignored");
             return;
         }
-        console.log("Starting bandwidth test ignored");
+        if (this._offlineCachingRunning) {
+            console.log(
+                "Offline cache test skipped while offline caching is" +
+                    " in progres"
+            );
+            return;
+        }
+        console.log("Starting bandwidth test");
 
         this._testRunning = true;
 
@@ -188,6 +202,10 @@ export class DeviceBandwidthTestService extends NgLifeCycleEvents {
     }
 
     private applyBandwidthMetric(responseTimeMs: number | null) {
+        if (this._offlineCachingRunning) {
+            return;
+        }
+
         this._lastMetric = responseTimeMs;
 
         if (this.slowNetworkBandwidthMetricThreshold == null) {

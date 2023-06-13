@@ -10,8 +10,13 @@ export class ClientSettingsTuple extends Tuple {
     fieldEnrollmentEnabled: boolean;
     officeEnrollmentEnabled: boolean;
     slowNetworkBandwidthMetricThreshold: number;
-    offlineCacheSyncSeconds: number = 0;
     offlineMasterSwitchEnabled: boolean;
+
+    offlineCacheSyncSeconds: number = 0;
+    checkBandwidthSeconds: number = 0;
+    abortRetrySeconds: number = 0;
+    pauseTimeoutSeconds: number = 0;
+    sendStateToServerSeconds: number = 0;
 
     constructor() {
         super(ClientSettingsTuple.tupleName);
