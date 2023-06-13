@@ -38,9 +38,11 @@ class BandwidthTestController:
 
     @deferToThreadWrapWithLogger(logger)
     def _createTestData(self):
+        BASE64_SIZE = 1.3
+        PACKET_SIZE = int((100.0 * 1024.0) / BASE64_SIZE)
 
         testData = ""
-        while len(testData) < 100 * 1024:
+        while len(testData) < PACKET_SIZE:
             testData += str(random())
 
         logger.debug(f"Generated testData of size {len(testData)}")

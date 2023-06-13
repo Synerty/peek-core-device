@@ -34,6 +34,7 @@ export class DeviceBandwidthTestService extends NgLifeCycleEvents {
     readonly RESPONSE_TIMEOUT_SECONDS = 30.0;
     private slowNetworkBandwidthMetricThreshold: number = 1200;
     private readonly CHECK_PERIOD_SECONDS = 15 * 60;
+    private readonly CHECK_BACKOFF_SECONDS = 30;
 
     private _isSlowNetwork: boolean = true;
     private _lastMetric: number = 1300;
@@ -148,7 +149,11 @@ export class DeviceBandwidthTestService extends NgLifeCycleEvents {
 
         this._performBandwidthTest()
             .catch((e) => console.log(`ERROR _performBandwidthTest: ${e}`))
-            .then(() => (this._testRunning = false));
+            .then(() => {
+                setTimeout(() => {
+                    this._testRunning = false;
+                }, this.CHECK_BACKOFF_SECONDS * 1000);
+            });
     }
 
     private _performBandwidthTest(): Promise<number | null> {
