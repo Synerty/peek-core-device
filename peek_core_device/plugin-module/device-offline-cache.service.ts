@@ -499,8 +499,16 @@ export class DeviceOfflineCacheService extends NgLifeCycleEvents {
                 break;
             }
             case StateMachineE.StartBandwidthTest: {
+                // If the test is already running, then wait until it's
+                // finished to start one.
+                if (this.deviceBandwidthTestService.isTestRunning) {
+                    return;
+                }
+
                 // Trigger the start and move on.
-                this.deviceBandwidthTestService.startTest();
+                if (!this.deviceBandwidthTestService.startTest()) {
+                    console.log("ERROR:Failed to start bandwidth test");
+                }
                 this.status.state = StateMachineE.PausedForBandwidthTest;
                 break;
             }

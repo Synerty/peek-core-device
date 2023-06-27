@@ -56,6 +56,11 @@ export class DeviceBandwidthTestService extends NgLifeCycleEvents {
         private enrolmentService: DeviceEnrolmentService
     ) {
         super();
+        this.status$.next({
+            isSlowNetwork: this._isSlowNetwork,
+            lastMetric: this._lastMetric,
+        });
+
         this.bandwidthTestEndpoint = vortexService.createEndpoint(
             this,
             deviceBandwidthTestFilt,
@@ -131,17 +136,17 @@ export class DeviceBandwidthTestService extends NgLifeCycleEvents {
         return this._testRunning;
     }
 
-    startTest(): void {
+    startTest(): boolean {
         if (this._testRunning) {
             console.log("Subsequent call to start bandwidth test ignored");
-            return;
+            return false;
         }
         if (this._offlineCachingRunning) {
             console.log(
                 "Offline cache test skipped while offline caching is" +
                     " in progres"
             );
-            return;
+            return false;
         }
         console.log("Starting bandwidth test");
 
@@ -154,6 +159,8 @@ export class DeviceBandwidthTestService extends NgLifeCycleEvents {
                     this._testRunning = false;
                 }, this.CHECK_BACKOFF_SECONDS * 1000);
             });
+
+        return true;
     }
 
     private _performBandwidthTest(): Promise<number | null> {
