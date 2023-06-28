@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { HeaderService } from "@synerty/peek-plugin-base-js";
+import { BalloonMsgService, HeaderService } from "@synerty/peek-plugin-base-js";
 import { NgLifeCycleEvents } from "@synerty/vortexjs";
 import {
     DeviceOfflineCacheService,
@@ -26,6 +26,7 @@ export class CoreDeviceCfgComponent extends NgLifeCycleEvents {
     bandwidthStatus$: BehaviorSubject<BandwidthStatusI>;
 
     constructor(
+        private balloonMsg: BalloonMsgService,
         private headerService: HeaderService,
         private tupleService: DeviceTupleService,
         private cacheController: DeviceOfflineCacheService,
@@ -37,5 +38,17 @@ export class CoreDeviceCfgComponent extends NgLifeCycleEvents {
         this.bandwidthStatus$ = deviceBandwidthTestService.status$;
 
         this.headerService.setTitle("Core Device Config");
+    }
+
+    forceCacheStartClicked(): void {
+        this.cacheController.forceStart();
+        this.balloonMsg.showSuccess("Caching started");
+    }
+
+    get isForceCacheStartButtonEnabled(): boolean {
+        return (
+            this.cacheController.cachingEnabled &&
+            !this.cacheController.isInRunStates
+        );
     }
 }

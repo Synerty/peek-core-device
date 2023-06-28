@@ -705,6 +705,12 @@ export class DeviceOfflineCacheService extends NgLifeCycleEvents {
         this._triggerCacheResume$.next();
     }
 
+    forceStart(): void {
+        this.status.state = StateMachineE.StartRunning;
+        this.status.nextState = null;
+        this.triggerCachingStop();
+    }
+
     get triggerCachingStartObservable(): Observable<boolean> {
         return this._triggerCacheStart$.asObservable();
     }

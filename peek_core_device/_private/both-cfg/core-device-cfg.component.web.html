@@ -44,4 +44,18 @@
             Once : <b>{{status.initialFullLoadComplete }}</b><br />
         </p>
     </div>
+
+    <div
+        *ngIf="isForceCacheStartButtonEnabled"
+        class="peek-information-section"
+    >
+        <button
+            nz-button
+            nzType="dashed"
+            nzDanger
+            (click)="forceCacheStartClicked()"
+        >
+            Force Cache Start
+        </button>
+    </div>
 </div>

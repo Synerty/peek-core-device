@@ -6,6 +6,7 @@ import { HttpClientModule } from "@angular/common/http";
 import { NzIconModule } from "ng-zorro-antd/icon";
 import { CoreDeviceCfgComponent } from "./core-device-cfg.component";
 import { ConnectComponent } from "./connect/connect.component";
+import { NzButtonModule } from "ng-zorro-antd/button";
 import {
     TupleActionPushNameService,
     TupleActionPushOfflineService,
@@ -60,6 +61,7 @@ export const pluginRoutes: Routes = [
         RouterModule.forChild(pluginRoutes),
         FormsModule,
         NzIconModule,
+        NzButtonModule,
         HttpClientModule,
     ],
     exports: [],
