@@ -5,10 +5,10 @@ import { Network } from "@capacitor/network";
 
 import {
     NgLifeCycleEvents,
+    Payload,
     TupleSelector,
     VortexService,
     VortexStatusService,
-    Payload,
 } from "@synerty/vortexjs";
 import { ClientSettingsTuple, DeviceTupleService } from "./_private";
 import { OfflineCacheSettingTuple } from "./_private/tuples/OfflineCacheSettingTuple";
@@ -22,6 +22,7 @@ import {
 } from "./_private/tuples/OfflineCacheStatusTuple";
 import { OfflineCacheStatusAction } from "./_private/tuples/OfflineCacheStatusAction";
 import { OfflineCacheCombinedStatusTuple } from "@peek/peek_core_device/_private/tuples/OfflineCacheCombinedStatusTuple";
+import { OfflineCacheLocalSavedStateTuple } from "@peek/peek_core_device/_private/tuples/offline-cache-local-saved-state-tuple";
 
 class Timer {
     private _startTime: Date;
@@ -131,6 +132,13 @@ export class DeviceOfflineCacheService extends NgLifeCycleEvents {
     // Make note of the last network type
     private _lastNetworkType = "";
 
+    private readonly savedStateTupleSelector = new TupleSelector(
+        OfflineCacheLocalSavedStateTuple.tupleName,
+        {}
+    );
+
+    private savedStateTuple: OfflineCacheLocalSavedStateTuple | null = null;
+
     constructor(
         private vortexService: VortexService,
         private vortexStatusService: VortexStatusService,
@@ -168,6 +176,62 @@ export class DeviceOfflineCacheService extends NgLifeCycleEvents {
                 this.abortRetryTimer.expire();
             }
         });
+
+        // Load the saved state
+        this.loadSavedState();
+    }
+
+    private loadSavedState() {
+        // Restore the next start date, if it exists
+        // This subscription has to stay around, or the update will fail.
+        this.tupleService.offlineObserver
+            .subscribeToTupleSelector(
+                this.savedStateTupleSelector,
+                false,
+                false,
+                true
+            )
+            .pipe(takeUntil(this.onDestroyEvent))
+            .pipe(filter((t) => (t?.length || 0) === 1))
+            .subscribe((tuples: OfflineCacheLocalSavedStateTuple[] | null) => {
+                // We need to keep the subscription, but only want to
+                // process the update once
+                if (this.savedStateTuple != null) {
+                    return;
+                }
+                this.savedStateTuple = tuples[0];
+
+                this.status.lastCachingStartDate =
+                    this.savedStateTuple.lastCachingStartDate;
+
+                this.status.lastCachingCompleteDate =
+                    this.savedStateTuple.lastCachingCompleteDate;
+
+                console.log("Offline cache, loaded save state.");
+                this.processStateLoaded();
+            });
+    }
+
+    private saveSavedState() {
+        this.savedStateTuple.lastCachingStartDate =
+            this.status.lastCachingStartDate;
+
+        this.savedStateTuple.lastCachingCompleteDate =
+            this.status.lastCachingCompleteDate;
+
+        this.tupleService.offlineObserver
+            .updateOfflineState(this.savedStateTupleSelector, [
+                this.savedStateTuple,
+            ])
+            .catch((e) =>
+                console.error(
+                    "ERROR, Failed to save" +
+                        " OfflineCacheLocalSavedStateTuple"
+                )
+            )
+            .then(() => {
+                console.log("Offline cache, saved save state.");
+            });
     }
 
     private setupAllDevicesSettingsSubscription() {
@@ -247,6 +311,7 @@ export class DeviceOfflineCacheService extends NgLifeCycleEvents {
         lastSettings: OfflineCacheSettingTuple | null = null
     ) {
         if (
+            this.savedStateTuple == null ||
             this.settings == null ||
             this.status == null ||
             this.allCientsSettingsTuple == null
@@ -319,7 +384,7 @@ export class DeviceOfflineCacheService extends NgLifeCycleEvents {
             .catch((e) => console.log(`ERROR: ${e}`));
     }
 
-    private get isRunning(): boolean {
+    get isInRunStates(): boolean {
         return (
             this.status.state === StateMachineE.StartRunning ||
             this.status.state === StateMachineE.Running ||
@@ -337,7 +402,7 @@ export class DeviceOfflineCacheService extends NgLifeCycleEvents {
             .catch((e) => console.log(`ERROR asyncStateMachine: ${e}`))
             .then(() => {
                 this.deviceBandwidthTestService.setOfflineCachingRunning(
-                    this.isRunning
+                    this.isInRunStates
                 );
                 // console.log(`StateMachine End = ${this.status.stateString}`);
 
@@ -381,6 +446,7 @@ export class DeviceOfflineCacheService extends NgLifeCycleEvents {
                     this.scheduledNextCacheStartTimer.reset(
                         this.status.lastCachingStartDate
                     );
+                    this.saveSavedState();
                 }
                 this.status.state = StateMachineE.Enabled;
                 break;
@@ -441,6 +507,7 @@ export class DeviceOfflineCacheService extends NgLifeCycleEvents {
                 if (this.areAllLoadersComplete()) {
                     this.status.state = StateMachineE.ScheduleNextRun;
                     this.status.setCompleted();
+                    this.saveSavedState();
                     break;
                 }
 
@@ -629,6 +696,7 @@ export class DeviceOfflineCacheService extends NgLifeCycleEvents {
     }
 
     private triggerCachingPause(): void {
+        // Don't emit the paused, the loaders will check this in their own time.
         this._isPaused = true;
     }
 
