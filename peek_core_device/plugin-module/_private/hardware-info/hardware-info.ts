@@ -68,7 +68,7 @@ export class HardwareInfo {
     }
 
     async uuid(): Promise<string> {
-        return (await Device.getId()).uuid;
+        return (await Device.getId()).identifier;
     }
 
     description(): string {
