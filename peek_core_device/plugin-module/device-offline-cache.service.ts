@@ -192,14 +192,19 @@ export class DeviceOfflineCacheService extends NgLifeCycleEvents {
                 true
             )
             .pipe(takeUntil(this.onDestroyEvent))
-            .pipe(filter((t) => (t?.length || 0) === 1))
             .subscribe((tuples: OfflineCacheLocalSavedStateTuple[] | null) => {
                 // We need to keep the subscription, but only want to
                 // process the update once
                 if (this.savedStateTuple != null) {
                     return;
                 }
-                this.savedStateTuple = tuples[0];
+
+                if ((tuples?.length || 0) === 0) {
+                    this.savedStateTuple =
+                        new OfflineCacheLocalSavedStateTuple();
+                } else {
+                    this.savedStateTuple = tuples[0];
+                }
 
                 this.status.lastCachingStartDate =
                     this.savedStateTuple.lastCachingStartDate;
