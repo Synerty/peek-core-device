@@ -6,7 +6,7 @@ import {
     VortexService,
 } from "@synerty/vortexjs";
 import { BalloonMsgService } from "@synerty/peek-plugin-base-js";
-// import { FileUploader } from "ng2-file-upload"
+
 import {
     CreateDeviceUpdateAction,
     DeviceUpdateTuple,
