@@ -11,7 +11,7 @@ export class LoadingComponent extends NgLifeCycleEvents implements OnInit {
         super();
     }
 
-    ngOnInit() {
+    override ngOnInit() {
         this.headerService.setEnabled(false);
         this.headerService.setTitle("");
     }

@@ -40,7 +40,7 @@ export class UploadDeviceUpdateComponent
         // this.doCheckEvent.subscribe(() => this.checkProgress());
     }
 
-    ngOnInit() {}
+    override ngOnInit() {}
 
     /*
     formEnabled(): boolean {

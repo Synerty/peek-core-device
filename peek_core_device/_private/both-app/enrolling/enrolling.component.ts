@@ -39,7 +39,7 @@ export class EnrollingComponent extends NgLifeCycleEvents implements OnInit {
             });
     }
 
-    ngOnInit() {
+    override ngOnInit() {
         this.headerService.setEnabled(false);
         this.headerService.setTitle("");
     }
