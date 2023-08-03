@@ -26,11 +26,10 @@ class OfflineCacheCombinedStatusTupleProvider(TuplesProviderABC):
     def makeVortexMsg(
         self, filt: dict, tupleSelector: TupleSelector
     ) -> Union[Deferred, bytes]:
-
         deviceToken = tupleSelector.selector.get("deviceToken")
 
-        encodedPayload = DeviceCacheStatusTuple(
-            statusList=self._offlineCacheController.lastCacheStatusEncodedPayload(
+        encodedPayload = (
+            self._offlineCacheController.lastCacheStatusEncodedPayload(
                 deviceToken
             )
         )
