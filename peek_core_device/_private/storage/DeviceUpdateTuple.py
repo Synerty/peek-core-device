@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 @addTupleType
-class DeviceUpdateTuple(Tuple, DeclarativeBase):
+class DeviceUpdateTuple(DeclarativeBase, Tuple):
     """DeviceUpdateTuple
 
     This table stores information about the peek device updates.

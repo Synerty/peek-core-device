@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 @addTupleType
-class GpsLocationTable(Tuple, DeclarativeBase):
+class GpsLocationTable(DeclarativeBase, Tuple):
     __tablename__ = "GpsLocation"
     __tupleType__ = deviceTuplePrefix + "GpsLocationTable"
 
