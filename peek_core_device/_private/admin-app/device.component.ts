@@ -5,5 +5,5 @@ import { Component, OnInit } from "@angular/core";
     templateUrl: "device.component.html",
 })
 export class DeviceComponent implements OnInit {
-    override ngOnInit() {}
+    ngOnInit() {}
 }

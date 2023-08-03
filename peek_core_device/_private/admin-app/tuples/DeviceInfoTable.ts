@@ -41,6 +41,7 @@ export class DeviceInfoTable extends Tuple {
     lastCacheUpdate: Date;
     lastBandwidthMetric: number;
     loggedInUser: string;
+    lastCacheCheck: Date | null;
 
     constructor() {
         super(DeviceInfoTable.tupleName);
