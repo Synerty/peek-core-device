@@ -10,6 +10,9 @@ from peek_core_device._private.storage.DeviceInfoTable import DeviceInfoTable
 from peek_core_device._private.storage.DeviceUpdateTuple import (
     DeviceUpdateTuple,
 )
+from peek_core_device._private.tuples.OfflineCacheCombinedStatusTuple import (
+    OfflineCacheCombinedStatusTuple,
+)
 from peek_core_device._private.tuples.OfflineCacheSettingTuple import (
     OfflineCacheSettingTuple,
 )
@@ -103,6 +106,15 @@ class NotifierController:
         self._tupleObservable.notifyOfTupleUpdate(
             TupleSelector(
                 OfflineCacheSettingTuple.tupleName(),
+                dict(deviceToken=deviceToken),
+            )
+        )
+
+    @callMethodLater
+    def notifyOfflineCacheCombinedStatusTuple(self, deviceToken: str):
+        self._tupleObservable.notifyOfTupleUpdate(
+            TupleSelector(
+                OfflineCacheCombinedStatusTuple.tupleName(),
                 dict(deviceToken=deviceToken),
             )
         )

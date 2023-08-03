@@ -9,8 +9,6 @@ import {
 } from "@synerty/vortexjs";
 import { takeUntil } from "rxjs/operators";
 import { DatePipe } from "@angular/common";
-import { DeviceCacheStatusTuple } from "../tuples/DeviceCacheStatusTuple";
-import { OfflineCacheLoaderStatusTuple } from "@peek/peek_core_device/tuples/OfflineCacheLoaderStatusTuple";
 import { OfflineCacheCombinedStatusTuple } from "@peek/peek_core_device/_private/tuples/OfflineCacheCombinedStatusTuple";
 
 @Component({

@@ -51,7 +51,6 @@ class OfflineCacheController:
         self._lastUpdateByDeviceToken = {}
 
     def processTupleAction(self, tupleAction: TupleActionABC) -> List[Tuple]:
-
         if isinstance(tupleAction, UpdateOfflineCacheSettingAction):
             d = self._processOfflineCacheSettingUpdate(tupleAction)
             d.addErrback(vortexLogFailure, logger)
@@ -104,3 +103,7 @@ class OfflineCacheController:
         self._lastStatusEncodedPayloadByDeviceToken[
             action.deviceToken
         ] = action.encodedCombinedTuplePayload
+
+        self._notifierController.notifyOfflineCacheCombinedStatusTuple(
+            deviceToken=action.deviceToken
+        )
