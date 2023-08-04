@@ -25,13 +25,14 @@ from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
 from peek_core_device._private.server.controller.NotifierController import (
     NotifierController,
 )
-from peek_core_device._private.storage.GpsLocationHistoryTable import (
-    GpsLocationHistoryTable,
-)
-from peek_core_device._private.storage.GpsLocationTable import GpsLocationTable
 from peek_core_device._private.tuples.UpdateDeviceGpsLocationTupleAction import (
     UpdateDeviceGpsLocationTupleAction,
 )
+from peek_core_device.tuples.DeviceGpsLocationTuple import (
+    DeviceGpsLocationTuple,
+)
+from peek_plugin_base.LoopingCallUtil import peekCatchErrbackWithLogger
+from peek_plugin_base.storage.RunPyInPg import runPyInPg
 
 logger = logging.getLogger(__name__)
 DeviceLocationTuple = namedtuple(
@@ -58,7 +59,8 @@ class GpsController(TupleActionProcessorDelegateABC):
         self._insertLoopingCall = None
 
     def start(self):
-        self._insertLoopingCall = LoopingCall(self._poll)
+        wrappedCall = peekCatchErrbackWithLogger(logger)(self._poll)
+        self._insertLoopingCall = LoopingCall(wrappedCall)
         d = self._insertLoopingCall.start(self.INSERT_SECONDS)
         d.addErrback(vortexLogFailure, logger)
 
