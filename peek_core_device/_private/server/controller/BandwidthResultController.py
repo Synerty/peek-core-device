@@ -17,6 +17,7 @@ from peek_core_device._private.server.controller.NotifierController import (
 from peek_core_device._private.tuples.BandwidthTestResultTuple import (
     BandwidthTestResultTuple,
 )
+from peek_plugin_base.LoopingCallUtil import peekCatchErrbackWithLogger
 from peek_plugin_base.storage.RunPyInPg import runPyInPg
 
 logger = logging.getLogger(__name__)
@@ -54,6 +55,7 @@ class BandwidthResultController:
             ] = tupleAction.metric
             return []
 
+    @peekCatchErrbackWithLogger(logger)
     @inlineCallbacks
     def _poll(self) -> Optional[Deferred]:
         if not self._metricUpdateQueue:
@@ -62,7 +64,7 @@ class BandwidthResultController:
         toProcess, self._metricUpdateQueue = self._metricUpdateQueue, {}
 
         startTime = datetime.now(pytz.UTC)
-        yield runPyInPg(
+        errors = yield runPyInPg(
             logger, self._dbSessionCreator, self._updateMetric, None, toProcess
         )
         logger.debug(
@@ -70,15 +72,18 @@ class BandwidthResultController:
             len(toProcess),
             datetime.now(pytz.UTC) - startTime,
         )
+        for error in errors:
+            logger.error(error)
 
         self._notifierController.notifyAllDeviceInfos()
 
     @classmethod
-    def _updateMetric(cls, plpy, updates: dict[str, int]) -> None:
+    def _updateMetric(cls, plpy, updates: dict[str, int]) -> list[str]:
         """Process Offline Cache Update
 
         :rtype: Deferred
         """
+        errors = []
 
         plan = plpy.prepare(
             """UPDATE core_device."DeviceInfo"
@@ -87,4 +92,12 @@ class BandwidthResultController:
             ["text", "integer"],
         )
         for deviceToken, metric in updates.items():
-            plpy.execute(plan, [deviceToken, metric])
+            try:
+                plpy.execute(plan, [deviceToken, metric])
+            except plpy.SPIError as e:
+                errors.append(
+                    f"Failed to make update for {item.deviceToken}"
+                    f": {str(e)}"
+                )
+
+        return errors
