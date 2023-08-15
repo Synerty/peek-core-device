@@ -3,10 +3,12 @@ from abc import abstractmethod
 from typing import List
 from typing import Optional
 
-from rx import Observable
+from reactivex import Observable
 from twisted.internet.defer import Deferred
 
-from peek_core_device.tuples.DeviceGpsLocationTuple import DeviceGpsLocationTuple
+from peek_core_device.tuples.DeviceGpsLocationTuple import (
+    DeviceGpsLocationTuple,
+)
 
 
 class DeviceApiABC(metaclass=ABCMeta):
