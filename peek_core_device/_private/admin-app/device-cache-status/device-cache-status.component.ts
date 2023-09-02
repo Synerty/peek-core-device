@@ -37,7 +37,7 @@ export class DeviceCacheStatusComponent
         super();
     }
 
-    ngOnInit() {
+    override ngOnInit() {
         this.deviceToken$
             .pipe(takeUntil(this.onDestroyEvent))
             .subscribe((deviceToken: string) => {

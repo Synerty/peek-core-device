@@ -3,7 +3,6 @@ import { filter, first } from "rxjs/operators";
 import { Injectable } from "@angular/core";
 import { BalloonMsgService } from "@synerty/peek-plugin-base-js";
 import {
-    extend,
     TupleSelector,
     VortexService,
     VortexStatusService,
@@ -22,7 +21,7 @@ export class DeviceServerService {
     );
     private serverInfo: ServerInfoTuple = new ServerInfoTuple();
     private serverInfoSubject = new Subject<ServerInfoTuple>();
-    private readonly deviceOnlineFilt = extend(
+    private readonly deviceOnlineFilt = Object.assign(
         { key: "device.online" },
         deviceFilt
     );
@@ -223,7 +222,10 @@ export class DeviceServerService {
 
         // Setup the online ping
         this.tupleService.hardwareInfo.uuid().then((deviceId) => {
-            let filt = extend({ deviceId: deviceId }, this.deviceOnlineFilt);
+            let filt = Object.assign(
+                { deviceId: deviceId },
+                this.deviceOnlineFilt
+            );
 
             this.lastOnlineSub = this.vortexStatusService.isOnline
                 .pipe(filter((online) => online)) // Filter for online only

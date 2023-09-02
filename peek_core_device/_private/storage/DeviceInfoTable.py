@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 @addTupleType
-class DeviceInfoTable(Tuple, DeclarativeBase):
+class DeviceInfoTable(DeclarativeBase, Tuple):
     """DeviceInfoTable
 
     This table stores information about devices.

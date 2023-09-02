@@ -21,7 +21,7 @@ import {
 })
 export class CoreDeviceCfgComponent extends NgLifeCycleEvents {
     offlineLoaderList$: BehaviorSubject<OfflineCacheLoaderStatusTuple[]>;
-    offlineCacheStatus$: BehaviorSubject<OfflineCacheStatusTuple | null[]>;
+    offlineCacheStatus$: BehaviorSubject<OfflineCacheStatusTuple | null>;
 
     bandwidthStatus$: BehaviorSubject<BandwidthStatusI>;
 

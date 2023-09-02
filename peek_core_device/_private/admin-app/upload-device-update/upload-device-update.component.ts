@@ -6,7 +6,7 @@ import {
     VortexService,
 } from "@synerty/vortexjs";
 import { BalloonMsgService } from "@synerty/peek-plugin-base-js";
-// import { FileUploader } from "ng2-file-upload"
+
 import {
     CreateDeviceUpdateAction,
     DeviceUpdateTuple,
@@ -40,7 +40,7 @@ export class UploadDeviceUpdateComponent
         // this.doCheckEvent.subscribe(() => this.checkProgress());
     }
 
-    ngOnInit() {}
+    override ngOnInit() {}
 
     /*
     formEnabled(): boolean {

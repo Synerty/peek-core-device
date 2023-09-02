@@ -42,7 +42,7 @@ export class ConnectComponent extends NgLifeCycleEvents implements OnInit {
         this.server = this.deviceServerService.connInfo;
     }
 
-    ngOnInit() {}
+    override ngOnInit() {}
 
     connectEnabled(): boolean {
         if (this.server != null) {

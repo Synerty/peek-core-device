@@ -5,7 +5,6 @@ import {
     TupleSelector,
 } from "@synerty/vortexjs";
 import { deviceTuplePrefix } from "../PluginNames";
-import { Md5 } from "ts-md5/dist/md5";
 import { isField as isFieldStatic } from "./is-field.mweb";
 import { Capacitor } from "@capacitor/core";
 import { Device } from "@capacitor/device";
@@ -68,7 +67,7 @@ export class HardwareInfo {
     }
 
     async uuid(): Promise<string> {
-        return (await Device.getId()).uuid;
+        return (await Device.getId()).identifier;
     }
 
     description(): string {

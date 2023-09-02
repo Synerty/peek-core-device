@@ -57,7 +57,7 @@ export class ConnectComponent extends NgLifeCycleEvents implements OnInit {
             });
     }
 
-    ngOnInit() {
+    override ngOnInit() {
         this.headerService.setEnabled(false);
         this.headerService.setTitle("");
     }
