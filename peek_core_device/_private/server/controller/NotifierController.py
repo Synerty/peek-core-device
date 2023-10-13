@@ -46,6 +46,9 @@ class NotifierController:
 
     @debounceCall(55)
     def notifyAllDeviceInfos(self):
+        if not self._tupleObservable:
+            return
+
         self._tupleObservable.notifyOfTupleUpdate(
             TupleSelector(DeviceInfoTuple.tupleName(), dict())
         )
@@ -66,6 +69,9 @@ class NotifierController:
 
     @debounceCall(30)
     def notifyAllDeviceUpdate(self):
+        if not self._tupleObservable:
+            return
+
         self._tupleObservable.notifyOfTupleUpdate(
             TupleSelector(DeviceUpdateTuple.tupleName(), dict())
         )
@@ -93,6 +99,9 @@ class NotifierController:
 
     @debounceCall(120)
     def notifyAllDeviceGpsLocation(self):
+        if not self._tupleObservable:
+            return
+
         from peek_core_device._private.storage.GpsLocationTable import (
             GpsLocationTable,
         )
